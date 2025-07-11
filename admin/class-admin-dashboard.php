@@ -525,6 +525,25 @@ class CAH_Admin_Dashboard {
         </div>
     }
     
+    private function render_edit_case_form() {
+        $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        if (!$case_id) {
+            echo '<div class="notice notice-error"><p>Fall-ID nicht gefunden.</p></div>';
+            return;
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1>Fall bearbeiten</h1>
+            <p>Fall-Bearbeitung wird in der nächsten Version implementiert.</p>
+            <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button button-primary">
+                ← Zurück zu Fall Details
+            </a>
+        </div>
+        <?php
+    }
+    
     public function admin_page_settings() {
         // Handle manual database creation
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_tables_nonce'])) {
