@@ -451,4 +451,27 @@ class CAH_Admin_Dashboard {
         
         echo '</tbody></table>';
     }
+    
+    private function show_detailed_table_status() {
+        global $wpdb;
+        
+        $required_tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_financial', 'klage_courts');
+        
+        echo '<table style="width: 100%; border-collapse: collapse;">';
+        foreach ($required_tables as $table) {
+            $full_table_name = $wpdb->prefix . $table;
+            $exists = $wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+            $count = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM $full_table_name") : 0;
+            
+            $status_icon = $exists ? '✅' : '❌';
+            $status_color = $exists ? 'green' : 'red';
+            
+            echo '<tr>';
+            echo '<td style="padding: 5px; border-bottom: 1px solid #ddd;">' . $status_icon . ' <strong>' . $table . '</strong></td>';
+            echo '<td style="padding: 5px; border-bottom: 1px solid #ddd; color: ' . $status_color . ';">' . ($exists ? 'Existiert' : 'FEHLT') . '</td>';
+            echo '<td style="padding: 5px; border-bottom: 1px solid #ddd;">' . $count . ' Einträge</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
 }
