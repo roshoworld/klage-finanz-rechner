@@ -408,9 +408,20 @@ class CAH_Admin_Dashboard {
     private function force_create_tables() {
         require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
         $database = new CAH_Database();
-        $result = $database->create_tables();
         
-        echo '<div class="notice notice-success"><p><strong>Erfolg!</strong> Alle Datenbank-Tabellen wurden erstellt. Aktualisieren Sie die Seite.</p></div>';
+        // Try advanced table creation with direct SQL
+        $results = $database->create_tables_direct();
+        
+        if ($results['success']) {
+            echo '<div class="notice notice-success"><p><strong>Erfolg!</strong> ' . $results['message'] . '</p></div>';
+        } else {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> ' . $results['message'] . '</p></div>';
+        }
+        
+        // Show detailed results
+        if (get_option('klage_click_debug_mode')) {
+            echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>' . implode('<br>', $results['details']) . '</p></div>';
+        }
     }
     
     private function display_system_status() {
