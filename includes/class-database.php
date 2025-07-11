@@ -69,13 +69,66 @@ class CAH_Database {
             KEY debtors_city (debtors_city)
         ) $charset_collate;";
         
+        // Clients table
+        $sql_clients = "CREATE TABLE {$this->wpdb->prefix}klage_clients (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) unsigned,
+            users_first_name varchar(100) NOT NULL,
+            users_last_name varchar(100) NOT NULL,
+            users_email varchar(255) NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        
+        // Emails table
+        $sql_emails = "CREATE TABLE {$this->wpdb->prefix}klage_emails (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            case_id bigint(20) unsigned NOT NULL,
+            emails_received_date date NOT NULL,
+            emails_received_time time NOT NULL,
+            emails_sender_email varchar(255) NOT NULL,
+            emails_user_email varchar(255) NOT NULL,
+            emails_subject varchar(200),
+            emails_content text,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        
+        // Financial table
+        $sql_financial = "CREATE TABLE {$this->wpdb->prefix}klage_financial (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            case_id bigint(20) unsigned NOT NULL,
+            damages_loss decimal(10,2) DEFAULT 350.00,
+            partner_fees decimal(10,2) DEFAULT 96.90,
+            communication_fees decimal(10,2) DEFAULT 13.36,
+            vat decimal(10,2) DEFAULT 87.85,
+            total decimal(10,2) DEFAULT 548.11,
+            court_fees decimal(10,2) DEFAULT 32.00,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        
+        // Courts table
+        $sql_courts = "CREATE TABLE {$this->wpdb->prefix}klage_courts (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            court_name varchar(100) NOT NULL,
+            court_address varchar(200) NOT NULL,
+            court_egvp_id varchar(20),
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) $charset_collate;";
+        
         // Execute all table creation queries
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
         dbDelta($sql_cases);
         dbDelta($sql_debtors);
+        dbDelta($sql_clients);
+        dbDelta($sql_emails);
+        dbDelta($sql_financial);
+        dbDelta($sql_courts);
         
-        // Insert default courts if needed
+        // Insert default courts
         $this->insert_default_courts();
     }
     
