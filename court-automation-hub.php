@@ -3,7 +3,7 @@
  * Plugin Name: Court Automation Hub
  * Plugin URI: https://klage.click
  * Description: Multi-purpose legal automation platform for German courts with AI-powered processing
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Klage.Click
  * Text Domain: court-automation-hub
  * Domain Path: /languages
