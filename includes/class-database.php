@@ -121,15 +121,26 @@ class CAH_Database {
         // Execute all table creation queries
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
-        dbDelta($sql_cases);
-        dbDelta($sql_debtors);
-        dbDelta($sql_clients);
-        dbDelta($sql_emails);
-        dbDelta($sql_financial);
-        dbDelta($sql_courts);
+        // Create each table individually with error checking
+        $results = array();
+        
+        $results['cases'] = dbDelta($sql_cases);
+        $results['debtors'] = dbDelta($sql_debtors);
+        $results['clients'] = dbDelta($sql_clients);
+        $results['emails'] = dbDelta($sql_emails);
+        $results['financial'] = dbDelta($sql_financial);
+        $results['courts'] = dbDelta($sql_courts);
         
         // Insert default courts
         $this->insert_default_courts();
+        
+        // Log results for debugging
+        if (get_option('klage_click_debug_mode')) {
+            error_log('Klage.Click Database Creation Results: ' . print_r($results, true));
+        }
+        
+        return $results;
+    }
     }
     
     private function insert_default_courts() {
