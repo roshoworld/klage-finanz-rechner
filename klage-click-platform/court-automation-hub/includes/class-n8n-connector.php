@@ -147,12 +147,12 @@ class CAH_N8N_Connector {
     /**
      * Get workflow status from N8N
      */
-    public function get_workflow_status($execution_id) {
+    public function get_workflow_status($process_id) {
         if (empty($this->n8n_url) || empty($this->n8n_key)) {
             return new WP_Error('n8n_not_configured', 'N8N ist nicht konfiguriert');
         }
         
-        $endpoint = trailingslashit($this->n8n_url) . 'api/v1/executions/' . $execution_id;
+        $endpoint = trailingslashit($this->n8n_url) . 'api/v1/processes/' . $process_id;
         
         $response = $this->send_get_request($endpoint);
         
