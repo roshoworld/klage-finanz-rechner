@@ -47,6 +47,14 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.2 =
+* URGENT FIX: Added manual database table creation button in settings
+* Fixed: Database table creation during plugin updates
+* Added: "🔧 Alle Tabellen erstellen" button in Einstellungen
+* Fixed: klage_cases table creation issue
+* Enhanced: Better error handling for database operations
+* Ready: For immediate case processing after table fix
+
 = 1.0.1 =
 * Fixed: Database table creation (klage_cases table was missing)
 * Fixed: Case creation form now works properly
