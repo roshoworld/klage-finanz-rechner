@@ -102,6 +102,9 @@ class CourtAutomationHub {
     }
     
     public function activate() {
+        // Include database class for activation
+        require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
+        
         // Create database tables
         $database = new CAH_Database();
         $database->create_tables();
