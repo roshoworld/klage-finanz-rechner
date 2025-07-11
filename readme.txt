@@ -47,6 +47,14 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.4 =
+* MAJOR FIX: Added direct SQL table creation (bypasses dbDelta issues)
+* Added: Detailed table status diagnostics in settings
+* Enhanced: Better error reporting and debugging
+* Fixed: Tables actually get created now (not just success message)
+* Added: Real-time table status display
+* Button: "🔧 Alle Tabellen erstellen (Direkt-SQL)"
+
 = 1.0.3 =
 * CRITICAL FIX: Removed extra closing brace causing PHP syntax error
 * Fixed: Plugin activation error in class-database.php line 146
