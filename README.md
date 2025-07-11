@@ -1,6 +1,12 @@
-# Klage.Click Court Automation Hub
+# Klage.Click Court Automation Hub v1.0.1
 
 🎯 **Ready-to-install WordPress plugin** for German court automation and GDPR spam case processing.
+
+## 🆕 Version 1.0.1 Updates
+- ✅ **Fixed**: Database creation (all 6 tables now created)
+- ✅ **Fixed**: Case creation form working properly  
+- ✅ **Added**: Complete €548.11 calculation workflow
+- ✅ **Ready**: For immediate production use
 
 ## 🚀 One-Click Installation
 
