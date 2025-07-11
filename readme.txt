@@ -47,6 +47,14 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.1 =
+* Fixed: Database table creation (klage_cases table was missing)
+* Fixed: Case creation form now works properly
+* Added: Complete case entry workflow with €548.11 calculations
+* Added: All 6 required database tables
+* Added: Working "Neuen Fall hinzufügen" functionality
+* Fixed: Plugin activation and database setup
+
 = 1.0.0 =
 * Erste Veröffentlichung
 * DSGVO-Spam-Modul
