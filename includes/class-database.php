@@ -133,22 +133,41 @@ class CAH_Database {
     }
     
     private function insert_default_courts() {
-        // Insert some default German courts
-        $default_courts = array(
-            array(
-                'court_name' => 'Amtsgericht Frankfurt am Main',
-                'court_address' => 'Gerichtsstraße 2, 60313 Frankfurt am Main',
-                'court_egvp_id' => 'AG.FFM.001',
-                'court_department' => '15 C'
-            )
-        );
+        // Check if courts already exist
+        $court_count = $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->wpdb->prefix}klage_courts");
         
-        foreach ($default_courts as $court) {
-            $this->wpdb->insert(
-                $this->wpdb->prefix . 'klage_courts',
-                $court,
-                array('%s', '%s', '%s', '%s')
+        if ($court_count == 0) {
+            // Insert default German courts
+            $default_courts = array(
+                array(
+                    'court_name' => 'Amtsgericht Frankfurt am Main',
+                    'court_address' => 'Gerichtsstraße 2, 60313 Frankfurt am Main',
+                    'court_egvp_id' => 'AG.FFM.001'
+                ),
+                array(
+                    'court_name' => 'Amtsgericht München',
+                    'court_address' => 'Pacellistraße 5, 80333 München',
+                    'court_egvp_id' => 'AG.MUC.001'
+                ),
+                array(
+                    'court_name' => 'Amtsgericht Berlin-Mitte',
+                    'court_address' => 'Littenstraße 12-17, 10179 Berlin',
+                    'court_egvp_id' => 'AG.BER.001'
+                ),
+                array(
+                    'court_name' => 'Amtsgericht Hamburg',
+                    'court_address' => 'Sievekingplatz 1, 20355 Hamburg',
+                    'court_egvp_id' => 'AG.HAM.001'
+                )
             );
+            
+            foreach ($default_courts as $court) {
+                $this->wpdb->insert(
+                    $this->wpdb->prefix . 'klage_courts',
+                    $court,
+                    array('%s', '%s', '%s')
+                );
+            }
         }
     }
     
