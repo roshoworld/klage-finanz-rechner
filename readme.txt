@@ -47,6 +47,12 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.3 =
+* CRITICAL FIX: Removed extra closing brace causing PHP syntax error
+* Fixed: Plugin activation error in class-database.php line 146
+* Status: Plugin now activates successfully
+* Ready: For database table creation and case processing
+
 = 1.0.2 =
 * URGENT FIX: Added manual database table creation button in settings
 * Fixed: Database table creation during plugin updates
