@@ -360,12 +360,18 @@ class CAH_Admin_Dashboard {
                 <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">🛠️ Datenbank Reparatur</h2>
                 <div class="inside" style="padding: 20px;">
                     <p><strong>Problem:</strong> Einige Datenbank-Tabellen fehlen und müssen erstellt werden.</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <h4>Aktuelle Tabellen-Status:</h4>
+                        <?php $this->show_detailed_table_status(); ?>
+                    </div>
+                    
                     <form method="post" style="margin-bottom: 15px;">
                         <?php wp_nonce_field('create_tables', 'create_tables_nonce'); ?>
-                        <input type="submit" class="button button-secondary" value="🔧 Alle Tabellen erstellen" 
+                        <input type="submit" class="button button-primary" value="🔧 Alle Tabellen erstellen (Direkt-SQL)" 
                                onclick="return confirm('Alle fehlenden Tabellen jetzt erstellen?');">
                     </form>
-                    <p class="description">Klicken Sie hier, um alle fehlenden Datenbank-Tabellen zu erstellen.</p>
+                    <p class="description">Verwendet direktes SQL (nicht dbDelta) für bessere Kompatibilität.</p>
                 </div>
             </div>
             
