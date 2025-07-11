@@ -344,9 +344,30 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_settings() {
+        // Handle manual database creation
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_tables_nonce'])) {
+            if (wp_verify_nonce($_POST['create_tables_nonce'], 'create_tables')) {
+                $this->force_create_tables();
+            }
+        }
+        
         ?>
         <div class="wrap">
             <h1><?php echo esc_html__('Klage.Click Hub Einstellungen', 'court-automation-hub'); ?></h1>
+            
+            <!-- Database Fix Section -->
+            <div class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">🛠️ Datenbank Reparatur</h2>
+                <div class="inside" style="padding: 20px;">
+                    <p><strong>Problem:</strong> Einige Datenbank-Tabellen fehlen und müssen erstellt werden.</p>
+                    <form method="post" style="margin-bottom: 15px;">
+                        <?php wp_nonce_field('create_tables', 'create_tables_nonce'); ?>
+                        <input type="submit" class="button button-secondary" value="🔧 Alle Tabellen erstellen" 
+                               onclick="return confirm('Alle fehlenden Tabellen jetzt erstellen?');">
+                    </form>
+                    <p class="description">Klicken Sie hier, um alle fehlenden Datenbank-Tabellen zu erstellen.</p>
+                </div>
+            </div>
             
             <form method="post" action="options.php">
                 <?php
@@ -382,6 +403,14 @@ class CAH_Admin_Dashboard {
             </form>
         </div>
         <?php
+    }
+    
+    private function force_create_tables() {
+        require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
+        $database = new CAH_Database();
+        $result = $database->create_tables();
+        
+        echo '<div class="notice notice-success"><p><strong>Erfolg!</strong> Alle Datenbank-Tabellen wurden erstellt. Aktualisieren Sie die Seite.</p></div>';
     }
     
     private function display_system_status() {
