@@ -71,8 +71,8 @@ class CAH_Admin_Dashboard {
                     <p style="margin: 0; color: #666;">Ausstehende Fälle</p>
                 </div>
                 <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 1;">
-                    <h3 style="margin: 0 0 10px 0; color: #0073aa; font-size: 28px;">€548.11</h3>
-                    <p style="margin: 0; color: #666;">Pro Fall (DSGVO)</p>
+                    <h3 style="margin: 0 0 10px 0; color: #0073aa; font-size: 28px;">DSGVO</h3>
+                    <p style="margin: 0; color: #666;">Fall-Typ</p>
                 </div>
             </div>
             
