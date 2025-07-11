@@ -141,7 +141,6 @@ class CAH_Database {
         
         return $results;
     }
-    }
     
     private function insert_default_courts() {
         // Check if courts already exist
