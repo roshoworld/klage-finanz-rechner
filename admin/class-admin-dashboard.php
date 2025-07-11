@@ -329,8 +329,8 @@ class CAH_Admin_Dashboard {
                                 <td><?php echo esc_html($case->emails_sender_email); ?></td>
                                 <td><strong>€<?php echo esc_html(number_format($case->total_amount, 2)); ?></strong></td>
                                 <td>
-                                    <a href="#" class="button button-small">Ansehen</a>
-                                    <a href="#" class="button button-small">Bearbeiten</a>
+                                    <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case->id); ?>" class="button button-small">Ansehen</a>
+                                    <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=edit&id=' . $case->id); ?>" class="button button-small">Bearbeiten</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
