@@ -533,13 +533,58 @@ class CAH_Admin_Dashboard {
             return;
         }
         
+        global $wpdb;
+        
+        // Get case data
+        $case = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_cases WHERE id = %d
+        ", $case_id));
+        
+        if (!$case) {
+            echo '<div class="notice notice-error"><p>Fall nicht gefunden.</p></div>';
+            return;
+        }
+        
         ?>
         <div class="wrap">
-            <h1>Fall bearbeiten</h1>
-            <p>Fall-Bearbeitung wird in der nächsten Version implementiert.</p>
-            <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button button-primary">
-                ← Zurück zu Fall Details
-            </a>
+            <h1>Fall bearbeiten: <?php echo esc_html($case->case_id); ?></h1>
+            
+            <div style="background: #fff3cd; padding: 15px; margin: 20px 0; border-radius: 5px;">
+                <p><strong>⚠️ Hinweis:</strong> Die vollständige Fall-Bearbeitung wird in v1.0.6 implementiert.</p>
+                <p>Aktuell können Sie den Fall ansehen und der Status wird in der nächsten Version editierbar sein.</p>
+            </div>
+            
+            <table class="form-table">
+                <tr>
+                    <th>Fall-ID:</th>
+                    <td><?php echo esc_html($case->case_id); ?></td>
+                </tr>
+                <tr>
+                    <th>Status:</th>
+                    <td><?php echo esc_html($case->case_status); ?></td>
+                </tr>
+                <tr>
+                    <th>Priorität:</th>
+                    <td><?php echo esc_html($case->case_priority); ?></td>
+                </tr>
+                <tr>
+                    <th>Gesamtbetrag:</th>
+                    <td>€<?php echo esc_html(number_format($case->total_amount, 2)); ?></td>
+                </tr>
+                <tr>
+                    <th>Erstellungsdatum:</th>
+                    <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($case->case_creation_date))); ?></td>
+                </tr>
+            </table>
+            
+            <p class="submit">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button button-primary">
+                    ← Zurück zu Fall Details
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">
+                    Zur Übersicht
+                </a>
+            </p>
         </div>
         <?php
     }
