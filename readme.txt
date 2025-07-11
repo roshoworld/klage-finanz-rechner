@@ -47,6 +47,13 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.6 =
+* FIXED: Case editing page error (undefined method)
+* Added: Working case edit page with case information display
+* Enhanced: Better navigation between case list → details → edit
+* Added: Case data preview in edit mode
+* Status: Edit functionality placeholder (full editing in v1.0.7)
+
 = 1.0.5 =
 * Added: Complete case details view
 * Added: Case information display (status, priority, dates)
