@@ -349,6 +349,182 @@ class CAH_Admin_Dashboard {
         <?php
     }
     
+    private function render_view_case() {
+        $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        if (!$case_id) {
+            echo '<div class="notice notice-error"><p>Fall-ID nicht gefunden.</p></div>';
+            return;
+        }
+        
+        global $wpdb;
+        
+        // Get case with all related data
+        $case = $wpdb->get_row($wpdb->prepare("
+            SELECT c.*, cl.users_first_name, cl.users_last_name, 
+                   d.debtors_name, d.debtors_email,
+                   ct.court_name
+            FROM {$wpdb->prefix}klage_cases c
+            LEFT JOIN {$wpdb->prefix}klage_clients cl ON c.client_id = cl.id
+            LEFT JOIN {$wpdb->prefix}klage_debtors d ON c.debtor_id = d.id
+            LEFT JOIN {$wpdb->prefix}klage_courts ct ON c.court_id = ct.id
+            WHERE c.id = %d
+        ", $case_id));
+        
+        if (!$case) {
+            echo '<div class="notice notice-error"><p>Fall nicht gefunden.</p></div>';
+            return;
+        }
+        
+        // Get email evidence
+        $emails = $wpdb->get_results($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_emails WHERE case_id = %d
+        ", $case_id));
+        
+        // Get financial data
+        $financial = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
+        ", $case_id));
+        
+        ?>
+        <div class="wrap">
+            <h1>Fall Details: <?php echo esc_html($case->case_id); ?></h1>
+            
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=edit&id=' . $case->id); ?>" class="button button-primary">
+                    ✏️ Bearbeiten
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">
+                    ← Zurück zur Übersicht
+                </a>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                
+                <!-- Case Information -->
+                <div class="postbox">
+                    <h2 class="hndle">📋 Fall-Informationen</h2>
+                    <div class="inside">
+                        <table class="form-table">
+                            <tr>
+                                <th>Fall-ID:</th>
+                                <td><strong><?php echo esc_html($case->case_id); ?></strong></td>
+                            </tr>
+                            <tr>
+                                <th>Erstellungsdatum:</th>
+                                <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($case->case_creation_date))); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <td>
+                                    <span class="status-badge status-<?php echo esc_attr($case->case_status); ?>">
+                                        <?php echo esc_html(ucfirst($case->case_status)); ?>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Priorität:</th>
+                                <td>
+                                    <span class="priority-badge priority-<?php echo esc_attr($case->case_priority); ?>">
+                                        <?php echo esc_html(ucfirst($case->case_priority)); ?>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Gesamtbetrag:</th>
+                                <td><strong>€<?php echo esc_html(number_format($case->total_amount, 2)); ?></strong></td>
+                            </tr>
+                            <?php if ($case->court_name): ?>
+                            <tr>
+                                <th>Zuständiges Gericht:</th>
+                                <td><?php echo esc_html($case->court_name); ?></td>
+                            </tr>
+                            <?php endif; ?>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Email Evidence -->
+                <div class="postbox">
+                    <h2 class="hndle">📧 E-Mail Evidenz</h2>
+                    <div class="inside">
+                        <?php if (!empty($emails)): ?>
+                            <?php foreach ($emails as $email): ?>
+                                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+                                    <table class="form-table">
+                                        <tr>
+                                            <th style="width: 120px;">Von:</th>
+                                            <td><strong><?php echo esc_html($email->emails_sender_email); ?></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>An:</th>
+                                            <td><?php echo esc_html($email->emails_user_email); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Datum/Zeit:</th>
+                                            <td><?php echo esc_html($email->emails_received_date . ' ' . $email->emails_received_time); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Betreff:</th>
+                                            <td><?php echo esc_html($email->emails_subject); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Inhalt:</th>
+                                            <td>
+                                                <div style="background: #f9f9f9; padding: 10px; border-radius: 3px; max-height: 200px; overflow-y: auto;">
+                                                    <pre style="white-space: pre-wrap; font-family: inherit; margin: 0;"><?php echo esc_html($email->emails_content); ?></pre>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>Keine E-Mail-Evidenz gefunden.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Financial Breakdown -->
+            <?php if ($financial): ?>
+            <div class="postbox" style="margin-top: 20px;">
+                <h2 class="hndle">💰 Finanzielle Aufschlüsselung</h2>
+                <div class="inside">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <strong>Grundschaden:</strong><br>
+                            €<?php echo esc_html(number_format($financial->damages_loss, 2)); ?>
+                        </div>
+                        <div>
+                            <strong>Anwaltskosten:</strong><br>
+                            €<?php echo esc_html(number_format($financial->partner_fees, 2)); ?>
+                        </div>
+                        <div>
+                            <strong>Kommunikation:</strong><br>
+                            €<?php echo esc_html(number_format($financial->communication_fees, 2)); ?>
+                        </div>
+                        <div>
+                            <strong>Gerichtskosten:</strong><br>
+                            €<?php echo esc_html(number_format($financial->court_fees, 2)); ?>
+                        </div>
+                        <div>
+                            <strong>MwSt:</strong><br>
+                            €<?php echo esc_html(number_format($financial->vat, 2)); ?>
+                        </div>
+                        <div style="background: #f0f8ff; padding: 10px; border-radius: 5px;">
+                            <strong>Gesamtsumme:</strong><br>
+                            <span style="font-size: 18px; color: #0073aa;">€<?php echo esc_html(number_format($financial->total, 2)); ?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+        </div>
+    }
+    
     public function admin_page_settings() {
         // Handle manual database creation
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_tables_nonce'])) {
