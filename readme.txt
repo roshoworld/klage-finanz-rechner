@@ -47,6 +47,16 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.0.5 =
+* Added: Complete case details view
+* Added: Case information display (status, priority, dates)
+* Added: Email evidence display with full content
+* Added: Financial breakdown visualization
+* Added: Working "Ansehen" buttons in case list
+* Added: Navigation between case list and details
+* Enhanced: Case management workflow foundation
+* Ready: For case editing and status management (next version)
+
 = 1.0.4 =
 * MAJOR FIX: Added direct SQL table creation (bypasses dbDelta issues)
 * Added: Detailed table status diagnostics in settings
