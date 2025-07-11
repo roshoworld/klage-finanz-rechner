@@ -112,6 +112,12 @@ class CAH_Admin_Dashboard {
             case 'add':
                 $this->render_add_case_form();
                 break;
+            case 'view':
+                $this->render_view_case();
+                break;
+            case 'edit':
+                $this->render_edit_case_form();
+                break;
             default:
                 $this->render_cases_list();
                 break;
