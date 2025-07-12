@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Clean Fix v1.1.2
+ * Admin Dashboard class - Full Functionality Restored v1.1.3
  */
 
 if (!defined('ABSPATH')) {
