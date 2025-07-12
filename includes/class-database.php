@@ -90,6 +90,16 @@ class CAH_Database {
                 court_egvp_id varchar(20),
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
+            ) $charset_collate",
+            
+            'klage_audit' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_audit (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                case_id bigint(20) unsigned NOT NULL,
+                action varchar(50) NOT NULL,
+                details text,
+                user_id bigint(20) unsigned NOT NULL,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
             ) $charset_collate"
         );
         
