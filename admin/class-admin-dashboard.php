@@ -393,6 +393,279 @@ class CAH_Admin_Dashboard {
         exit;
     }
     
+    private function handle_import_action() {
+        global $wpdb;
+        
+        if (!wp_verify_nonce($_POST['csv_import_nonce'], 'csv_import_action')) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler. Bitte versuchen Sie es erneut.</p></div>';
+            return;
+        }
+        
+        $action = sanitize_text_field($_POST['import_action']);
+        
+        if ($action === 'upload_csv') {
+            $this->process_csv_upload();
+        }
+    }
+    
+    private function process_csv_upload() {
+        global $wpdb;
+        
+        // Validate file upload
+        if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Datei konnte nicht hochgeladen werden.</p></div>';
+            return;
+        }
+        
+        $file = $_FILES['csv_file'];
+        $delimiter = $_POST['delimiter'];
+        $encoding = $_POST['encoding'];
+        $import_mode = $_POST['import_mode'];
+        
+        // File validation
+        if ($file['size'] > 10 * 1024 * 1024) { // 10MB limit
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Datei ist zu groß (max. 10MB).</p></div>';
+            return;
+        }
+        
+        if (pathinfo($file['name'], PATHINFO_EXTENSION) !== 'csv') {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Nur CSV-Dateien sind erlaubt.</p></div>';
+            return;
+        }
+        
+        // Read and process CSV
+        $file_content = file_get_contents($file['tmp_name']);
+        
+        // Convert encoding if needed
+        if ($encoding !== 'UTF-8') {
+            $file_content = mb_convert_encoding($file_content, 'UTF-8', $encoding);
+        }
+        
+        // Parse CSV
+        $lines = str_getcsv($file_content, "\n");
+        if (empty($lines)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> CSV-Datei ist leer.</p></div>';
+            return;
+        }
+        
+        // Get header
+        $header = str_getcsv($lines[0], $delimiter);
+        $data_rows = array_slice($lines, 1);
+        
+        // Validate required columns
+        $required_fields = array('Fall-ID', 'Nachname');
+        foreach ($required_fields as $field) {
+            if (!in_array($field, $header)) {
+                echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Erforderliche Spalte fehlt: ' . esc_html($field) . '</p></div>';
+                return;
+            }
+        }
+        
+        // Process data
+        $success_count = 0;
+        $error_count = 0;
+        $errors = array();
+        
+        foreach ($data_rows as $line_num => $line) {
+            if (empty(trim($line))) continue;
+            
+            $data = str_getcsv($line, $delimiter);
+            if (count($data) !== count($header)) {
+                $errors[] = "Zeile " . ($line_num + 2) . ": Falsche Anzahl Spalten";
+                $error_count++;
+                continue;
+            }
+            
+            $row_data = array_combine($header, $data);
+            
+            // Process this row
+            $result = $this->import_single_case($row_data, $import_mode);
+            if ($result['success']) {
+                $success_count++;
+            } else {
+                $error_count++;
+                $errors[] = "Zeile " . ($line_num + 2) . ": " . $result['error'];
+            }
+        }
+        
+        // Show results
+        if ($success_count > 0) {
+            echo '<div class="notice notice-success"><p><strong>✅ Import erfolgreich!</strong> ' . $success_count . ' Fälle wurden importiert.</p></div>';
+        }
+        
+        if ($error_count > 0) {
+            echo '<div class="notice notice-warning"><p><strong>⚠️ Teilweise Fehler:</strong> ' . $error_count . ' Fälle konnten nicht importiert werden.</p>';
+            if (!empty($errors)) {
+                echo '<details><summary>Fehlerdetails anzeigen</summary><ul>';
+                foreach (array_slice($errors, 0, 10) as $error) {
+                    echo '<li>' . esc_html($error) . '</li>';
+                }
+                if (count($errors) > 10) {
+                    echo '<li>... und ' . (count($errors) - 10) . ' weitere Fehler</li>';
+                }
+                echo '</ul></details>';
+            }
+            echo '</div>';
+        }
+    }
+    
+    private function import_single_case($data, $import_mode) {
+        global $wpdb;
+        
+        try {
+            // Extract case data
+            $case_id = sanitize_text_field($data['Fall-ID'] ?? '');
+            $case_status = sanitize_text_field($data['Fall-Status'] ?? 'draft');
+            $brief_status = sanitize_text_field($data['Brief-Status'] ?? 'pending');
+            $mandant = sanitize_text_field($data['Mandant'] ?? '');
+            $submission_date = sanitize_text_field($data['Einreichungsdatum'] ?? '');
+            $evidence = sanitize_textarea_field($data['Beweise'] ?? '');
+            
+            // Extract debtor data
+            $company_name = sanitize_text_field($data['Firmenname'] ?? '');
+            $first_name = sanitize_text_field($data['Vorname'] ?? '');
+            $last_name = sanitize_text_field($data['Nachname'] ?? '');
+            $address = sanitize_text_field($data['Adresse'] ?? '');
+            $postal_code = sanitize_text_field($data['Postleitzahl'] ?? '');
+            $city = sanitize_text_field($data['Stadt'] ?? '');
+            $country = sanitize_text_field($data['Land'] ?? 'Deutschland');
+            $email = sanitize_email($data['Email'] ?? '');
+            $phone = sanitize_text_field($data['Telefon'] ?? '');
+            $notes = sanitize_textarea_field($data['Notizen'] ?? '');
+            
+            if (empty($case_id) || empty($last_name)) {
+                return array('success' => false, 'error' => 'Fall-ID und Nachname sind erforderlich');
+            }
+            
+            // Check if case exists
+            $existing_case = $wpdb->get_row($wpdb->prepare("
+                SELECT id FROM {$wpdb->prefix}klage_cases WHERE case_id = %s
+            ", $case_id));
+            
+            if ($existing_case && $import_mode === 'create_new') {
+                return array('success' => false, 'error' => 'Fall existiert bereits (nur neue Fälle erlaubt)');
+            }
+            
+            if (!$existing_case && $import_mode === 'update_existing') {
+                return array('success' => false, 'error' => 'Fall existiert nicht (nur Updates erlaubt)');
+            }
+            
+            // Create or find debtor
+            $debtor_name = trim($first_name . ' ' . $last_name);
+            $debtor_id = $wpdb->get_var($wpdb->prepare("
+                SELECT id FROM {$wpdb->prefix}klage_debtors 
+                WHERE debtors_name = %s OR (debtors_first_name = %s AND debtors_last_name = %s)
+            ", $debtor_name, $first_name, $last_name));
+            
+            if (!$debtor_id) {
+                // Create new debtor
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_debtors',
+                    array(
+                        'debtors_name' => $debtor_name,
+                        'debtors_company' => $company_name,
+                        'debtors_first_name' => $first_name,
+                        'debtors_last_name' => $last_name,
+                        'debtors_email' => $email,
+                        'debtors_address' => $address,
+                        'debtors_postal_code' => $postal_code,
+                        'debtors_city' => $city,
+                        'debtors_country' => $country
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                );
+                $debtor_id = $wpdb->insert_id;
+            }
+            
+            // Prepare submission date
+            $submission_date_mysql = '';
+            if (!empty($submission_date)) {
+                $date = DateTime::createFromFormat('Y-m-d', $submission_date);
+                if ($date) {
+                    $submission_date_mysql = $date->format('Y-m-d');
+                }
+            }
+            
+            if ($existing_case) {
+                // Update existing case
+                $wpdb->update(
+                    $wpdb->prefix . 'klage_cases',
+                    array(
+                        'case_status' => $case_status,
+                        'brief_status' => $brief_status,
+                        'mandant' => $mandant,
+                        'submission_date' => $submission_date_mysql ?: null,
+                        'case_notes' => $notes,
+                        'debtor_id' => $debtor_id,
+                        'case_updated_date' => current_time('mysql'),
+                        'import_source' => 'forderungen_com'
+                    ),
+                    array('id' => $existing_case->id),
+                    array('%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s'),
+                    array('%d')
+                );
+                $case_internal_id = $existing_case->id;
+            } else {
+                // Create new case
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_cases',
+                    array(
+                        'case_id' => $case_id,
+                        'case_creation_date' => current_time('mysql'),
+                        'case_status' => $case_status,
+                        'case_priority' => 'medium',
+                        'brief_status' => $brief_status,
+                        'submission_date' => $submission_date_mysql ?: null,
+                        'mandant' => $mandant,
+                        'case_notes' => $notes,
+                        'debtor_id' => $debtor_id,
+                        'total_amount' => 548.11, // DSGVO standard
+                        'import_source' => 'forderungen_com'
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s')
+                );
+                $case_internal_id = $wpdb->insert_id;
+                
+                // Create default financial record
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_financial',
+                    array(
+                        'case_id' => $case_internal_id,
+                        'damages_loss' => 350.00,
+                        'partner_fees' => 96.90,
+                        'communication_fees' => 13.36,
+                        'vat' => 87.85,
+                        'total' => 548.11,
+                        'court_fees' => 32.00
+                    ),
+                    array('%d', '%f', '%f', '%f', '%f', '%f', '%f')
+                );
+                
+                // Create email evidence entry if email provided
+                if (!empty($email)) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'klage_emails',
+                        array(
+                            'case_id' => $case_internal_id,
+                            'emails_received_date' => current_time('Y-m-d'),
+                            'emails_received_time' => current_time('H:i:s'),
+                            'emails_sender_email' => $email,
+                            'emails_user_email' => $email, // Default to same
+                            'emails_subject' => 'SPAM - Importiert von Forderungen.com',
+                            'emails_content' => $evidence ?: 'Details: ' . $notes
+                        ),
+                        array('%d', '%s', '%s', '%s', '%s', '%s', '%s')
+                    );
+                }
+            }
+            
+            return array('success' => true, 'case_id' => $case_internal_id);
+            
+        } catch (Exception $e) {
+            return array('success' => false, 'error' => 'Unbekannter Fehler: ' . $e->getMessage());
+        }
+    }
+    
     private function render_edit_case() {
         $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         
