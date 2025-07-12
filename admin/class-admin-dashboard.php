@@ -7,6 +7,362 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+    public function admin_page_help() {
+        ?>
+        <div class="wrap">
+            <h1>📚 Hilfe & Prozesse - Klage.Click Hub</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.0 - Komplette Anleitung!</strong></p>
+                <p>Schritt-für-Schritt Anleitungen für alle Funktionen des Court Automation Hub.</p>
+            </div>
+            
+            <!-- Quick Navigation -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <h2 style="margin-top: 0;">🎯 Schnell-Navigation</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <a href="#process-overview" class="button button-primary" style="text-decoration: none; text-align: center; padding: 15px;">
+                        📋 Prozess-Übersicht
+                    </a>
+                    <a href="#calculator-guide" class="button button-primary" style="text-decoration: none; text-align: center; padding: 15px;">
+                        🧮 Finanzrechner
+                    </a>
+                    <a href="#import-guide" class="button button-primary" style="text-decoration: none; text-align: center; padding: 15px;">
+                        📊 CSV Import
+                    </a>
+                    <a href="#case-management" class="button button-primary" style="text-decoration: none; text-align: center; padding: 15px;">
+                        📁 Fall-Management
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Process Overview -->
+            <div id="process-overview" class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle">📋 Komplett-Prozess: Von Forderungen.com zu fertigen Fällen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                        <div>
+                            <h3 style="color: #0073aa;">🎯 Workflow-Übersicht</h3>
+                            <ol style="line-height: 1.8;">
+                                <li><strong>Daten von Forderungen.com</strong></li>
+                                <li><strong>CSV Template herunterladen</strong></li>
+                                <li><strong>Daten in Template einfügen</strong></li>
+                                <li><strong>Bulk-Import durchführen</strong></li>
+                                <li><strong>Finanzberechnungen anpassen</strong></li>
+                                <li><strong>Fälle bearbeiten & verwalten</strong></li>
+                                <li><strong>Export für weitere Bearbeitung</strong></li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h3 style="color: #0073aa;">⏱️ Zeitaufwand pro Schritt</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>CSV Template Download</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">30 Sekunden</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Daten einfügen (50 Fälle)</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">15-30 Minuten</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Bulk-Import</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">2-5 Minuten</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Finanz-Anpassungen</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">5-10 Minuten</td>
+                                </tr>
+                                <tr style="background: #f0f8ff;">
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>Gesamt (50 Fälle)</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 8px;"><strong>25-50 Minuten</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calculator Guide -->
+            <div id="calculator-guide" class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle">🧮 Finanzrechner - Komplette Anleitung</h2>
+                <div class="inside" style="padding: 20px;">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="color: #0073aa;">📊 Standard DSGVO-Berechnung</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                                <tr style="background: #f8f9fa;">
+                                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Feld</th>
+                                    <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Betrag</th>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">💰 Grundschaden</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€350.00</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">⚖️ Anwaltskosten</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€96.90</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">📞 Kommunikation</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€13.36</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">🏛️ Gerichtskosten</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€32.00</strong></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 8px;">📊 MwSt (19%)</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€87.85</strong></td>
+                                </tr>
+                                <tr style="background: #e7f3ff; font-weight: bold;">
+                                    <td style="border: 1px solid #ddd; padding: 8px;">🎯 GESAMT</td>
+                                    <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><strong>€548.11</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #0073aa;">⚡ Schnell-Templates</h3>
+                            <div style="space-y: 10px;">
+                                <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: #0073aa;">📋 DSGVO Standard</h4>
+                                    <p style="margin: 5px 0; font-size: 13px;">Für einfache SPAM-Fälle</p>
+                                    <strong>Gesamt: €548.11</strong>
+                                </div>
+                                <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: #856404;">💎 DSGVO Premium</h4>
+                                    <p style="margin: 5px 0; font-size: 13px;">Mehrfach-Verstöße, erhöhte Anwaltskosten</p>
+                                    <strong>Gesamt: €750+</strong>
+                                </div>
+                                <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: #155724;">🏢 Business-Fall</h4>
+                                    <p style="margin: 5px 0; font-size: 13px;">Firmen-Verstöße, komplexere Fälle</p>
+                                    <strong>Gesamt: €1000+</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #0073aa; margin-top: 0;">🔧 Benutzerdefinierte Felder hinzufügen</h4>
+                        <ol>
+                            <li><strong>Gehen Sie zu:</strong> Finanz-Rechner → Feldverwaltung</li>
+                            <li><strong>Klicken Sie:</strong> "Neues Finanzfeld hinzufügen"</li>
+                            <li><strong>Wählen Sie Feldtyp:</strong>
+                                <ul>
+                                    <li>💰 Betrag (Zahl) - für Geldbeträge</li>
+                                    <li>% Prozentsatz - für prozentuale Zuschläge</li>
+                                    <li>📝 Text - für Beschreibungen</li>
+                                    <li>📋 Dropdown - für vordefinierte Optionen</li>
+                                    <li>🧮 Formel - für automatische Berechnungen</li>
+                                </ul>
+                            </li>
+                            <li><strong>Beispiel Formel:</strong> <code>=SUM(grundschaden,anwaltskosten)</code></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Import Guide -->
+            <div id="import-guide" class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle">📊 CSV Import - Schritt-für-Schritt</h2>
+                <div class="inside" style="padding: 20px;">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3 style="color: #0073aa;">1️⃣ Template Vorbereitung</h3>
+                            <ol style="line-height: 1.6;">
+                                <li><strong>CSV Import</strong> Seite öffnen</li>
+                                <li><strong>"📥 Template downloaden"</strong> klicken</li>
+                                <li>Template in <strong>Excel/LibreOffice</strong> öffnen</li>
+                                <li><strong>Beispieldaten löschen</strong> (Zeilen 2-3)</li>
+                                <li><strong>Echte Daten einfügen</strong></li>
+                                <li>Als <strong>CSV (UTF-8)</strong> speichern</li>
+                            </ol>
+                            
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <strong>⚠️ Wichtig:</strong> Verwenden Sie Semikolon (;) als Trennzeichen für deutsche Excel-Kompatibilität.
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #0073aa;">2️⃣ Datenstruktur</h3>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <tr style="background: #f8f9fa;">
+                                    <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Feld</th>
+                                    <th style="border: 1px solid #ddd; padding: 6px;">Pflicht</th>
+                                    <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Beispiel</th>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Fall-ID</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">✅</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">SPAM-2024-0001</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Nachname</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">✅</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Mustermann</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Vorname</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⭕</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Max</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Email</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⭕</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">spam@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Fall-Status</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px; text-align: center;">⭕</td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">draft, processing</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <h4 style="color: #0073aa; margin-top: 0;">🚀 Import-Optionen</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                            <div>
+                                <strong>🆕 Nur neue erstellen</strong><br>
+                                <small>Überspringt existierende Fall-IDs</small>
+                            </div>
+                            <div>
+                                <strong>🔄 Nur aktualisieren</strong><br>
+                                <small>Aktualisiert nur vorhandene Fälle</small>
+                            </div>
+                            <div>
+                                <strong>🚀 Erstellen + Aktualisieren</strong><br>
+                                <small>Intelligenter Modus (empfohlen)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Case Management -->
+            <div id="case-management" class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle">📁 Fall-Management - Best Practices</h2>
+                <div class="inside" style="padding: 20px;">
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="color: #0073aa;">🎯 Status-Workflow</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; display: flex; align-items: center;">
+                                    <span style="margin-right: 10px;">📝</span>
+                                    <div>
+                                        <strong>Draft (Entwurf)</strong><br>
+                                        <small>Neu importiert, noch nicht bearbeitet</small>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; color: #666;">↓</div>
+                                <div style="background: #cce5ff; padding: 10px; border-radius: 5px; display: flex; align-items: center;">
+                                    <span style="margin-right: 10px;">⚡</span>
+                                    <div>
+                                        <strong>Processing (In Bearbeitung)</strong><br>
+                                        <small>Wird aktiv bearbeitet</small>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; color: #666;">↓</div>
+                                <div style="background: #d4edda; padding: 10px; border-radius: 5px; display: flex; align-items: center;">
+                                    <span style="margin-right: 10px;">✅</span>
+                                    <div>
+                                        <strong>Completed (Abgeschlossen)</strong><br>
+                                        <small>Fall erfolgreich bearbeitet</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #0073aa;">⚡ Bulk-Aktionen</h3>
+                            <div style="space-y: 10px;">
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                                    <strong>Status ändern (Bulk)</strong><br>
+                                    <small>Mehrere Fälle gleichzeitig auf "Processing" setzen</small>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                                    <strong>Priorität setzen</strong><br>
+                                    <small>Dringende Fälle auf "Hoch" setzen</small>
+                                </div>
+                                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                                    <strong>CSV Export</strong><br>
+                                    <small>Ausgewählte Fälle für externe Bearbeitung</small>
+                                </div>
+                            </div>
+                            
+                            <div style="background: #e7f3ff; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <strong>💡 Tipp:</strong> Verwenden Sie Filter um schnell bestimmte Fälle zu finden (Status, Priorität, Suche).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px;">
+                        <h4 style="color: #0073aa; margin-top: 0;">📊 Statistiken & Übersicht</h4>
+                        <p>Die Dashboard-Übersicht zeigt Ihnen:</p>
+                        <ul>
+                            <li><strong>Gesamt-Fälle:</strong> Alle importierten und erstellten Fälle</li>
+                            <li><strong>Entwürfe:</strong> Noch nicht bearbeitete Fälle</li>
+                            <li><strong>In Bearbeitung:</strong> Aktiv bearbeitete Fälle</li>
+                            <li><strong>Abgeschlossen:</strong> Erfolgreich bearbeitete Fälle</li>
+                            <li><strong>Gesamtwert:</strong> Summe aller Forderungen (€548.11 × Anzahl)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="postbox">
+                <h2 class="hndle">⚡ Schnell-Aktionen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-import&action=template'); ?>" 
+                           class="button button-primary" style="padding: 20px; height: auto; text-align: center; text-decoration: none;">
+                            <strong>📥 CSV Template</strong><br>
+                            <small>Forderungen.com Template herunterladen</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" 
+                           class="button button-primary" style="padding: 20px; height: auto; text-align: center; text-decoration: none;">
+                            <strong>🧮 Finanzrechner</strong><br>
+                            <small>Beträge berechnen und anpassen</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" 
+                           class="button button-primary" style="padding: 20px; height: auto; text-align: center; text-decoration: none;">
+                            <strong>📝 Neuer Fall</strong><br>
+                            <small>Manuell einen Fall erstellen</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" 
+                           class="button button-primary" style="padding: 20px; height: auto; text-align: center; text-decoration: none;">
+                            <strong>📊 Bulk Import</strong><br>
+                            <small>CSV-Datei hochladen und importieren</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+        .postbox h2.hndle {
+            background: #0073aa;
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .postbox .inside {
+            border-radius: 0 0 8px 8px;
+        }
+        
+        html { scroll-behavior: smooth; }
+        </style>
+        <?php
+    }
+
 class CAH_Admin_Dashboard {
     
     public function __construct() {
