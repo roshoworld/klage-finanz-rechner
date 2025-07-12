@@ -36,6 +36,24 @@ class CAH_Admin_Dashboard {
         
         add_submenu_page(
             'klage-click-hub',
+            __('Finanz-Rechner', 'court-automation-hub'),
+            __('Finanz-Rechner', 'court-automation-hub'),
+            'manage_options',
+            'klage-click-financial',
+            array($this, 'admin_page_financial')
+        );
+        
+        add_submenu_page(
+            'klage-click-hub',
+            __('CSV Import', 'court-automation-hub'),
+            __('CSV Import', 'court-automation-hub'),
+            'manage_options',
+            'klage-click-import',
+            array($this, 'admin_page_import')
+        );
+        
+        add_submenu_page(
+            'klage-click-hub',
             __('Einstellungen', 'court-automation-hub'),
             __('Einstellungen', 'court-automation-hub'),
             'manage_options',
