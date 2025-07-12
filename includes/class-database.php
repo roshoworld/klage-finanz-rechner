@@ -100,6 +100,47 @@ class CAH_Database {
                 user_id bigint(20) unsigned NOT NULL,
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
+            ) $charset_collate",
+            
+            'klage_debtors' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_debtors (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                debtors_name varchar(100) NOT NULL,
+                debtors_company varchar(100),
+                debtors_first_name varchar(50),
+                debtors_last_name varchar(50),
+                debtors_email varchar(255),
+                debtors_address varchar(200),
+                debtors_postal_code varchar(10),
+                debtors_city varchar(100),
+                debtors_country varchar(50) DEFAULT 'Deutschland',
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) $charset_collate",
+            
+            'klage_financial_fields' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_financial_fields (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                field_name varchar(100) NOT NULL,
+                field_label varchar(100) NOT NULL,
+                field_type varchar(20) NOT NULL,
+                field_options text,
+                default_value varchar(255),
+                formula varchar(255),
+                is_permanent tinyint(1) DEFAULT 1,
+                display_order int(3) DEFAULT 0,
+                is_active tinyint(1) DEFAULT 1,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
+            ) $charset_collate",
+            
+            'klage_import_templates' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_import_templates (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                template_name varchar(100) NOT NULL,
+                template_type varchar(50) NOT NULL,
+                field_mapping text NOT NULL,
+                default_values text,
+                validation_rules text,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id)
             ) $charset_collate"
         );
         
