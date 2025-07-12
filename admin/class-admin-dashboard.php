@@ -7,6 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+class CAH_Admin_Dashboard {
+    
     public function admin_page_help() {
         ?>
         <div class="wrap">
