@@ -475,8 +475,9 @@ class CAH_Admin_Dashboard {
         
         switch ($action) {
             case 'template':
-                $this->download_import_template();
-                break;
+                // Redirect to AJAX endpoint for proper file download
+                wp_redirect(admin_url('admin-ajax.php?action=klage_download_template&_wpnonce=' . wp_create_nonce('download_template')));
+                exit;
             case 'preview':
                 $this->render_import_preview();
                 break;
