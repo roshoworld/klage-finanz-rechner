@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Complete version v1.0.8
+ * Admin Dashboard class - Dynamic Financial + CSV Import v1.0.9
  */
 
 if (!defined('ABSPATH')) {
