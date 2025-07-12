@@ -158,7 +158,42 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_cases() {
-        echo '<div class="wrap"><h1>Cases - v1.1.2</h1><p>Cases functionality will be restored.</p></div>';
+        ?>
+        <div class="wrap">
+            <h1 class="wp-heading-inline">GDPR Spam Fälle</h1>
+            <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="page-title-action">
+                Neuen Fall hinzufügen
+            </a>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.3 - Case Management!</strong></p>
+                <p>Vollständige Fall-Verwaltung wird in v1.1.4 implementiert. Aktuell: Basis-Funktionalität verfügbar.</p>
+            </div>
+            
+            <div class="postbox">
+                <h2 class="hndle">📋 Case Management Features (v1.1.4)</h2>
+                <div class="inside" style="padding: 20px;">
+                    <ul>
+                        <li>✅ <strong>Fall-Erstellung</strong> mit automatischen DSGVO-Berechnungen</li>
+                        <li>✅ <strong>Fall-Übersicht</strong> mit Filtering und Suche</li>
+                        <li>✅ <strong>Fall-Bearbeitung</strong> mit Finanz-Rechner Integration</li>
+                        <li>✅ <strong>Status-Management</strong> (Draft → Processing → Completed)</li>
+                        <li>✅ <strong>Bulk-Aktionen</strong> für mehrere Fälle gleichzeitig</li>
+                        <li>✅ <strong>CSV Export</strong> für externe Bearbeitung</li>
+                    </ul>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4>🎯 Verfügbare Aktionen:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-primary">📊 CSV Import verwenden</a>
+                            <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-secondary">🧮 Finanzrechner nutzen</a>
+                            <a href="<?php echo admin_url('admin.php?page=klage-click-help'); ?>" class="button button-secondary">📚 Anleitung lesen</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
     }
     
     public function admin_page_financial() {
