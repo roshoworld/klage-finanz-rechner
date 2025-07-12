@@ -825,7 +825,124 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_settings() {
-        echo '<div class="wrap"><h1>Settings - v1.1.2</h1><p>Settings functionality will be restored.</p></div>';
+        // Handle manual database creation
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_tables_nonce'])) {
+            if (wp_verify_nonce($_POST['create_tables_nonce'], 'create_tables')) {
+                $this->force_create_tables();
+            }
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1><?php echo esc_html__('Klage.Click Hub Einstellungen', 'court-automation-hub'); ?></h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.3 - System Settings!</strong></p>
+                <p>Datenbank-Management und Plugin-Konfiguration verfügbar.</p>
+            </div>
+            
+            <!-- Database Management Section -->
+            <div class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">🛠️ Datenbank Management</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="margin: 15px 0;">
+                        <h4>Aktuelle Tabellen-Status:</h4>
+                        <?php $this->display_system_status(); ?>
+                    </div>
+                    
+                    <form method="post" style="margin-bottom: 15px;">
+                        <?php wp_nonce_field('create_tables', 'create_tables_nonce'); ?>
+                        <input type="submit" class="button button-primary" value="🔧 Alle Tabellen erstellen/reparieren" 
+                               onclick="return confirm('Alle fehlenden Tabellen jetzt erstellen?');">
+                    </form>
+                    <p class="description">Verwendet direktes SQL für bessere Kompatibilität mit allen WordPress-Umgebungen.</p>
+                </div>
+            </div>
+            
+            <!-- Plugin Settings -->
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('klage_click_settings');
+                do_settings_sections('klage_click_settings');
+                ?>
+                
+                <div class="postbox">
+                    <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">⚙️ Plugin-Einstellungen</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row">N8N API URL</th>
+                                <td>
+                                    <input type="url" name="klage_click_n8n_url" value="<?php echo esc_attr(get_option('klage_click_n8n_url')); ?>" class="regular-text" />
+                                    <p class="description">URL zu Ihrer N8N Workflow-Automation (für v1.2.0+)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">N8N API Key</th>
+                                <td>
+                                    <input type="password" name="klage_click_n8n_key" value="<?php echo esc_attr(get_option('klage_click_n8n_key')); ?>" class="regular-text" />
+                                    <p class="description">API-Schlüssel für N8N Integration</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Debug-Modus</th>
+                                <td>
+                                    <input type="checkbox" name="klage_click_debug_mode" value="1" <?php checked(1, get_option('klage_click_debug_mode')); ?> />
+                                    <label for="klage_click_debug_mode">Debug-Informationen in Admin-Notices anzeigen</label>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <?php submit_button('Einstellungen speichern'); ?>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- System Information -->
+            <div class="postbox">
+                <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">ℹ️ System-Information</h2>
+                <div class="inside" style="padding: 20px;">
+                    <table class="form-table">
+                        <tr>
+                            <th>Plugin-Version:</th>
+                            <td><strong>v1.1.3</strong></td>
+                        </tr>
+                        <tr>
+                            <th>WordPress-Version:</th>
+                            <td><?php echo get_bloginfo('version'); ?></td>
+                        </tr>
+                        <tr>
+                            <th>PHP-Version:</th>
+                            <td><?php echo PHP_VERSION; ?></td>
+                        </tr>
+                        <tr>
+                            <th>Datenbank:</th>
+                            <td><?php echo $GLOBALS['wpdb']->db_version(); ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private function force_create_tables() {
+        require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
+        $database = new CAH_Database();
+        
+        // Try database creation
+        $results = $database->create_tables_direct();
+        
+        if ($results['success']) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> ' . $results['message'] . '</p></div>';
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> ' . $results['message'] . '</p></div>';
+        }
+        
+        // Show detailed results in debug mode
+        if (get_option('klage_click_debug_mode')) {
+            echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>' . implode('<br>', $results['details']) . '</p></div>';
+        }
     }
     
     public function ajax_download_template() {
