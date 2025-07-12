@@ -1421,4 +1421,267 @@ class CAH_Admin_Dashboard {
         fclose($output);
         exit; // Important: Stop execution after sending CSV
     }
+    
+    public function admin_page_financial() {
+        global $wpdb;
+        
+        // Handle financial field management
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['financial_action'])) {
+            $this->handle_financial_field_action();
+        }
+        
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'manage';
+        
+        switch ($action) {
+            case 'calculator':
+                $this->render_financial_calculator();
+                break;
+            default:
+                $this->render_financial_field_manager();
+                break;
+        }
+    }
+    
+    private function render_financial_field_manager() {
+        global $wpdb;
+        
+        // Get existing fields
+        $fields = $wpdb->get_results("
+            SELECT * FROM {$wpdb->prefix}klage_financial_fields 
+            WHERE is_active = 1 
+            ORDER BY display_order ASC
+        ");
+        
+        ?>
+        <div class="wrap">
+            <h1>💰 Finanz-Rechner Verwaltung</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.0.9 - Dynamischer Finanz-Rechner!</strong></p>
+                <p>Erstellen Sie benutzerdefinierte Finanzfelder mit Excel-ähnlicher Funktionalität und automatischen Berechnungen.</p>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-primary">
+                    🧮 Rechner öffnen
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary">
+                    📊 CSV Import (Forderungen.com)
+                </a>
+            </div>
+            
+            <!-- Add New Field Form -->
+            <div class="postbox" style="margin-bottom: 30px;">
+                <h2 class="hndle">➕ Neues Finanzfeld hinzufügen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <form method="post">
+                        <input type="hidden" name="financial_action" value="add_field">
+                        <?php wp_nonce_field('financial_field_action', 'financial_field_nonce'); ?>
+                        
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="field_name">Feldname (technisch)</label></th>
+                                <td>
+                                    <input type="text" id="field_name" name="field_name" class="regular-text" required>
+                                    <p class="description">Eindeutiger technischer Name (z.B. zusatz_kosten)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="field_label">Anzeigename</label></th>
+                                <td>
+                                    <input type="text" id="field_label" name="field_label" class="regular-text" required>
+                                    <p class="description">Name wie er im Rechner angezeigt wird (z.B. Zusatzkosten)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="field_type">Feldtyp</label></th>
+                                <td>
+                                    <select id="field_type" name="field_type" required>
+                                        <option value="number">💰 Betrag (Zahl)</option>
+                                        <option value="percentage">% Prozentsatz</option>
+                                        <option value="text">📝 Text</option>
+                                        <option value="dropdown">📋 Dropdown</option>
+                                        <option value="date">📅 Datum</option>
+                                        <option value="formula">🧮 Formel</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="field_options">Optionen/Formel</label></th>
+                                <td>
+                                    <textarea id="field_options" name="field_options" class="large-text" rows="3"></textarea>
+                                    <p class="description">
+                                        <strong>Dropdown:</strong> Option1,Option2,Option3<br>
+                                        <strong>Formel:</strong> =SUM(grundschaden,anwaltskosten) oder =grundschaden*0.19
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="default_value">Standardwert</label></th>
+                                <td>
+                                    <input type="text" id="default_value" name="default_value" class="regular-text">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="display_order">Reihenfolge</label></th>
+                                <td>
+                                    <input type="number" id="display_order" name="display_order" class="small-text" value="10">
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <p class="submit">
+                            <input type="submit" class="button button-primary" value="💾 Feld hinzufügen">
+                        </p>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Existing Fields List -->
+            <div class="postbox">
+                <h2 class="hndle">📋 Vorhandene Finanzfelder</h2>
+                <div class="inside">
+                    <?php if (empty($fields)): ?>
+                        <p style="padding: 20px; text-align: center; color: #666;">
+                            Keine benutzerdefinierten Felder gefunden. Erstellen Sie Ihr erstes Feld oben.
+                        </p>
+                    <?php else: ?>
+                        <table class="wp-list-table widefat fixed striped">
+                            <thead>
+                                <tr>
+                                    <th>Anzeigename</th>
+                                    <th>Typ</th>
+                                    <th>Standardwert</th>
+                                    <th>Formel/Optionen</th>
+                                    <th>Reihenfolge</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($fields as $field): ?>
+                                    <tr>
+                                        <td><strong><?php echo esc_html($field->field_label); ?></strong></td>
+                                        <td>
+                                            <?php
+                                            $type_icons = array(
+                                                'number' => '💰 Betrag',
+                                                'percentage' => '% Prozent',
+                                                'text' => '📝 Text',
+                                                'dropdown' => '📋 Dropdown',
+                                                'date' => '📅 Datum',
+                                                'formula' => '🧮 Formel'
+                                            );
+                                            echo $type_icons[$field->field_type] ?? $field->field_type;
+                                            ?>
+                                        </td>
+                                        <td><?php echo esc_html($field->default_value); ?></td>
+                                        <td><?php echo esc_html(wp_trim_words($field->field_options, 10)); ?></td>
+                                        <td><?php echo esc_html($field->display_order); ?></td>
+                                        <td>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="financial_action" value="delete_field">
+                                                <input type="hidden" name="field_id" value="<?php echo esc_attr($field->id); ?>">
+                                                <?php wp_nonce_field('financial_field_action', 'financial_field_nonce'); ?>
+                                                <input type="submit" class="button button-small button-link-delete" 
+                                                       value="Löschen" onclick="return confirm('Feld wirklich löschen?');">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- Default Fields Info -->
+            <div class="postbox" style="margin-top: 20px;">
+                <h2 class="hndle">ℹ️ Standard DSGVO-Felder</h2>
+                <div class="inside" style="padding: 20px;">
+                    <p>Diese Felder sind immer verfügbar und können nicht gelöscht werden:</p>
+                    <ul style="list-style-type: disc; margin-left: 20px;">
+                        <li><strong>Grundschaden:</strong> €350.00 (DSGVO Art. 82)</li>
+                        <li><strong>Anwaltskosten:</strong> €96.90 (RVG)</li>
+                        <li><strong>Kommunikationskosten:</strong> €13.36</li>
+                        <li><strong>Gerichtskosten:</strong> €32.00</li>
+                        <li><strong>MwSt:</strong> €87.85 (19%)</li>
+                        <li><strong>Gesamtsumme:</strong> Automatische Berechnung</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private function handle_financial_field_action() {
+        global $wpdb;
+        
+        if (!wp_verify_nonce($_POST['financial_field_nonce'], 'financial_field_action')) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler. Bitte versuchen Sie es erneut.</p></div>';
+            return;
+        }
+        
+        $action = sanitize_text_field($_POST['financial_action']);
+        
+        switch ($action) {
+            case 'add_field':
+                $field_name = sanitize_text_field($_POST['field_name']);
+                $field_label = sanitize_text_field($_POST['field_label']);
+                $field_type = sanitize_text_field($_POST['field_type']);
+                $field_options = sanitize_textarea_field($_POST['field_options']);
+                $default_value = sanitize_text_field($_POST['default_value']);
+                $display_order = intval($_POST['display_order']);
+                
+                // Check if field name already exists
+                $existing = $wpdb->get_var($wpdb->prepare("
+                    SELECT id FROM {$wpdb->prefix}klage_financial_fields 
+                    WHERE field_name = %s AND is_active = 1
+                ", $field_name));
+                
+                if ($existing) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Ein Feld mit diesem Namen existiert bereits.</p></div>';
+                    return;
+                }
+                
+                $result = $wpdb->insert(
+                    $wpdb->prefix . 'klage_financial_fields',
+                    array(
+                        'field_name' => $field_name,
+                        'field_label' => $field_label,
+                        'field_type' => $field_type,
+                        'field_options' => $field_options,
+                        'default_value' => $default_value,
+                        'display_order' => $display_order,
+                        'is_permanent' => 1,
+                        'is_active' => 1
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d')
+                );
+                
+                if ($result) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Finanzfeld "' . esc_html($field_label) . '" wurde hinzugefügt.</p></div>';
+                } else {
+                    echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Feld konnte nicht hinzugefügt werden.</p></div>';
+                }
+                break;
+                
+            case 'delete_field':
+                $field_id = intval($_POST['field_id']);
+                
+                $result = $wpdb->update(
+                    $wpdb->prefix . 'klage_financial_fields',
+                    array('is_active' => 0),
+                    array('id' => $field_id),
+                    array('%d'),
+                    array('%d')
+                );
+                
+                if ($result !== false) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Finanzfeld wurde gelöscht.</p></div>';
+                } else {
+                    echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Feld konnte nicht gelöscht werden.</p></div>';
+                }
+                break;
+        }
+    }
 }
