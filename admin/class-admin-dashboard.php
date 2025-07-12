@@ -526,7 +526,7 @@ class CAH_Admin_Dashboard {
             <h1>🧮 Dynamischer Finanz-Rechner</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.0 - Excel-ähnlicher Finanzrechner!</strong></p>
+                <p><strong>🚀 v1.1.1 - Excel-ähnlicher Finanzrechner!</strong></p>
                 <p>Berechnen Sie automatisch DSGVO-Forderungen mit benutzerdefinierten Feldern und Formeln.</p>
             </div>
             
