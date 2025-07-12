@@ -364,8 +364,6 @@ class CAH_Admin_Dashboard {
         </style>
         <?php
     }
-
-class CAH_Admin_Dashboard {
     
     public function __construct() {
         add_action('admin_menu', array($this, 'add_admin_menu'));
