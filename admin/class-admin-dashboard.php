@@ -54,6 +54,15 @@ class CAH_Admin_Dashboard {
         
         add_submenu_page(
             'klage-click-hub',
+            __('Hilfe & Prozesse', 'court-automation-hub'),
+            __('Hilfe & Prozesse', 'court-automation-hub'),
+            'manage_options',
+            'klage-click-help',
+            array($this, 'admin_page_help')
+        );
+        
+        add_submenu_page(
+            'klage-click-hub',
             __('Einstellungen', 'court-automation-hub'),
             __('Einstellungen', 'court-automation-hub'),
             'manage_options',
