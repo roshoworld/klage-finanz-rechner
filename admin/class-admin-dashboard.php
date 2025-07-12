@@ -1227,6 +1227,175 @@ class CAH_Admin_Dashboard {
             echo '<td style="padding: 5px; border-bottom: 1px solid #ddd;">' . $count . ' Einträge</td>';
             echo '</tr>';
         }
-        echo '</table>';
+    private function handle_bulk_actions() {
+        global $wpdb;
+        
+        $action = sanitize_text_field($_POST['bulk_action']);
+        $case_ids = isset($_POST['case_ids']) ? array_map('intval', $_POST['case_ids']) : array();
+        
+        if (empty($case_ids)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Keine Fälle ausgewählt.</p></div>';
+            return;
+        }
+        
+        $case_ids_placeholder = implode(',', array_fill(0, count($case_ids), '%d'));
+        $affected_rows = 0;
+        
+        switch ($action) {
+            case 'status_processing':
+                $affected_rows = $wpdb->query($wpdb->prepare("
+                    UPDATE {$wpdb->prefix}klage_cases 
+                    SET case_status = 'processing', case_updated_date = %s 
+                    WHERE id IN ({$case_ids_placeholder})
+                ", array_merge([current_time('mysql')], $case_ids)));
+                
+                if ($affected_rows > 0) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> ' . $affected_rows . ' Fälle auf "In Bearbeitung" gesetzt.</p></div>';
+                }
+                break;
+                
+            case 'status_completed':
+                $affected_rows = $wpdb->query($wpdb->prepare("
+                    UPDATE {$wpdb->prefix}klage_cases 
+                    SET case_status = 'completed', case_updated_date = %s 
+                    WHERE id IN ({$case_ids_placeholder})
+                ", array_merge([current_time('mysql')], $case_ids)));
+                
+                if ($affected_rows > 0) {
+                    echo '<div class="notice notice-success"><p><strong>🎉 Erfolg!</strong> ' . $affected_rows . ' Fälle als "Abgeschlossen" markiert.</p></div>';
+                }
+                break;
+                
+            case 'priority_high':
+                $affected_rows = $wpdb->query($wpdb->prepare("
+                    UPDATE {$wpdb->prefix}klage_cases 
+                    SET case_priority = 'high', case_updated_date = %s 
+                    WHERE id IN ({$case_ids_placeholder})
+                ", array_merge([current_time('mysql')], $case_ids)));
+                
+                if ($affected_rows > 0) {
+                    echo '<div class="notice notice-success"><p><strong>🟠 Erfolg!</strong> ' . $affected_rows . ' Fälle auf "Hohe Priorität" gesetzt.</p></div>';
+                }
+                break;
+                
+            case 'export_csv':
+                $this->export_cases_csv($case_ids);
+                return; // Don't show success message for export
+                
+            default:
+                echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Unbekannte Aktion.</p></div>';
+                return;
+        }
+        
+        // Add audit log entries for bulk actions
+        foreach ($case_ids as $case_id) {
+            $wpdb->insert(
+                $wpdb->prefix . 'klage_audit',
+                array(
+                    'case_id' => $case_id,
+                    'action' => 'bulk_' . $action,
+                    'details' => "Bulk-Aktion durchgeführt: {$action}",
+                    'user_id' => get_current_user_id(),
+                    'created_at' => current_time('mysql')
+                ),
+                array('%d', '%s', '%s', '%d', '%s')
+            );
+        }
+        
+        if ($affected_rows === 0) {
+            echo '<div class="notice notice-warning"><p><strong>⚠️ Hinweis!</strong> Keine Änderungen vorgenommen. Möglicherweise hatten die ausgewählten Fälle bereits den gewünschten Status.</p></div>';
+        }
+    }
+    
+    private function export_cases_csv($case_ids) {
+        global $wpdb;
+        
+        $case_ids_placeholder = implode(',', array_fill(0, count($case_ids), '%d'));
+        
+        $cases = $wpdb->get_results($wpdb->prepare("
+            SELECT 
+                c.case_id,
+                c.case_creation_date,
+                c.case_status,
+                c.case_priority,
+                c.total_amount,
+                c.case_notes,
+                e.emails_sender_email,
+                e.emails_user_email,
+                e.emails_subject,
+                e.emails_received_date,
+                f.damages_loss,
+                f.partner_fees,
+                f.communication_fees,
+                f.court_fees,
+                f.vat
+            FROM {$wpdb->prefix}klage_cases c
+            LEFT JOIN {$wpdb->prefix}klage_emails e ON c.id = e.case_id
+            LEFT JOIN {$wpdb->prefix}klage_financial f ON c.id = f.case_id
+            WHERE c.id IN ({$case_ids_placeholder})
+            ORDER BY c.case_creation_date DESC
+        ", $case_ids));
+        
+        if (empty($cases)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Keine Daten zum Exportieren gefunden.</p></div>';
+            return;
+        }
+        
+        // Set headers for CSV download
+        $filename = 'klage_click_faelle_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // Open output stream
+        $output = fopen('php://output', 'w');
+        
+        // Add BOM for UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // CSV Header
+        fputcsv($output, array(
+            'Fall-ID',
+            'Erstellungsdatum',
+            'Status',
+            'Priorität',
+            'Gesamtbetrag',
+            'Notizen',
+            'Spam-Absender',
+            'Betroffene E-Mail',
+            'E-Mail Betreff',
+            'Empfangsdatum',
+            'Grundschaden',
+            'Anwaltskosten',
+            'Kommunikationskosten',
+            'Gerichtskosten',
+            'MwSt'
+        ), ';');
+        
+        // CSV Data
+        foreach ($cases as $case) {
+            fputcsv($output, array(
+                $case->case_id,
+                $case->case_creation_date,
+                $case->case_status,
+                $case->case_priority,
+                number_format($case->total_amount, 2, ',', '.'),
+                $case->case_notes,
+                $case->emails_sender_email,
+                $case->emails_user_email,
+                $case->emails_subject,
+                $case->emails_received_date,
+                number_format($case->damages_loss, 2, ',', '.'),
+                number_format($case->partner_fees, 2, ',', '.'),
+                number_format($case->communication_fees, 2, ',', '.'),
+                number_format($case->court_fees, 2, ',', '.'),
+                number_format($case->vat, 2, ',', '.')
+            ), ';');
+        }
+        
+        fclose($output);
+        exit; // Important: Stop execution after sending CSV
     }
 }
