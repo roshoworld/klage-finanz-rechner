@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Clean version v1.0.7
+ * Admin Dashboard class - Complete version v1.0.8
  */
 
 if (!defined('ABSPATH')) {
