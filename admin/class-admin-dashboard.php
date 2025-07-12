@@ -142,6 +142,257 @@ class CAH_Admin_Dashboard {
         }
     }
     
+    public function admin_page_import() {
+        global $wpdb;
+        
+        // Handle import actions
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import_action'])) {
+            $this->handle_import_action();
+        }
+        
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'upload';
+        
+        switch ($action) {
+            case 'template':
+                $this->download_import_template();
+                break;
+            case 'preview':
+                $this->render_import_preview();
+                break;
+            default:
+                $this->render_import_page();
+                break;
+        }
+    }
+    
+    private function render_import_page() {
+        ?>
+        <div class="wrap">
+            <h1>📊 CSV Import - Forderungen.com</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.0.9 - Bulk-Import von Forderungen!</strong></p>
+                <p>Importieren Sie Fälle direkt von Ihrem Inkasso-Dienstleister Forderungen.com mit vollständigen Schuldnerdaten.</p>
+            </div>
+            
+            <!-- Step-by-Step Process -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #0073aa;">1️⃣ Template herunterladen</h3>
+                    <p>Laden Sie die Forderungen.com-kompatible CSV-Vorlage herunter</p>
+                    <a href="<?php echo admin_url('admin.php?page=klage-click-import&action=template'); ?>" class="button button-primary">
+                        📥 Template downloaden
+                    </a>
+                </div>
+                
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #0073aa;">2️⃣ Daten vorbereiten</h3>
+                    <p>Füllen Sie die CSV mit Ihren Forderungsdaten aus</p>
+                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                        <strong>Unterstützte Felder:</strong><br>
+                        Fall-ID, Mandant, Schuldner-Details, Beträge, Dokumente
+                    </div>
+                </div>
+                
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #0073aa;">3️⃣ Import durchführen</h3>
+                    <p>Laden Sie die CSV hoch und prüfen Sie die Vorschau</p>
+                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                        <strong>Automatisch erstellt:</strong><br>
+                        Fälle + Schuldner + Finanzberechnungen
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Upload Form -->
+            <div class="postbox">
+                <h2 class="hndle">📁 CSV-Datei hochladen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <form method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="import_action" value="upload_csv">
+                        <?php wp_nonce_field('csv_import_action', 'csv_import_nonce'); ?>
+                        
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="csv_file">CSV-Datei auswählen</label></th>
+                                <td>
+                                    <input type="file" id="csv_file" name="csv_file" accept=".csv" required>
+                                    <p class="description">
+                                        Unterstützte Formate: .csv (UTF-8 oder Windows-1252)<br>
+                                        Trennzeichen: Semikolon (;) oder Komma (,)<br>
+                                        Maximale Dateigröße: 10MB
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="delimiter">Trennzeichen</label></th>
+                                <td>
+                                    <select id="delimiter" name="delimiter">
+                                        <option value=";">Semikolon (;) - Standard deutsch</option>
+                                        <option value=",">Komma (,) - International</option>
+                                        <option value="\t">Tab</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="encoding">Zeichenkodierung</label></th>
+                                <td>
+                                    <select id="encoding" name="encoding">
+                                        <option value="UTF-8">UTF-8 (Empfohlen)</option>
+                                        <option value="Windows-1252">Windows-1252 (Excel Standard)</option>
+                                        <option value="ISO-8859-1">ISO-8859-1</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="import_mode">Import-Modus</label></th>
+                                <td>
+                                    <select id="import_mode" name="import_mode">
+                                        <option value="create_new">🆕 Nur neue Fälle erstellen</option>
+                                        <option value="update_existing">🔄 Bestehende Fälle aktualisieren</option>
+                                        <option value="create_and_update">🚀 Neue erstellen + Bestehende aktualisieren</option>
+                                    </select>
+                                    <p class="description">Bei "Aktualisieren" wird anhand der Fall-ID abgeglichen</p>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <p class="submit">
+                            <input type="submit" class="button button-primary button-large" value="📊 CSV hochladen & Vorschau">
+                        </p>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Template Structure Info -->
+            <div class="postbox" style="margin-top: 30px;">
+                <h2 class="hndle">📋 Forderungen.com Template-Struktur</h2>
+                <div class="inside" style="padding: 20px;">
+                    <p><strong>Erforderliche CSV-Spalten (basierend auf Ihrem Screenshot):</strong></p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 20px 0;">
+                        <div>
+                            <h4 style="color: #0073aa;">📋 Fall-Informationen</h4>
+                            <ul style="list-style-type: disc; margin-left: 20px;">
+                                <li><strong>Fall-ID:</strong> Eindeutige Kennung (z.B. SPAM-2024-0001)</li>
+                                <li><strong>Fall-Status:</strong> draft, processing, completed</li>
+                                <li><strong>Brief-Status:</strong> pending, sent, delivered</li>
+                                <li><strong>Mandant:</strong> Ihr Firmenname/Kunde</li>
+                                <li><strong>Einreichungsdatum:</strong> YYYY-MM-DD Format</li>
+                                <li><strong>Beweise:</strong> Beschreibung der Beweislage</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 style="color: #0073aa;">👤 Schuldner-Informationen</h4>
+                            <ul style="list-style-type: disc; margin-left: 20px;">
+                                <li><strong>Firmenname:</strong> Name der Firma (optional)</li>
+                                <li><strong>Vorname:</strong> Vorname der Person</li>
+                                <li><strong>Nachname:</strong> Nachname der Person</li>
+                                <li><strong>Adresse:</strong> Straße und Hausnummer</li>
+                                <li><strong>Postleitzahl:</strong> PLZ</li>
+                                <li><strong>Stadt:</strong> Ort</li>
+                                <li><strong>Land:</strong> Standard: Deutschland</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <h4 style="color: #0073aa;">💰 Automatische Finanzberechnung</h4>
+                        <p>Das System berechnet automatisch die DSGVO-Standardbeträge:</p>
+                        <ul style="list-style-type: disc; margin-left: 20px;">
+                            <li>Grundschaden: €350.00 (DSGVO Art. 82)</li>
+                            <li>Anwaltskosten: €96.90 (RVG)</li>
+                            <li>Kommunikationskosten: €13.36</li>
+                            <li>Gerichtskosten: €32.00</li>
+                            <li>MwSt: €87.85 (19%)</li>
+                            <li><strong>Gesamtsumme: €548.11</strong></li>
+                        </ul>
+                        <p><em>Individuelle Beträge können nach dem Import manuell angepasst werden.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private function download_import_template() {
+        // Create CSV template based on Forderungen.com structure
+        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        $output = fopen('php://output', 'w');
+        
+        // Add BOM for UTF-8 (Excel compatibility)
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // CSV Header - based on Forderungen.com structure
+        fputcsv($output, array(
+            'Fall-ID',
+            'Fall-Status',
+            'Brief-Status',
+            'Mandant',
+            'Einreichungsdatum',
+            'Beweise',
+            'Firmenname',
+            'Vorname', 
+            'Nachname',
+            'Adresse',
+            'Postleitzahl',
+            'Stadt',
+            'Land',
+            'Email',
+            'Telefon',
+            'Notizen'
+        ), ';');
+        
+        // Add sample data
+        fputcsv($output, array(
+            'SPAM-2024-0001',
+            'draft',
+            'pending',
+            'Musterfirma GmbH',
+            '2024-01-15',
+            'SPAM E-Mail ohne Einwilligung erhalten',
+            '',
+            'Max',
+            'Mustermann',
+            'Musterstraße 123',
+            '12345',
+            'Musterstadt',
+            'Deutschland',
+            'spam@example.com',
+            '0123456789',
+            'Mehrfache SPAM-Emails trotz Widerspruch'
+        ), ';');
+        
+        fputcsv($output, array(
+            'SPAM-2024-0002',
+            'processing',
+            'sent',
+            'Musterfirma GmbH',
+            '2024-01-16',
+            'Newsletter ohne Double-Opt-In',
+            'Beispiel AG',
+            'Erika',
+            'Beispiel',
+            'Beispielweg 456',
+            '54321',
+            'Beispielhausen',
+            'Deutschland',
+            'newsletter@beispiel-ag.de',
+            '0987654321',
+            'Firmennewsletter ohne Zustimmung'
+        ), ';');
+        
+        fclose($output);
+        exit;
+    }
+    
     private function render_edit_case() {
         $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         
