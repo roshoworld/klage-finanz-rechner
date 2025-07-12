@@ -373,7 +373,114 @@ class CAH_Admin_Dashboard {
         <?php
     }
     
-    private function handle_case_creation() {
+    private function handle_case_update($case_id) {
+        global $wpdb;
+        
+        // Sanitize and validate input data
+        $case_id_field = sanitize_text_field($_POST['case_id']);
+        $case_status = sanitize_text_field($_POST['case_status']);
+        $case_priority = sanitize_text_field($_POST['case_priority']);
+        $case_notes = sanitize_textarea_field($_POST['case_notes'] ?? '');
+        $total_amount = floatval($_POST['total_amount']);
+        
+        // Email fields
+        $emails_sender = sanitize_email($_POST['emails_sender_email']);
+        $emails_user = sanitize_email($_POST['emails_user_email']);
+        $emails_subject = sanitize_text_field($_POST['emails_subject']);
+        $emails_content = sanitize_textarea_field($_POST['emails_content']);
+        $emails_date = sanitize_text_field($_POST['emails_received_date']);
+        $emails_time = sanitize_text_field($_POST['emails_received_time']);
+        
+        // Financial fields
+        $damages_loss = floatval($_POST['damages_loss']);
+        $partner_fees = floatval($_POST['partner_fees']);
+        $communication_fees = floatval($_POST['communication_fees']);
+        $court_fees = floatval($_POST['court_fees']);
+        $vat = floatval($_POST['vat']);
+        
+        // Update case main data
+        $case_updated = $wpdb->update(
+            $wpdb->prefix . 'klage_cases',
+            array(
+                'case_id' => $case_id_field,
+                'case_status' => $case_status,
+                'case_priority' => $case_priority,
+                'case_notes' => $case_notes,
+                'total_amount' => $total_amount,
+                'case_updated_date' => current_time('mysql')
+            ),
+            array('id' => $case_id),
+            array('%s', '%s', '%s', '%s', '%f', '%s'),
+            array('%d')
+        );
+        
+        // Update email evidence
+        $email_updated = $wpdb->update(
+            $wpdb->prefix . 'klage_emails',
+            array(
+                'emails_received_date' => $emails_date,
+                'emails_received_time' => $emails_time,
+                'emails_sender_email' => $emails_sender,
+                'emails_user_email' => $emails_user,
+                'emails_subject' => $emails_subject,
+                'emails_content' => $emails_content
+            ),
+            array('case_id' => $case_id),
+            array('%s', '%s', '%s', '%s', '%s', '%s'),
+            array('%d')
+        );
+        
+        // Update financial data
+        $financial_updated = $wpdb->update(
+            $wpdb->prefix . 'klage_financial',
+            array(
+                'damages_loss' => $damages_loss,
+                'partner_fees' => $partner_fees,
+                'communication_fees' => $communication_fees,
+                'court_fees' => $court_fees,
+                'vat' => $vat,
+                'total' => $total_amount
+            ),
+            array('case_id' => $case_id),
+            array('%f', '%f', '%f', '%f', '%f', '%f'),
+            array('%d')
+        );
+        
+        // Create audit log entry
+        $wpdb->insert(
+            $wpdb->prefix . 'klage_audit',
+            array(
+                'case_id' => $case_id,
+                'action' => 'case_updated',
+                'details' => "Fall {$case_id_field} wurde bearbeitet. Status: {$case_status}, Betrag: €{$total_amount}",
+                'user_id' => get_current_user_id(),
+                'created_at' => current_time('mysql')
+            ),
+            array('%d', '%s', '%s', '%d', '%s')
+        );
+        
+        if ($case_updated !== false && $email_updated !== false && $financial_updated !== false) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall "' . esc_html($case_id_field) . '" wurde erfolgreich aktualisiert.</p></div>';
+            
+            // Status change notifications
+            if ($case_status === 'completed') {
+                echo '<div class="notice notice-info"><p><strong>🎉 Fall abgeschlossen!</strong> Der Fall ist jetzt als "Abgeschlossen" markiert.</p></div>';
+            } elseif ($case_status === 'processing') {
+                echo '<div class="notice notice-info"><p><strong>⚡ In Bearbeitung!</strong> Der Fall wird jetzt aktiv bearbeitet.</p></div>';
+            }
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</p></div>';
+            
+            // Debug information for administrators
+            if (current_user_can('administrator') && get_option('klage_click_debug_mode')) {
+                echo '<div class="notice notice-warning"><p><strong>Debug Info:</strong><br>';
+                echo 'Case Update: ' . ($case_updated !== false ? 'OK' : 'FAILED') . '<br>';
+                echo 'Email Update: ' . ($email_updated !== false ? 'OK' : 'FAILED') . '<br>';
+                echo 'Financial Update: ' . ($financial_updated !== false ? 'OK' : 'FAILED') . '<br>';
+                echo 'Last DB Error: ' . $wpdb->last_error . '</p></div>';
+            }
+        }
+    }
         global $wpdb;
         
         // Sanitize input data
