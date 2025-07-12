@@ -233,4 +233,37 @@ class CAH_Admin_Dashboard {
         echo "CSV Export functionality - v1.1.2";
         exit;
     }
+    
+    private function display_system_status() {
+        global $wpdb;
+        
+        $required_tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_financial', 'klage_courts', 'klage_audit', 'klage_financial_fields', 'klage_import_templates');
+        
+        echo '<table class="wp-list-table widefat">';
+        echo '<thead><tr><th>Tabelle</th><th>Status</th><th>Einträge</th></tr></thead>';
+        echo '<tbody>';
+        
+        foreach ($required_tables as $table) {
+            $full_table_name = $wpdb->prefix . $table;
+            $exists = $wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+            $count = $exists ? $wpdb->get_var("SELECT COUNT(*) FROM $full_table_name") : 0;
+            
+            $status_icon = $exists ? '✅' : '❌';
+            $status_text = $exists ? 'OK' : 'Fehlt';
+            
+            echo '<tr>';
+            echo '<td>' . esc_html($table) . '</td>';
+            echo '<td>' . $status_icon . ' ' . esc_html($status_text) . '</td>';
+            echo '<td>' . esc_html($count) . '</td>';
+            echo '</tr>';
+        }
+        
+        echo '</tbody></table>';
+        
+        if (!$wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_cases'")) {
+            echo '<div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 5px;">';
+            echo '<p><strong>⚠️ Hinweis:</strong> Haupttabellen fehlen. Gehen Sie zu Einstellungen → Datenbank reparieren.</p>';
+            echo '</div>';
+        }
+    }
 }
