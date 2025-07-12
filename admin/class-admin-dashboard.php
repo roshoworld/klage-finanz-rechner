@@ -66,6 +66,10 @@ class CAH_Admin_Dashboard {
         register_setting('klage_click_settings', 'klage_click_n8n_url');
         register_setting('klage_click_settings', 'klage_click_n8n_key');
         register_setting('klage_click_settings', 'klage_click_debug_mode');
+        
+        // Add AJAX handlers for file downloads
+        add_action('wp_ajax_klage_download_template', array($this, 'ajax_download_template'));
+        add_action('wp_ajax_klage_export_calculation', array($this, 'ajax_export_calculation'));
     }
     
     public function admin_page_dashboard() {
