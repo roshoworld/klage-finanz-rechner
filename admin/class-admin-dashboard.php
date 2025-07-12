@@ -634,21 +634,31 @@ class CAH_Admin_Dashboard {
     }
     
     private function download_import_template() {
+        // Prevent any output before headers
+        if (headers_sent()) {
+            wp_die('Headers already sent. Cannot download template.');
+        }
+        
+        // Clear any existing output
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        
         // Create CSV template based on Forderungen.com structure
         $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
         
-        header('Content-Type: text/csv; charset=utf-8');
+        // Set proper headers for file download
+        header('Content-Type: application/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Pragma: no-cache');
         header('Expires: 0');
-        
-        $output = fopen('php://output', 'w');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         
         // Add BOM for UTF-8 (Excel compatibility)
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        echo chr(0xEF) . chr(0xBB) . chr(0xBF);
         
         // CSV Header - based on Forderungen.com structure
-        fputcsv($output, array(
+        $header = array(
             'Fall-ID',
             'Fall-Status',
             'Brief-Status',
@@ -665,49 +675,55 @@ class CAH_Admin_Dashboard {
             'Email',
             'Telefon',
             'Notizen'
-        ), ';');
+        );
+        
+        echo implode(';', $header) . "\n";
         
         // Add sample data
-        fputcsv($output, array(
-            'SPAM-2024-0001',
-            'draft',
-            'pending',
-            'Musterfirma GmbH',
-            '2024-01-15',
-            'SPAM E-Mail ohne Einwilligung erhalten',
-            '',
-            'Max',
-            'Mustermann',
-            'Musterstraße 123',
-            '12345',
-            'Musterstadt',
-            'Deutschland',
-            'spam@example.com',
-            '0123456789',
-            'Mehrfache SPAM-Emails trotz Widerspruch'
-        ), ';');
+        $sample_data = array(
+            array(
+                'SPAM-2024-0001',
+                'draft',
+                'pending',
+                'Musterfirma GmbH',
+                '2024-01-15',
+                'SPAM E-Mail ohne Einwilligung erhalten',
+                '',
+                'Max',
+                'Mustermann',
+                'Musterstraße 123',
+                '12345',
+                'Musterstadt',
+                'Deutschland',
+                'spam@example.com',
+                '0123456789',
+                'Mehrfache SPAM-Emails trotz Widerspruch'
+            ),
+            array(
+                'SPAM-2024-0002',
+                'processing',
+                'sent',
+                'Musterfirma GmbH',
+                '2024-01-16',
+                'Newsletter ohne Double-Opt-In',
+                'Beispiel AG',
+                'Erika',
+                'Beispiel',
+                'Beispielweg 456',
+                '54321',
+                'Beispielhausen',
+                'Deutschland',
+                'newsletter@beispiel-ag.de',
+                '0987654321',
+                'Firmennewsletter ohne Zustimmung'
+            )
+        );
         
-        fputcsv($output, array(
-            'SPAM-2024-0002',
-            'processing',
-            'sent',
-            'Musterfirma GmbH',
-            '2024-01-16',
-            'Newsletter ohne Double-Opt-In',
-            'Beispiel AG',
-            'Erika',
-            'Beispiel',
-            'Beispielweg 456',
-            '54321',
-            'Beispielhausen',
-            'Deutschland',
-            'newsletter@beispiel-ag.de',
-            '0987654321',
-            'Firmennewsletter ohne Zustimmung'
-        ), ';');
+        foreach ($sample_data as $row) {
+            echo implode(';', $row) . "\n";
+        }
         
-        fclose($output);
-        exit;
+        exit; // Important: Stop execution after sending CSV
     }
     
     private function handle_import_action() {
