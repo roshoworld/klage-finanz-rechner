@@ -134,6 +134,13 @@ class CAH_Admin_Dashboard {
         
         global $wpdb;
         
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_case_nonce'])) {
+            if (wp_verify_nonce($_POST['edit_case_nonce'], 'edit_case_' . $case_id)) {
+                $this->handle_case_update($case_id);
+            }
+        }
+        
         // Get case data
         $case = $wpdb->get_row($wpdb->prepare("
             SELECT * FROM {$wpdb->prefix}klage_cases WHERE id = %d
@@ -144,51 +151,225 @@ class CAH_Admin_Dashboard {
             return;
         }
         
+        // Get email evidence
+        $email = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_emails WHERE case_id = %d LIMIT 1
+        ", $case_id));
+        
+        // Get financial data
+        $financial = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
+        ", $case_id));
+        
         ?>
         <div class="wrap">
             <h1>Fall bearbeiten: <?php echo esc_html($case->case_id); ?></h1>
             
             <div style="background: #d1ecf1; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>✅ Erfolgreich geladen!</strong> Die Fall-Bearbeitung funktioniert jetzt in v1.0.7.</p>
-                <p>Hier können Sie Fall-Details einsehen und in zukünftigen Versionen bearbeiten.</p>
+                <p><strong>✅ v1.0.8 - Vollständige Fall-Bearbeitung!</strong></p>
+                <p>Sie können jetzt alle Fall-Details bearbeiten, Status ändern und Daten aktualisieren.</p>
             </div>
             
-            <table class="form-table">
-                <tr>
-                    <th>Fall-ID:</th>
-                    <td><strong><?php echo esc_html($case->case_id); ?></strong></td>
-                </tr>
-                <tr>
-                    <th>Status:</th>
-                    <td>
-                        <span class="status-badge status-<?php echo esc_attr($case->case_status); ?>">
-                            <?php echo esc_html(ucfirst($case->case_status)); ?>
+            <form method="post" style="max-width: 1200px;">
+                <?php wp_nonce_field('edit_case_' . $case_id, 'edit_case_nonce'); ?>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    
+                    <!-- Left Column: Case Information -->
+                    <div class="postbox">
+                        <h2 class="hndle">📋 Fall-Informationen</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="case_id">Fall-ID</label></th>
+                                    <td>
+                                        <input type="text" id="case_id" name="case_id" class="regular-text" 
+                                               value="<?php echo esc_attr($case->case_id); ?>" required>
+                                        <p class="description">Eindeutige Fall-Kennung</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_status">Status</label></th>
+                                    <td>
+                                        <select id="case_status" name="case_status" class="regular-text">
+                                            <option value="draft" <?php selected($case->case_status, 'draft'); ?>>📝 Entwurf</option>
+                                            <option value="processing" <?php selected($case->case_status, 'processing'); ?>>⚡ In Bearbeitung</option>
+                                            <option value="pending" <?php selected($case->case_status, 'pending'); ?>>⏳ Ausstehend</option>
+                                            <option value="completed" <?php selected($case->case_status, 'completed'); ?>>✅ Abgeschlossen</option>
+                                            <option value="cancelled" <?php selected($case->case_status, 'cancelled'); ?>>❌ Abgebrochen</option>
+                                        </select>
+                                        <p class="description">Aktueller Bearbeitungsstatus</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_priority">Priorität</label></th>
+                                    <td>
+                                        <select id="case_priority" name="case_priority" class="regular-text">
+                                            <option value="low" <?php selected($case->case_priority, 'low'); ?>>🟢 Niedrig</option>
+                                            <option value="medium" <?php selected($case->case_priority, 'medium'); ?>>🟡 Medium</option>
+                                            <option value="high" <?php selected($case->case_priority, 'high'); ?>>🟠 Hoch</option>
+                                            <option value="urgent" <?php selected($case->case_priority, 'urgent'); ?>>🔴 Dringend</option>
+                                        </select>
+                                        <p class="description">Bearbeitungspriorität</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_notes">Notizen</label></th>
+                                    <td>
+                                        <textarea id="case_notes" name="case_notes" class="large-text" rows="4" 
+                                                  placeholder="Interne Notizen zum Fall..."><?php echo esc_textarea($case->case_notes ?? ''); ?></textarea>
+                                        <p class="description">Interne Bearbeitungsnotizen</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Email Evidence -->
+                    <div class="postbox">
+                        <h2 class="hndle">📧 E-Mail Evidenz</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <?php if ($email): ?>
+                                <table class="form-table">
+                                    <tr>
+                                        <th scope="row"><label for="emails_sender_email">Spam-Absender</label></th>
+                                        <td>
+                                            <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text" 
+                                                   value="<?php echo esc_attr($email->emails_sender_email); ?>" required>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><label for="emails_user_email">Betroffene E-Mail</label></th>
+                                        <td>
+                                            <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text" 
+                                                   value="<?php echo esc_attr($email->emails_user_email); ?>" required>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><label for="emails_received_date">Empfangsdatum</label></th>
+                                        <td>
+                                            <input type="date" id="emails_received_date" name="emails_received_date" class="regular-text" 
+                                                   value="<?php echo esc_attr($email->emails_received_date); ?>" required>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><label for="emails_received_time">Empfangszeit</label></th>
+                                        <td>
+                                            <input type="time" id="emails_received_time" name="emails_received_time" class="regular-text" 
+                                                   value="<?php echo esc_attr($email->emails_received_time); ?>" required>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><label for="emails_subject">Betreff</label></th>
+                                        <td>
+                                            <input type="text" id="emails_subject" name="emails_subject" class="regular-text" 
+                                                   value="<?php echo esc_attr($email->emails_subject); ?>">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><label for="emails_content">E-Mail Inhalt</label></th>
+                                        <td>
+                                            <textarea id="emails_content" name="emails_content" class="large-text" rows="6" required><?php echo esc_textarea($email->emails_content); ?></textarea>
+                                        </td>
+                                    </tr>
+                                </table>
+                            <?php else: ?>
+                                <p>Keine E-Mail-Evidenz gefunden. <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>">Zur Ansicht wechseln</a></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Information -->
+                <?php if ($financial): ?>
+                <div class="postbox" style="margin-top: 20px;">
+                    <h2 class="hndle">💰 Finanzielle Details (DSGVO Standard)</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div>
+                                <label for="damages_loss"><strong>Grundschaden (€)</strong></label>
+                                <input type="number" step="0.01" id="damages_loss" name="damages_loss" class="regular-text" 
+                                       value="<?php echo esc_attr($financial->damages_loss); ?>" required>
+                                <p class="description">DSGVO Art. 82 Schadenersatz</p>
+                            </div>
+                            <div>
+                                <label for="partner_fees"><strong>Anwaltskosten (€)</strong></label>
+                                <input type="number" step="0.01" id="partner_fees" name="partner_fees" class="regular-text" 
+                                       value="<?php echo esc_attr($financial->partner_fees); ?>" required>
+                                <p class="description">RVG Rechtsanwaltsgebühren</p>
+                            </div>
+                            <div>
+                                <label for="communication_fees"><strong>Kommunikationskosten (€)</strong></label>
+                                <input type="number" step="0.01" id="communication_fees" name="communication_fees" class="regular-text" 
+                                       value="<?php echo esc_attr($financial->communication_fees); ?>" required>
+                                <p class="description">Porto, Telefon, etc.</p>
+                            </div>
+                            <div>
+                                <label for="court_fees"><strong>Gerichtskosten (€)</strong></label>
+                                <input type="number" step="0.01" id="court_fees" name="court_fees" class="regular-text" 
+                                       value="<?php echo esc_attr($financial->court_fees); ?>" required>
+                                <p class="description">Verfahrenskosten</p>
+                            </div>
+                            <div>
+                                <label for="vat"><strong>MwSt (€)</strong></label>
+                                <input type="number" step="0.01" id="vat" name="vat" class="regular-text" 
+                                       value="<?php echo esc_attr($financial->vat); ?>" required>
+                                <p class="description">19% Mehrwertsteuer</p>
+                            </div>
+                            <div style="background: #f0f8ff; padding: 15px; border-radius: 5px;">
+                                <label for="total_amount"><strong>Gesamtsumme (€)</strong></label>
+                                <input type="number" step="0.01" id="total_amount" name="total_amount" class="regular-text" 
+                                       value="<?php echo esc_attr($case->total_amount); ?>" required 
+                                       style="font-size: 16px; font-weight: bold; color: #0073aa;">
+                                <p class="description">Forderungsgesamtbetrag</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Action Buttons -->
+                <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
+                    <p class="submit" style="margin: 0;">
+                        <input type="submit" class="button button-primary button-large" value="💾 Fall speichern" style="margin-right: 10px;">
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button button-secondary">👁️ Zur Ansicht</a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">← Zur Übersicht</a>
+                        
+                        <span style="margin-left: 20px; color: #666;">
+                            <strong>Letzte Änderung:</strong> <?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($case->case_creation_date))); ?>
                         </span>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Priorität:</th>
-                    <td><?php echo esc_html($case->case_priority); ?></td>
-                </tr>
-                <tr>
-                    <th>Gesamtbetrag:</th>
-                    <td><strong>€<?php echo esc_html(number_format($case->total_amount, 2)); ?></strong></td>
-                </tr>
-                <tr>
-                    <th>Erstellungsdatum:</th>
-                    <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($case->case_creation_date))); ?></td>
-                </tr>
-            </table>
-            
-            <p class="submit">
-                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button button-primary">
-                    👁️ Fall Details ansehen
-                </a>
-                <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">
-                    ← Zur Übersicht
-                </a>
-            </p>
+                    </p>
+                </div>
+            </form>
         </div>
+        
+        <script>
+        // Auto-calculate total when financial fields change
+        document.addEventListener('DOMContentLoaded', function() {
+            const financialFields = ['damages_loss', 'partner_fees', 'communication_fees', 'court_fees', 'vat'];
+            const totalField = document.getElementById('total_amount');
+            
+            financialFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', calculateTotal);
+                }
+            });
+            
+            function calculateTotal() {
+                let total = 0;
+                financialFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && field.value) {
+                        total += parseFloat(field.value) || 0;
+                    }
+                });
+                if (totalField) {
+                    totalField.value = total.toFixed(2);
+                }
+            }
+        });
+        </script>
         <?php
     }
     
