@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Headers Fix + Enhanced Calculator v1.1.0
+ * Admin Dashboard class - AJAX Download Fix + Help System v1.1.1
  */
 
 if (!defined('ABSPATH')) {
