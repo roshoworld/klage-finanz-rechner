@@ -142,6 +142,323 @@ class CAH_Admin_Dashboard {
         }
     }
     
+    private function render_financial_calculator() {
+        global $wpdb;
+        
+        // Get all active financial fields
+        $custom_fields = $wpdb->get_results("
+            SELECT * FROM {$wpdb->prefix}klage_financial_fields 
+            WHERE is_active = 1 
+            ORDER BY display_order ASC
+        ");
+        
+        ?>
+        <div class="wrap">
+            <h1>🧮 Dynamischer Finanz-Rechner</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 Excel-ähnlicher Finanzrechner!</strong></p>
+                <p>Berechnen Sie automatisch DSGVO-Forderungen mit benutzerdefinierten Feldern und Formeln.</p>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-financial'); ?>" class="button button-secondary">
+                    ← Zurück zur Feldverwaltung
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="button button-primary">
+                    💰 Neuen Fall mit Rechner erstellen
+                </a>
+            </div>
+            
+            <!-- Spreadsheet-like Calculator -->
+            <div class="postbox">
+                <h2 class="hndle">📊 Finanz-Rechner (Spreadsheet-Modus)</h2>
+                <div class="inside" style="padding: 20px;">
+                    
+                    <!-- Standard DSGVO Fields -->
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                        <h3 style="color: #0073aa; margin-top: 0;">📋 Standard DSGVO-Berechnung</h3>
+                        
+                        <table class="financial-calculator-table" style="width: 100%; border-collapse: collapse; background: white;">
+                            <thead>
+                                <tr style="background: #0073aa; color: white;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Feld</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Typ</th>
+                                    <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Wert (€)</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Formel/Beschreibung</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 12px; border: 1px solid #ddd;"><strong>💰 Grundschaden</strong></td>
+                                    <td style="padding: 12px; border: 1px solid #ddd;">Standard</td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                        <input type="number" step="0.01" value="350.00" class="calc-field" data-field="grundschaden" 
+                                               style="width: 100px; text-align: right; font-weight: bold;">
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; color: #666;">DSGVO Art. 82 Schadenersatz</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; border: 1px solid #ddd;"><strong>⚖️ Anwaltskosten</strong></td>
+                                    <td style="padding: 12px; border: 1px solid #ddd;">Standard</td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                        <input type="number" step="0.01" value="96.90" class="calc-field" data-field="anwaltskosten"
+                                               style="width: 100px; text-align: right; font-weight: bold;">
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; color: #666;">RVG Rechtsanwaltsgebühren</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; border: 1px solid #ddd;"><strong>📞 Kommunikation</strong></td>
+                                    <td style="padding: 12px; border: 1px solid #ddd;">Standard</td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                        <input type="number" step="0.01" value="13.36" class="calc-field" data-field="kommunikation"
+                                               style="width: 100px; text-align: right; font-weight: bold;">
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; color: #666;">Porto, Telefon, etc.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; border: 1px solid #ddd;"><strong>🏛️ Gerichtskosten</strong></td>
+                                    <td style="padding: 12px; border: 1px solid #ddd;">Standard</td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                        <input type="number" step="0.01" value="32.00" class="calc-field" data-field="gerichtskosten"
+                                               style="width: 100px; text-align: right; font-weight: bold;">
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; color: #666;">Verfahrenskosten</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px; border: 1px solid #ddd;"><strong>📊 MwSt (19%)</strong></td>
+                                    <td style="padding: 12px; border: 1px solid #ddd;">Formel</td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                        <input type="number" step="0.01" value="87.85" class="calc-field" data-field="mwst" readonly
+                                               style="width: 100px; text-align: right; font-weight: bold; background: #f0f8ff;">
+                                    </td>
+                                    <td style="padding: 12px; border: 1px solid #ddd; color: #666;">=(Anwaltskosten + Kommunikation) * 0.19</td>
+                                </tr>
+                                
+                                <!-- Custom Fields -->
+                                <?php if (!empty($custom_fields)): ?>
+                                    <?php foreach ($custom_fields as $field): ?>
+                                        <tr>
+                                            <td style="padding: 12px; border: 1px solid #ddd;"><strong>🔧 <?php echo esc_html($field->field_label); ?></strong></td>
+                                            <td style="padding: 12px; border: 1px solid #ddd;"><?php echo esc_html(ucfirst($field->field_type)); ?></td>
+                                            <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                                <?php if ($field->field_type === 'dropdown'): ?>
+                                                    <select class="calc-field" data-field="<?php echo esc_attr($field->field_name); ?>" style="width: 120px;">
+                                                        <?php 
+                                                        $options = explode(',', $field->field_options);
+                                                        foreach ($options as $option) {
+                                                            $option = trim($option);
+                                                            echo '<option value="' . esc_attr($option) . '">' . esc_html($option) . '</option>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                <?php elseif ($field->field_type === 'number' || $field->field_type === 'percentage'): ?>
+                                                    <input type="number" step="0.01" value="<?php echo esc_attr($field->default_value); ?>" 
+                                                           class="calc-field" data-field="<?php echo esc_attr($field->field_name); ?>"
+                                                           style="width: 100px; text-align: right; font-weight: bold;">
+                                                <?php else: ?>
+                                                    <input type="text" value="<?php echo esc_attr($field->default_value); ?>" 
+                                                           class="calc-field" data-field="<?php echo esc_attr($field->field_name); ?>"
+                                                           style="width: 120px;">
+                                                <?php endif; ?>
+                                            </td>
+                                            <td style="padding: 12px; border: 1px solid #ddd; color: #666;">
+                                                <?php echo esc_html($field->field_options ?: 'Benutzerdefiniert'); ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                
+                                <!-- Total Row -->
+                                <tr style="background: #f0f8ff; font-weight: bold; font-size: 16px;">
+                                    <td style="padding: 15px; border: 2px solid #0073aa;"><strong>🎯 GESAMTSUMME</strong></td>
+                                    <td style="padding: 15px; border: 2px solid #0073aa;">Auto-Berechnung</td>
+                                    <td style="padding: 15px; border: 2px solid #0073aa; text-align: right;">
+                                        <input type="number" step="0.01" value="548.11" id="total-amount" readonly
+                                               style="width: 120px; text-align: right; font-weight: bold; font-size: 18px; 
+                                                      background: #e7f3ff; border: 2px solid #0073aa; color: #0073aa;">
+                                    </td>
+                                    <td style="padding: 15px; border: 2px solid #0073aa; color: #0073aa;">
+                                        =SUM(Alle Felder) - Automatisch berechnet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="button" class="button button-large" onclick="resetCalculator()">
+                            🔄 Zurücksetzen
+                        </button>
+                        <button type="button" class="button button-primary button-large" onclick="saveTemplate()" style="margin-left: 15px;">
+                            💾 Als Vorlage speichern
+                        </button>
+                        <button type="button" class="button button-secondary button-large" onclick="exportCalculation()" style="margin-left: 15px;">
+                            📊 Als CSV exportieren
+                        </button>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- Quick Templates -->
+            <div class="postbox" style="margin-top: 30px;">
+                <h2 class="hndle">⚡ Schnell-Vorlagen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button type="button" class="button" onclick="loadTemplate('dsgvo_standard')" 
+                                style="padding: 15px; height: auto; text-align: center;">
+                            <strong>📋 DSGVO Standard</strong><br>
+                            <small>€548.11 - Basis SPAM-Fall</small>
+                        </button>
+                        <button type="button" class="button" onclick="loadTemplate('dsgvo_premium')" 
+                                style="padding: 15px; height: auto; text-align: center;">
+                            <strong>💎 DSGVO Premium</strong><br>
+                            <small>€750+ - Mehrfach-Verstöße</small>
+                        </button>
+                        <button type="button" class="button" onclick="loadTemplate('dsgvo_business')" 
+                                style="padding: 15px; height: auto; text-align: center;">
+                            <strong>🏢 Business-Fall</strong><br>
+                            <small>€1000+ - Firmen-Verstöße</small>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-calculate totals when fields change
+            const calcFields = document.querySelectorAll('.calc-field');
+            
+            calcFields.forEach(field => {
+                field.addEventListener('input', calculateTotal);
+            });
+            
+            function calculateTotal() {
+                const grundschaden = parseFloat(document.querySelector('[data-field="grundschaden"]').value) || 0;
+                const anwaltskosten = parseFloat(document.querySelector('[data-field="anwaltskosten"]').value) || 0;
+                const kommunikation = parseFloat(document.querySelector('[data-field="kommunikation"]').value) || 0;
+                const gerichtskosten = parseFloat(document.querySelector('[data-field="gerichtskosten"]').value) || 0;
+                
+                // Calculate MwSt (19% on lawyer fees + communication)
+                const mwst = (anwaltskosten + kommunikation) * 0.19;
+                document.querySelector('[data-field="mwst"]').value = mwst.toFixed(2);
+                
+                // Calculate custom field values
+                let customTotal = 0;
+                const customFields = document.querySelectorAll('.calc-field[data-field]:not([data-field="grundschaden"]):not([data-field="anwaltskosten"]):not([data-field="kommunikation"]):not([data-field="gerichtskosten"]):not([data-field="mwst"])');
+                customFields.forEach(field => {
+                    if (field.type === 'number') {
+                        customTotal += parseFloat(field.value) || 0;
+                    }
+                });
+                
+                // Total calculation
+                const total = grundschaden + anwaltskosten + kommunikation + gerichtskosten + mwst + customTotal;
+                document.getElementById('total-amount').value = total.toFixed(2);
+            }
+            
+            // Initial calculation
+            calculateTotal();
+        });
+        
+        function resetCalculator() {
+            document.querySelector('[data-field="grundschaden"]').value = '350.00';
+            document.querySelector('[data-field="anwaltskosten"]').value = '96.90';
+            document.querySelector('[data-field="kommunikation"]').value = '13.36';
+            document.querySelector('[data-field="gerichtskosten"]').value = '32.00';
+            
+            // Reset custom fields to default
+            const customFields = document.querySelectorAll('.calc-field[data-field]:not([data-field="grundschaden"]):not([data-field="anwaltskosten"]):not([data-field="kommunikation"]):not([data-field="gerichtskosten"]):not([data-field="mwst"])');
+            customFields.forEach(field => {
+                if (field.tagName === 'SELECT') {
+                    field.selectedIndex = 0;
+                } else {
+                    field.value = field.getAttribute('data-default') || '0.00';
+                }
+            });
+            
+            // Recalculate
+            document.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+        
+        function loadTemplate(templateType) {
+            switch(templateType) {
+                case 'dsgvo_standard':
+                    // Already the default
+                    resetCalculator();
+                    break;
+                case 'dsgvo_premium':
+                    document.querySelector('[data-field="grundschaden"]').value = '500.00';
+                    document.querySelector('[data-field="anwaltskosten"]').value = '150.00';
+                    break;
+                case 'dsgvo_business':
+                    document.querySelector('[data-field="grundschaden"]').value = '750.00';
+                    document.querySelector('[data-field="anwaltskosten"]').value = '200.00';
+                    document.querySelector('[data-field="kommunikation"]').value = '25.00';
+                    break;
+            }
+            
+            // Trigger recalculation
+            document.querySelector('[data-field="grundschaden"]').dispatchEvent(new Event('input', {bubbles: true}));
+        }
+        
+        function saveTemplate() {
+            alert('💾 Vorlagen-Speicherung wird in v1.1.0 implementiert!');
+        }
+        
+        function exportCalculation() {
+            // Create CSV data
+            const rows = [];
+            rows.push(['Feld', 'Wert', 'Beschreibung']);
+            
+            document.querySelectorAll('.financial-calculator-table tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 3) {
+                    const field = cells[0].textContent.trim();
+                    const value = cells[2].querySelector('input, select') ? 
+                                 cells[2].querySelector('input, select').value : 
+                                 cells[2].textContent.trim();
+                    const desc = cells[3].textContent.trim();
+                    rows.push([field, value, desc]);
+                }
+            });
+            
+            // Create and download CSV
+            const csvContent = rows.map(row => row.join(';')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'finanz_berechnung_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+        }
+        </script>
+        
+        <style>
+        .financial-calculator-table input[type="number"],
+        .financial-calculator-table input[type="text"],
+        .financial-calculator-table select {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        
+        .financial-calculator-table input:focus,
+        .financial-calculator-table select:focus {
+            border-color: #0073aa;
+            box-shadow: 0 0 0 1px #0073aa;
+            outline: none;
+        }
+        
+        .financial-calculator-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        </style>
+        <?php
+    }
+    
     public function admin_page_import() {
         global $wpdb;
         
