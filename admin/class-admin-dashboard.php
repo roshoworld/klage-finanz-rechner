@@ -162,7 +162,250 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_financial() {
-        echo '<div class="wrap"><h1>Financial Calculator - v1.1.2</h1><p>Calculator functionality will be restored.</p></div>';
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'manage';
+        
+        switch ($action) {
+            case 'calculator':
+                $this->render_financial_calculator();
+                break;
+            default:
+                $this->render_financial_field_manager();
+                break;
+        }
+    }
+    
+    private function render_financial_field_manager() {
+        ?>
+        <div class="wrap">
+            <h1>💰 Finanz-Rechner Verwaltung</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.3 - Dynamischer Finanz-Rechner!</strong></p>
+                <p>Excel-ähnliche Berechnungen mit DSGVO-Standards und benutzerdefinierten Feldern.</p>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-primary">
+                    🧮 Rechner öffnen
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary">
+                    📊 CSV Import
+                </a>
+            </div>
+            
+            <!-- DSGVO Standard Overview -->
+            <div class="postbox">
+                <h2 class="hndle">📊 DSGVO Standard-Berechnung</h2>
+                <div class="inside" style="padding: 20px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Kostenart</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Betrag</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Beschreibung</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">💰 Grundschaden</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€350.00</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">DSGVO Art. 82 Schadenersatz</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">⚖️ Anwaltskosten</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€96.90</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">RVG Rechtsanwaltsgebühren</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">📞 Kommunikation</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€13.36</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">Porto, Telefon, etc.</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">🏛️ Gerichtskosten</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€32.00</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">Verfahrenskosten</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">📊 MwSt (19%)</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€87.85</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 10px;">19% auf Anwalt + Kommunikation</td>
+                        </tr>
+                        <tr style="background: #e7f3ff; font-weight: bold;">
+                            <td style="border: 2px solid #0073aa; padding: 12px;">🎯 GESAMTSUMME</td>
+                            <td style="border: 2px solid #0073aa; padding: 12px; text-align: right; font-size: 18px; color: #0073aa;"><strong>€548.11</strong></td>
+                            <td style="border: 2px solid #0073aa; padding: 12px;">Standard DSGVO SPAM-Fall</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Quick Templates -->
+            <div class="postbox" style="margin-top: 20px;">
+                <h2 class="hndle">⚡ Schnell-Templates</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0 0 10px 0; color: #0073aa;">📋 DSGVO Standard</h4>
+                            <p style="margin: 0 0 10px 0; font-size: 14px;">Einfache SPAM-Fälle</p>
+                            <strong style="font-size: 18px; color: #0073aa;">€548.11</strong>
+                        </div>
+                        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0 0 10px 0; color: #856404;">💎 DSGVO Premium</h4>
+                            <p style="margin: 0 0 10px 0; font-size: 14px;">Mehrfach-Verstöße</p>
+                            <strong style="font-size: 18px; color: #856404;">€750+</strong>
+                        </div>
+                        <div style="background: #d4edda; padding: 20px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0 0 10px 0; color: #155724;">🏢 Business-Fall</h4>
+                            <p style="margin: 0 0 10px 0; font-size: 14px;">Firmen-Verstöße</p>
+                            <strong style="font-size: 18px; color: #155724;">€1000+</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private function render_financial_calculator() {
+        ?>
+        <div class="wrap">
+            <h1>🧮 Dynamischer Finanz-Rechner</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.3 - Excel-ähnlicher Finanzrechner!</strong></p>
+                <p>Berechnen Sie automatisch DSGVO-Forderungen mit Echtzeit-Berechnungen.</p>
+            </div>
+            
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-financial'); ?>" class="button button-secondary">
+                    ← Zurück zur Feldverwaltung
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="button button-primary">
+                    💰 Neuen Fall mit Rechner erstellen
+                </a>
+            </div>
+            
+            <!-- Calculator Interface -->
+            <div class="postbox">
+                <h2 class="hndle">📊 Finanz-Rechner (Spreadsheet-Modus)</h2>
+                <div class="inside" style="padding: 20px;">
+                    <table id="financial-calculator" style="width: 100%; border-collapse: collapse; background: white;">
+                        <thead>
+                            <tr style="background: #0073aa; color: white;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Feld</th>
+                                <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Wert (€)</th>
+                                <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Formel/Beschreibung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;"><strong>💰 Grundschaden</strong></td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                    <input type="number" step="0.01" value="350.00" id="grundschaden" 
+                                           style="width: 100px; text-align: right; font-weight: bold;">
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; color: #666;">DSGVO Art. 82 Schadenersatz</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;"><strong>⚖️ Anwaltskosten</strong></td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                    <input type="number" step="0.01" value="96.90" id="anwaltskosten"
+                                           style="width: 100px; text-align: right; font-weight: bold;">
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; color: #666;">RVG Rechtsanwaltsgebühren</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;"><strong>📞 Kommunikation</strong></td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                    <input type="number" step="0.01" value="13.36" id="kommunikation"
+                                           style="width: 100px; text-align: right; font-weight: bold;">
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; color: #666;">Porto, Telefon, etc.</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;"><strong>🏛️ Gerichtskosten</strong></td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                    <input type="number" step="0.01" value="32.00" id="gerichtskosten"
+                                           style="width: 100px; text-align: right; font-weight: bold;">
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; color: #666;">Verfahrenskosten</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd;"><strong>📊 MwSt (19%)</strong></td>
+                                <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">
+                                    <input type="number" step="0.01" value="87.85" id="mwst" readonly
+                                           style="width: 100px; text-align: right; font-weight: bold; background: #f0f8ff;">
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd; color: #666;">=(Anwaltskosten + Kommunikation) * 0.19</td>
+                            </tr>
+                            <tr style="background: #f0f8ff; font-weight: bold; font-size: 16px;">
+                                <td style="padding: 15px; border: 2px solid #0073aa;"><strong>🎯 GESAMTSUMME</strong></td>
+                                <td style="padding: 15px; border: 2px solid #0073aa; text-align: right;">
+                                    <input type="number" step="0.01" value="548.11" id="total" readonly
+                                           style="width: 120px; text-align: right; font-weight: bold; font-size: 18px; 
+                                                  background: #e7f3ff; border: 2px solid #0073aa; color: #0073aa;">
+                                </td>
+                                <td style="padding: 15px; border: 2px solid #0073aa; color: #0073aa;">
+                                    =SUM(Alle Felder) - Automatisch berechnet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="button" class="button button-large" onclick="resetCalculator()">
+                            🔄 Zurücksetzen
+                        </button>
+                        <button type="button" class="button button-primary button-large" onclick="saveCalculation()" style="margin-left: 15px;">
+                            💾 Berechnung speichern
+                        </button>
+                        <button type="button" class="button button-secondary button-large" onclick="exportCalculation()" style="margin-left: 15px;">
+                            📊 Als CSV exportieren
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fields = ['grundschaden', 'anwaltskosten', 'kommunikation', 'gerichtskosten'];
+            
+            fields.forEach(fieldId => {
+                document.getElementById(fieldId).addEventListener('input', calculateTotal);
+            });
+            
+            function calculateTotal() {
+                const grundschaden = parseFloat(document.getElementById('grundschaden').value) || 0;
+                const anwaltskosten = parseFloat(document.getElementById('anwaltskosten').value) || 0;
+                const kommunikation = parseFloat(document.getElementById('kommunikation').value) || 0;
+                const gerichtskosten = parseFloat(document.getElementById('gerichtskosten').value) || 0;
+                
+                const mwst = (anwaltskosten + kommunikation) * 0.19;
+                document.getElementById('mwst').value = mwst.toFixed(2);
+                
+                const total = grundschaden + anwaltskosten + kommunikation + gerichtskosten + mwst;
+                document.getElementById('total').value = total.toFixed(2);
+            }
+        });
+        
+        function resetCalculator() {
+            document.getElementById('grundschaden').value = '350.00';
+            document.getElementById('anwaltskosten').value = '96.90';
+            document.getElementById('kommunikation').value = '13.36';
+            document.getElementById('gerichtskosten').value = '32.00';
+            
+            // Trigger recalculation
+            document.getElementById('grundschaden').dispatchEvent(new Event('input'));
+        }
+        
+        function saveCalculation() {
+            alert('💾 Speichern-Funktion wird in v1.1.4 implementiert!');
+        }
+        
+        function exportCalculation() {
+            alert('📊 CSV-Export wird in v1.1.4 implementiert!');
+        }
+        </script>
+        <?php
     }
     
     public function admin_page_import() {
