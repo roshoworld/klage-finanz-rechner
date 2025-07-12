@@ -1754,7 +1754,7 @@ class CAH_Admin_Dashboard {
     private function show_detailed_table_status() {
         global $wpdb;
         
-        $required_tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_financial', 'klage_courts');
+        $required_tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_financial', 'klage_courts', 'klage_audit', 'klage_financial_fields', 'klage_import_templates');
         
         echo '<table style="width: 100%; border-collapse: collapse;">';
         foreach ($required_tables as $table) {
