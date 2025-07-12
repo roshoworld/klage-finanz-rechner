@@ -1229,6 +1229,9 @@ class CAH_Admin_Dashboard {
             echo '<td style="padding: 5px; border-bottom: 1px solid #ddd;">' . $count . ' Einträge</td>';
             echo '</tr>';
         }
+        echo '</table>';
+    }
+    
     private function handle_bulk_actions() {
         global $wpdb;
         
