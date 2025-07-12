@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
             <h1>📚 Hilfe & Prozesse - Klage.Click Hub</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.0 - Komplette Anleitung!</strong></p>
+                <p><strong>🚀 v1.1.1 - Komplette Anleitung!</strong></p>
                 <p>Schritt-für-Schritt Anleitungen für alle Funktionen des Court Automation Hub.</p>
             </div>
             
