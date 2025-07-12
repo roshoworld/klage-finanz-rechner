@@ -779,29 +779,49 @@ class CAH_Admin_Dashboard {
         }
         
         function exportCalculation() {
-            // Create CSV data
-            const rows = [];
-            rows.push(['Feld', 'Wert', 'Beschreibung']);
+            // Create calculation data
+            const calculationData = [];
             
             document.querySelectorAll('.financial-calculator-table tbody tr').forEach(row => {
                 const cells = row.querySelectorAll('td');
                 if (cells.length >= 3) {
                     const field = cells[0].textContent.trim();
-                    const value = cells[2].querySelector('input, select') ? 
-                                 cells[2].querySelector('input, select').value : 
-                                 cells[2].textContent.trim();
+                    const valueInput = cells[2].querySelector('input, select');
+                    const value = valueInput ? valueInput.value : cells[2].textContent.trim();
                     const desc = cells[3].textContent.trim();
-                    rows.push([field, value, desc]);
+                    
+                    calculationData.push({
+                        field: field,
+                        value: value,
+                        description: desc
+                    });
                 }
             });
             
-            // Create and download CSV
-            const csvContent = rows.map(row => row.join(';')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'finanz_berechnung_' + new Date().toISOString().split('T')[0] + '.csv';
-            link.click();
+            // Send to server for proper CSV download
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = ajaxurl;
+            form.style.display = 'none';
+            
+            const actionInput = document.createElement('input');
+            actionInput.name = 'action';
+            actionInput.value = 'klage_export_calculation';
+            form.appendChild(actionInput);
+            
+            const nonceInput = document.createElement('input');
+            nonceInput.name = '_wpnonce';
+            nonceInput.value = '<?php echo wp_create_nonce('export_calculation'); ?>';
+            form.appendChild(nonceInput);
+            
+            const dataInput = document.createElement('input');
+            dataInput.name = 'calculation_data';
+            dataInput.value = JSON.stringify(calculationData);
+            form.appendChild(dataInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         }
         </script>
         
