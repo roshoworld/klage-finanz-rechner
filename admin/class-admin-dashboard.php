@@ -488,8 +488,8 @@ class CAH_Admin_Dashboard {
             <h1>📊 CSV Import - Forderungen.com</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.0.9 - Bulk-Import von Forderungen!</strong></p>
-                <p>Importieren Sie Fälle direkt von Ihrem Inkasso-Dienstleister Forderungen.com mit vollständigen Schuldnerdaten.</p>
+                <p><strong>🚀 v1.1.0 - Template Download Fix!</strong></p>
+                <p>CSV-Templates werden jetzt korrekt als Datei heruntergeladen statt im Browser angezeigt.</p>
             </div>
             
             <!-- Step-by-Step Process -->
