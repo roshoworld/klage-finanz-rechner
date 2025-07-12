@@ -79,6 +79,8 @@ class CAH_Database {
                 vat decimal(10,2) DEFAULT 87.85,
                 total decimal(10,2) DEFAULT 548.11,
                 court_fees decimal(10,2) DEFAULT 32.00,
+                custom_fields text,
+                calculation_template_id bigint(20) unsigned,
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
             ) $charset_collate",
