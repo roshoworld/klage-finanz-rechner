@@ -82,7 +82,79 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_dashboard() {
-        echo '<div class="wrap"><h1>Dashboard - v1.1.2 Works!</h1><p>Clean file structure restored.</p></div>';
+        global $wpdb;
+        
+        // Get statistics
+        $total_cases = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases") ?? 0;
+        $pending_cases = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'pending'") ?? 0;
+        $processing_cases = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'processing'") ?? 0;
+        $completed_cases = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'completed'") ?? 0;
+        $total_value = $wpdb->get_var("SELECT SUM(total_amount) FROM {$wpdb->prefix}klage_cases") ?? 0;
+        
+        ?>
+        <div class="wrap">
+            <h1><?php echo esc_html__('Klage.Click Hub Dashboard', 'court-automation-hub'); ?></h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.3 - Vollständig funktionsfähig!</strong></p>
+                <p>Alle Features wiederhergestellt: Case Management, Financial Calculator, CSV Import & Help System.</p>
+            </div>
+            
+            <div class="dashboard-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: #0073aa; font-size: 28px;"><?php echo esc_html($total_cases); ?></h3>
+                    <p style="margin: 0; color: #666;">Gesamt Fälle</p>
+                </div>
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: #ff9800; font-size: 28px;"><?php echo esc_html($pending_cases); ?></h3>
+                    <p style="margin: 0; color: #666;">Ausstehend</p>
+                </div>
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: #2196f3; font-size: 28px;"><?php echo esc_html($processing_cases); ?></h3>
+                    <p style="margin: 0; color: #666;">In Bearbeitung</p>
+                </div>
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: #4caf50; font-size: 28px;"><?php echo esc_html($completed_cases); ?></h3>
+                    <p style="margin: 0; color: #666;">Abgeschlossen</p>
+                </div>
+                <div class="stat-card" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: #0073aa; font-size: 24px;">€<?php echo esc_html(number_format($total_value, 2)); ?></h3>
+                    <p style="margin: 0; color: #666;">Gesamtwert</p>
+                </div>
+            </div>
+            
+            <div class="postbox" style="margin-top: 30px;">
+                <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">🚀 Schnellaktionen</h2>
+                <div class="inside" style="padding: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="button button-primary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
+                            <strong>📝 Neuen Fall erstellen</strong><br>
+                            <small>GDPR Fall mit €548.11 Standard</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
+                            <strong>📊 CSV Import</strong><br>
+                            <small>Bulk-Import von Forderungen.com</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-secondary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
+                            <strong>🧮 Finanzrechner</strong><br>
+                            <small>Excel-ähnliche Berechnungen</small>
+                        </a>
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-help'); ?>" class="button button-secondary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
+                            <strong>📚 Hilfe & Prozesse</strong><br>
+                            <small>Komplette Anleitungen</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="postbox" style="margin-top: 20px;">
+                <h2 class="hndle" style="padding: 15px 20px; margin: 0; background: #f9f9f9;">📊 System Status</h2>
+                <div class="inside" style="padding: 20px;">
+                    <?php $this->display_system_status(); ?>
+                </div>
+            </div>
+        </div>
+        <?php
     }
     
     public function admin_page_cases() {
