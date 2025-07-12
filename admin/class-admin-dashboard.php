@@ -483,6 +483,18 @@ class CAH_Admin_Dashboard {
     }
     
     private function handle_case_creation() {
+        global $wpdb;
+        
+        // Sanitize input data
+        $case_id = sanitize_text_field($_POST['case_id']);
+        $emails_sender = sanitize_email($_POST['emails_sender_email']);
+        $emails_user = sanitize_email($_POST['emails_user_email']);
+        $emails_subject = sanitize_text_field($_POST['emails_subject']);
+        $emails_content = sanitize_textarea_field($_POST['emails_content']);
+        $emails_date = sanitize_text_field($_POST['emails_received_date']);
+        $emails_time = sanitize_text_field($_POST['emails_received_time']);
+        
+        // Create case
         $case_result = $wpdb->insert(
             $wpdb->prefix . 'klage_cases',
             array(
