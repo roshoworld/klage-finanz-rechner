@@ -1004,6 +1004,130 @@ class CAH_Admin_Dashboard {
         }
     }
     
+    public function ajax_download_template() {
+        // Verify nonce
+        if (!wp_verify_nonce($_GET['_wpnonce'], 'download_template')) {
+            wp_die('Security check failed');
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_die('Insufficient permissions');
+        }
+        
+        // Create CSV template
+        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
+        
+        // Set headers for download
+        header('Content-Type: application/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        
+        // Add BOM for UTF-8 Excel compatibility
+        echo chr(0xEF) . chr(0xBB) . chr(0xBF);
+        
+        // CSV Header
+        $header = array(
+            'Fall-ID',
+            'Fall-Status', 
+            'Brief-Status',
+            'Mandant',
+            'Einreichungsdatum',
+            'Beweise',
+            'Firmenname',
+            'Vorname',
+            'Nachname', 
+            'Adresse',
+            'Postleitzahl',
+            'Stadt',
+            'Land',
+            'Email',
+            'Telefon',
+            'Notizen'
+        );
+        
+        echo implode(';', $header) . "\n";
+        
+        // Sample data
+        $samples = array(
+            array(
+                'SPAM-2024-0001',
+                'draft',
+                'pending', 
+                'Ihre Firma GmbH',
+                '2024-01-15',
+                'SPAM E-Mail ohne Einwilligung',
+                '',
+                'Max',
+                'Mustermann',
+                'Musterstraße 123',
+                '12345',
+                'Musterstadt',
+                'Deutschland',
+                'spam@example.com',
+                '+49123456789',
+                'Mehrfache SPAM-Emails trotz Widerspruch'
+            ),
+            array(
+                'SPAM-2024-0002',
+                'processing',
+                'sent',
+                'Ihre Firma GmbH', 
+                '2024-01-16',
+                'Newsletter ohne Double-Opt-In',
+                'Beispiel AG',
+                'Erika',
+                'Beispiel',
+                'Beispielweg 456',
+                '54321',
+                'Beispielhausen',
+                'Deutschland',
+                'newsletter@beispiel-ag.de',
+                '+49987654321',
+                'Firmennewsletter ohne Zustimmung'
+            )
+        );
+        
+        foreach ($samples as $row) {
+            echo implode(';', $row) . "\n";
+        }
+        
+        exit;
+    }
+    
+    public function ajax_export_calculation() {
+        // Verify nonce and permissions
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'export_calculation') || !current_user_can('manage_options')) {
+            wp_die('Security check failed');
+        }
+        
+        $calculation_data = json_decode(stripslashes($_POST['calculation_data']), true);
+        
+        $filename = 'finanz_berechnung_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        header('Content-Type: application/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // Add BOM
+        echo chr(0xEF) . chr(0xBB) . chr(0xBF);
+        
+        echo "Feld;Wert;Beschreibung\n";
+        
+        foreach ($calculation_data as $item) {
+            echo implode(';', array(
+                $item['field'],
+                $item['value'], 
+                $item['description']
+            )) . "\n";
+        }
+        
+        exit;
+    }
+    
     private function render_edit_case() {
         $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
         
