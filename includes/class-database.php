@@ -47,8 +47,61 @@ class CAH_Database {
                 total_amount decimal(10,2) DEFAULT 0.00,
                 court_id bigint(20) unsigned,
                 import_source varchar(50) DEFAULT NULL,
+                
+                -- Core Forderungen.com fields
+                briefe int(3) DEFAULT 1,
+                schuldner varchar(200) DEFAULT NULL,
+                beweise text DEFAULT NULL,
+                dokumente text DEFAULT NULL,
+                links_zu_dokumenten text DEFAULT NULL,
+                
+                -- Legal Processing fields
+                verfahrensart varchar(50) DEFAULT 'mahnverfahren',
+                rechtsgrundlage varchar(100) DEFAULT 'DSGVO Art. 82',
+                zeitraum_von date DEFAULT NULL,
+                zeitraum_bis date DEFAULT NULL,
+                anzahl_verstoesse int(5) DEFAULT 1,
+                schadenhoehe decimal(10,2) DEFAULT 548.11,
+                
+                -- Document Management
+                anwaltsschreiben_status varchar(20) DEFAULT 'pending',
+                mahnung_status varchar(20) DEFAULT 'pending',
+                klage_status varchar(20) DEFAULT 'pending',
+                vollstreckung_status varchar(20) DEFAULT 'pending',
+                
+                -- Court Integration (EGVP/XJustiz)
+                egvp_aktenzeichen varchar(50) DEFAULT NULL,
+                xjustiz_uuid varchar(100) DEFAULT NULL,
+                gericht_zustaendig varchar(100) DEFAULT NULL,
+                verfahrenswert decimal(10,2) DEFAULT 548.11,
+                
+                -- Timeline Management
+                deadline_antwort date DEFAULT NULL,
+                deadline_zahlung date DEFAULT NULL,
+                mahnung_datum date DEFAULT NULL,
+                klage_datum date DEFAULT NULL,
+                
+                -- Risk Assessment
+                erfolgsaussicht varchar(20) DEFAULT 'hoch',
+                risiko_bewertung varchar(20) DEFAULT 'niedrig',
+                komplexitaet varchar(20) DEFAULT 'standard',
+                
+                -- Communication
+                kommunikation_sprache varchar(5) DEFAULT 'de',
+                bevorzugter_kontakt varchar(20) DEFAULT 'email',
+                
+                -- Additional metadata
+                kategorie varchar(50) DEFAULT 'GDPR_SPAM',
+                unterkategorie varchar(50) DEFAULT 'Newsletter',
+                bearbeitungsstatus varchar(30) DEFAULT 'neu',
+                prioritaet_intern varchar(20) DEFAULT 'normal',
+                
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id)
+                PRIMARY KEY (id),
+                KEY case_id (case_id),
+                KEY case_status (case_status),
+                KEY debtor_id (debtor_id),
+                KEY submission_date (submission_date)
             ) $charset_collate",
             
             'klage_clients' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_clients (
