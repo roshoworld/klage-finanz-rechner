@@ -19,9 +19,67 @@ class CAH_Admin_Dashboard {
         register_setting('klage_click_settings', 'klage_click_n8n_key');
         register_setting('klage_click_settings', 'klage_click_debug_mode');
         
+        // Handle template download EARLY before any output
+        $this->handle_early_download();
+        
         // Add AJAX handlers for file downloads
         add_action('wp_ajax_klage_download_template', array($this, 'ajax_download_template'));
         add_action('wp_ajax_klage_export_calculation', array($this, 'ajax_export_calculation'));
+    }
+    
+    private function handle_early_download() {
+        // Check if this is our template download request
+        if (isset($_GET['page']) && $_GET['page'] === 'klage-click-import' && 
+            isset($_GET['action']) && $_GET['action'] === 'template' && 
+            isset($_GET['_wpnonce'])) {
+            
+            // Verify nonce
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'download_template')) {
+                wp_die('Security check failed');
+            }
+            
+            // Check permissions
+            if (!current_user_can('manage_options')) {
+                wp_die('Insufficient permissions');
+            }
+            
+            // Send the file download
+            $this->send_template_download();
+            exit; // Critical: Stop WordPress execution
+        }
+    }
+    
+    private function send_template_download() {
+        // Create filename
+        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
+        
+        // Get file content
+        $content = $this->get_template_content();
+        
+        // Clean any output buffer
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Prevent any caching
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        
+        // Set download headers
+        header('Content-Type: application/force-download');
+        header('Content-Type: application/octet-stream');
+        header('Content-Type: application/download');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($content));
+        
+        // Output the content
+        echo $content;
+        
+        // Stop all further processing
+        die();
     }
     
     public function add_admin_menu() {
