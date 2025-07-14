@@ -273,6 +273,76 @@ class CAH_Database {
                 validation_rules text,
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id)
+            ) $charset_collate",
+            
+            'klage_documents' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_documents (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                case_id bigint(20) unsigned NOT NULL,
+                document_type varchar(50) NOT NULL,
+                document_name varchar(200) NOT NULL,
+                document_path varchar(500),
+                document_url varchar(500),
+                document_size bigint(20) DEFAULT 0,
+                document_mime_type varchar(100),
+                document_hash varchar(64),
+                document_status varchar(20) DEFAULT 'active',
+                created_by bigint(20) unsigned,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY case_id (case_id),
+                KEY document_type (document_type)
+            ) $charset_collate",
+            
+            'klage_communications' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_communications (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                case_id bigint(20) unsigned NOT NULL,
+                communication_type varchar(50) NOT NULL,
+                direction varchar(20) NOT NULL,
+                sender_name varchar(200),
+                sender_email varchar(255),
+                recipient_name varchar(200),
+                recipient_email varchar(255),
+                subject varchar(500),
+                content text,
+                sent_date datetime NOT NULL,
+                status varchar(20) DEFAULT 'sent',
+                tracking_id varchar(100),
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY case_id (case_id),
+                KEY communication_type (communication_type),
+                KEY sent_date (sent_date)
+            ) $charset_collate",
+            
+            'klage_deadlines' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_deadlines (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                case_id bigint(20) unsigned NOT NULL,
+                deadline_type varchar(50) NOT NULL,
+                deadline_date date NOT NULL,
+                deadline_time time DEFAULT '23:59:59',
+                description text,
+                reminder_sent tinyint(1) DEFAULT 0,
+                status varchar(20) DEFAULT 'active',
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY case_id (case_id),
+                KEY deadline_date (deadline_date),
+                KEY deadline_type (deadline_type)
+            ) $charset_collate",
+            
+            'klage_case_history' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_case_history (
+                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                case_id bigint(20) unsigned NOT NULL,
+                action_type varchar(50) NOT NULL,
+                action_description text,
+                old_value text,
+                new_value text,
+                user_id bigint(20) unsigned,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY case_id (case_id),
+                KEY action_type (action_type),
+                KEY created_at (created_at)
             ) $charset_collate"
         );
         
