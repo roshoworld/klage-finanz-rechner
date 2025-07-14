@@ -1563,10 +1563,10 @@ class CAH_Admin_Dashboard {
             
             // Show results
             if ($success_count > 0) {
-                echo '<div class="notice notice-success"><p><strong>✅ Import erfolgreich!</strong> ' . $success_count . ' Fälle aus Forderungen.com wurden mit vollständiger 57-Felder Master-Data importiert.</p></div>';
+                echo '<div class="notice notice-success"><p><strong>✅ Import erfolgreich!</strong> ' . $success_count . ' Fälle aus Forderungen.com (17 Felder) wurden importiert und automatisch zu vollständigen Datensätzen erweitert.</p></div>';
                 
                 if ($is_forderungen_export) {
-                    echo '<div class="notice notice-info"><p><strong>📊 Forderungen.com v1.2.0 Enterprise Export erkannt!</strong> Alle 57 Felder wurden korrekt zugeordnet. Gesamtwert: €' . number_format($success_count * 548.11, 2) . '</p></div>';
+                    echo '<div class="notice notice-info"><p><strong>📊 Forderungen.com Export erkannt!</strong> 17 Felder importiert, automatisch zu 57 Feldern erweitert. Gesamtwert: €' . number_format($success_count * 548.11, 2) . '</p></div>';
                 }
             }
             
