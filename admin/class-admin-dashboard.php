@@ -2182,4 +2182,553 @@ class CAH_Admin_Dashboard {
             echo '</div>';
         }
     }
+    
+    private function render_edit_case_form($case_id) {
+        global $wpdb;
+        
+        // Get case data
+        $case = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_cases WHERE id = %d
+        ", $case_id));
+        
+        if (!$case) {
+            echo '<div class="notice notice-error"><p>Fall nicht gefunden.</p></div>';
+            return;
+        }
+        
+        // Get debtor data
+        $debtor = null;
+        if ($case->debtor_id) {
+            $debtor = $wpdb->get_row($wpdb->prepare("
+                SELECT * FROM {$wpdb->prefix}klage_debtors WHERE id = %d
+            ", $case->debtor_id));
+        }
+        
+        // Get financial data
+        $financial = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
+        ", $case_id));
+        
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_case'])) {
+            $this->handle_case_update($case_id, $_POST);
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1>Fall bearbeiten: <?php echo esc_html($case->case_id); ?></h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>📝 Fall-Bearbeitung</strong></p>
+                <p>Bearbeiten Sie alle Aspekte dieses Falls. Änderungen werden im Audit-Trail gespeichert.</p>
+            </div>
+            
+            <form method="post">
+                <?php wp_nonce_field('edit_case_action', 'edit_case_nonce'); ?>
+                <input type="hidden" name="save_case" value="1">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <!-- Left Column: Case Information -->
+                    <div class="postbox">
+                        <h2 class="hndle">📋 Fall-Informationen</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="case_id">Fall-ID</label></th>
+                                    <td>
+                                        <input type="text" id="case_id" name="case_id" value="<?php echo esc_attr($case->case_id); ?>" class="regular-text" readonly>
+                                        <p class="description">Fall-ID kann nicht geändert werden</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_status">Status</label></th>
+                                    <td>
+                                        <select id="case_status" name="case_status" class="regular-text">
+                                            <option value="draft" <?php selected($case->case_status, 'draft'); ?>>📝 Entwurf</option>
+                                            <option value="pending" <?php selected($case->case_status, 'pending'); ?>>⏳ Wartend</option>
+                                            <option value="processing" <?php selected($case->case_status, 'processing'); ?>>🔄 In Bearbeitung</option>
+                                            <option value="completed" <?php selected($case->case_status, 'completed'); ?>>✅ Abgeschlossen</option>
+                                            <option value="cancelled" <?php selected($case->case_status, 'cancelled'); ?>>❌ Storniert</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_priority">Priorität</label></th>
+                                    <td>
+                                        <select id="case_priority" name="case_priority" class="regular-text">
+                                            <option value="low" <?php selected($case->case_priority, 'low'); ?>>🔵 Niedrig</option>
+                                            <option value="medium" <?php selected($case->case_priority, 'medium'); ?>>🟡 Mittel</option>
+                                            <option value="high" <?php selected($case->case_priority, 'high'); ?>>🟠 Hoch</option>
+                                            <option value="urgent" <?php selected($case->case_priority, 'urgent'); ?>>🔴 Dringend</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="mandant">Mandant</label></th>
+                                    <td>
+                                        <input type="text" id="mandant" name="mandant" value="<?php echo esc_attr($case->mandant); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="submission_date">Einreichungsdatum</label></th>
+                                    <td>
+                                        <input type="date" id="submission_date" name="submission_date" value="<?php echo esc_attr($case->submission_date); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_notes">Notizen</label></th>
+                                    <td>
+                                        <textarea id="case_notes" name="case_notes" rows="4" class="large-text"><?php echo esc_textarea($case->case_notes); ?></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Debtor Information -->
+                    <div class="postbox">
+                        <h2 class="hndle">👤 Schuldner-Details</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <?php if ($debtor): ?>
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="debtors_first_name">Vorname</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_first_name" name="debtors_first_name" value="<?php echo esc_attr($debtor->debtors_first_name); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_last_name">Nachname</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_last_name" name="debtors_last_name" value="<?php echo esc_attr($debtor->debtors_last_name); ?>" class="regular-text" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_company">Firma</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_company" name="debtors_company" value="<?php echo esc_attr($debtor->debtors_company); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_email">E-Mail</label></th>
+                                    <td>
+                                        <input type="email" id="debtors_email" name="debtors_email" value="<?php echo esc_attr($debtor->debtors_email); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_address">Adresse</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_address" name="debtors_address" value="<?php echo esc_attr($debtor->debtors_address); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_postal_code">PLZ</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_postal_code" name="debtors_postal_code" value="<?php echo esc_attr($debtor->debtors_postal_code); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_city">Stadt</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_city" name="debtors_city" value="<?php echo esc_attr($debtor->debtors_city); ?>" class="regular-text">
+                                    </td>
+                                </tr>
+                            </table>
+                            <?php else: ?>
+                            <p>Keine Schuldner-Daten vorhanden.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Information -->
+                <?php if ($financial): ?>
+                <div class="postbox" style="margin-top: 20px;">
+                    <h2 class="hndle">💰 Finanzielle Details</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                            <div>
+                                <label for="damages_loss">Schadenersatz</label>
+                                <input type="number" step="0.01" id="damages_loss" name="damages_loss" value="<?php echo esc_attr($financial->damages_loss); ?>" class="regular-text">
+                            </div>
+                            <div>
+                                <label for="partner_fees">Anwaltskosten</label>
+                                <input type="number" step="0.01" id="partner_fees" name="partner_fees" value="<?php echo esc_attr($financial->partner_fees); ?>" class="regular-text">
+                            </div>
+                            <div>
+                                <label for="communication_fees">Kommunikationskosten</label>
+                                <input type="number" step="0.01" id="communication_fees" name="communication_fees" value="<?php echo esc_attr($financial->communication_fees); ?>" class="regular-text">
+                            </div>
+                            <div>
+                                <label for="court_fees">Gerichtskosten</label>
+                                <input type="number" step="0.01" id="court_fees" name="court_fees" value="<?php echo esc_attr($financial->court_fees); ?>" class="regular-text">
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 15px; background: #f0f8ff; border-radius: 5px;">
+                            <strong>Gesamtbetrag: €<?php echo number_format($financial->total, 2); ?></strong>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Actions -->
+                <div style="margin-top: 20px;">
+                    <input type="submit" class="button button-primary button-large" value="💾 Änderungen speichern">
+                    <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">🔙 Zurück zur Liste</a>
+                    <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_id); ?>" class="button">👁️ Anzeigen</a>
+                </div>
+            </form>
+        </div>
+        <?php
+    }
+    
+    private function render_view_case($case_id) {
+        global $wpdb;
+        
+        // Get case data
+        $case = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_cases WHERE id = %d
+        ", $case_id));
+        
+        if (!$case) {
+            echo '<div class="notice notice-error"><p>Fall nicht gefunden.</p></div>';
+            return;
+        }
+        
+        // Get debtor data
+        $debtor = null;
+        if ($case->debtor_id) {
+            $debtor = $wpdb->get_row($wpdb->prepare("
+                SELECT * FROM {$wpdb->prefix}klage_debtors WHERE id = %d
+            ", $case->debtor_id));
+        }
+        
+        // Get financial data
+        $financial = $wpdb->get_row($wpdb->prepare("
+            SELECT * FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
+        ", $case_id));
+        
+        ?>
+        <div class="wrap">
+            <h1>Fall anzeigen: <?php echo esc_html($case->case_id); ?></h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>👁️ Fall-Ansicht</strong></p>
+                <p>Detailansicht aller Fall-Informationen im Nur-Lese-Modus.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- Left Column: Case Information -->
+                <div class="postbox">
+                    <h2 class="hndle">📋 Fall-Informationen</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <table class="form-table">
+                            <tr>
+                                <th>Fall-ID:</th>
+                                <td><strong><?php echo esc_html($case->case_id); ?></strong></td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <td>
+                                    <?php
+                                    $status_icons = array(
+                                        'draft' => '📝 Entwurf',
+                                        'pending' => '⏳ Wartend',
+                                        'processing' => '🔄 In Bearbeitung',
+                                        'completed' => '✅ Abgeschlossen',
+                                        'cancelled' => '❌ Storniert'
+                                    );
+                                    echo $status_icons[$case->case_status] ?? $case->case_status;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Priorität:</th>
+                                <td>
+                                    <?php
+                                    $priority_icons = array(
+                                        'low' => '🔵 Niedrig',
+                                        'medium' => '🟡 Mittel',
+                                        'high' => '🟠 Hoch',
+                                        'urgent' => '🔴 Dringend'
+                                    );
+                                    echo $priority_icons[$case->case_priority] ?? $case->case_priority;
+                                    ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Mandant:</th>
+                                <td><?php echo esc_html($case->mandant); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Erstellt:</th>
+                                <td><?php echo esc_html(date('d.m.Y H:i', strtotime($case->case_creation_date))); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Einreichung:</th>
+                                <td><?php echo $case->submission_date ? esc_html(date('d.m.Y', strtotime($case->submission_date))) : 'Nicht gesetzt'; ?></td>
+                            </tr>
+                            <tr>
+                                <th>Quelle:</th>
+                                <td><?php echo esc_html($case->import_source ?: 'Manual'); ?></td>
+                            </tr>
+                        </table>
+                        
+                        <?php if ($case->case_notes): ?>
+                        <div style="margin-top: 20px;">
+                            <h4>📝 Notizen:</h4>
+                            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px;">
+                                <?php echo nl2br(esc_html($case->case_notes)); ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Debtor Information -->
+                <div class="postbox">
+                    <h2 class="hndle">👤 Schuldner-Details</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <?php if ($debtor): ?>
+                        <table class="form-table">
+                            <tr>
+                                <th>Name:</th>
+                                <td><strong><?php echo esc_html($debtor->debtors_name); ?></strong></td>
+                            </tr>
+                            <?php if ($debtor->debtors_company): ?>
+                            <tr>
+                                <th>Firma:</th>
+                                <td><?php echo esc_html($debtor->debtors_company); ?></td>
+                            </tr>
+                            <?php endif; ?>
+                            <tr>
+                                <th>Vorname:</th>
+                                <td><?php echo esc_html($debtor->debtors_first_name); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Nachname:</th>
+                                <td><?php echo esc_html($debtor->debtors_last_name); ?></td>
+                            </tr>
+                            <?php if ($debtor->debtors_email): ?>
+                            <tr>
+                                <th>E-Mail:</th>
+                                <td><a href="mailto:<?php echo esc_attr($debtor->debtors_email); ?>"><?php echo esc_html($debtor->debtors_email); ?></a></td>
+                            </tr>
+                            <?php endif; ?>
+                            <tr>
+                                <th>Adresse:</th>
+                                <td>
+                                    <?php echo esc_html($debtor->debtors_address); ?><br>
+                                    <?php echo esc_html($debtor->debtors_postal_code . ' ' . $debtor->debtors_city); ?><br>
+                                    <?php echo esc_html($debtor->debtors_country); ?>
+                                </td>
+                            </tr>
+                        </table>
+                        <?php else: ?>
+                        <p>Keine Schuldner-Daten vorhanden.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Information -->
+            <?php if ($financial): ?>
+            <div class="postbox" style="margin-top: 20px;">
+                <h2 class="hndle">💰 Finanzielle Details</h2>
+                <div class="inside" style="padding: 20px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #f8f9fa;">
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Position</th>
+                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Betrag</th>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">💸 Schadenersatz</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->damages_loss, 2); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">⚖️ Anwaltskosten</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->partner_fees, 2); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">📞 Kommunikationskosten</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->communication_fees, 2); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">🏛️ Gerichtskosten</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->court_fees, 2); ?></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 10px;">📊 MwSt</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->vat, 2); ?></strong></td>
+                        </tr>
+                        <tr style="background: #e7f3ff; font-weight: bold; font-size: 16px;">
+                            <td style="border: 1px solid #ddd; padding: 10px;">🎯 GESAMT</td>
+                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€<?php echo number_format($financial->total, 2); ?></strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Actions -->
+            <div style="margin-top: 20px;">
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=edit&id=' . $case_id); ?>" class="button button-primary">✏️ Bearbeiten</a>
+                <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">🔙 Zurück zur Liste</a>
+                <button onclick="window.print()" class="button">🖨️ Drucken</button>
+            </div>
+        </div>
+        
+        <style>
+        @media print {
+            .wrap h1:before { content: "Klage.Click Fall-Übersicht - "; }
+            .button { display: none; }
+        }
+        </style>
+        <?php
+    }
+    
+    private function handle_delete_case($case_id) {
+        global $wpdb;
+        
+        // Verify nonce for security
+        if (!wp_verify_nonce($_GET['_wpnonce'], 'delete_case_' . $case_id)) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler.</p></div>';
+            return;
+        }
+        
+        // Get case for logging
+        $case = $wpdb->get_row($wpdb->prepare("
+            SELECT case_id FROM {$wpdb->prefix}klage_cases WHERE id = %d
+        ", $case_id));
+        
+        if (!$case) {
+            echo '<div class="notice notice-error"><p>Fall nicht gefunden.</p></div>';
+            return;
+        }
+        
+        // Delete from related tables first
+        $wpdb->delete($wpdb->prefix . 'klage_financial', array('case_id' => $case_id), array('%d'));
+        $wpdb->delete($wpdb->prefix . 'klage_audit', array('case_id' => $case_id), array('%d'));
+        
+        // Delete main case
+        $result = $wpdb->delete($wpdb->prefix . 'klage_cases', array('id' => $case_id), array('%d'));
+        
+        if ($result) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall "' . esc_html($case->case_id) . '" wurde gelöscht.</p></div>';
+            
+            // Log the deletion
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_audit',
+                    array(
+                        'case_id' => 0, // Case no longer exists
+                        'action' => 'case_deleted',
+                        'details' => 'Fall "' . $case->case_id . '" wurde gelöscht',
+                        'user_id' => get_current_user_id()
+                    ),
+                    array('%d', '%s', '%s', '%d')
+                );
+            }
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Fall konnte nicht gelöscht werden.</p></div>';
+        }
+    }
+    
+    private function handle_case_update($case_id, $post_data) {
+        global $wpdb;
+        
+        // Verify nonce
+        if (!wp_verify_nonce($post_data['edit_case_nonce'], 'edit_case_action')) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler.</p></div>';
+            return;
+        }
+        
+        // Update case data
+        $case_data = array(
+            'case_status' => sanitize_text_field($post_data['case_status']),
+            'case_priority' => sanitize_text_field($post_data['case_priority']),
+            'mandant' => sanitize_text_field($post_data['mandant']),
+            'submission_date' => sanitize_text_field($post_data['submission_date']),
+            'case_notes' => sanitize_textarea_field($post_data['case_notes']),
+            'case_updated_date' => current_time('mysql')
+        );
+        
+        $result = $wpdb->update(
+            $wpdb->prefix . 'klage_cases',
+            $case_data,
+            array('id' => $case_id),
+            array('%s', '%s', '%s', '%s', '%s', '%s'),
+            array('%d')
+        );
+        
+        // Update debtor if exists
+        if (isset($post_data['debtors_first_name'])) {
+            $case = $wpdb->get_row($wpdb->prepare("SELECT debtor_id FROM {$wpdb->prefix}klage_cases WHERE id = %d", $case_id));
+            if ($case && $case->debtor_id) {
+                $debtor_data = array(
+                    'debtors_first_name' => sanitize_text_field($post_data['debtors_first_name']),
+                    'debtors_last_name' => sanitize_text_field($post_data['debtors_last_name']),
+                    'debtors_company' => sanitize_text_field($post_data['debtors_company']),
+                    'debtors_email' => sanitize_email($post_data['debtors_email']),
+                    'debtors_address' => sanitize_text_field($post_data['debtors_address']),
+                    'debtors_postal_code' => sanitize_text_field($post_data['debtors_postal_code']),
+                    'debtors_city' => sanitize_text_field($post_data['debtors_city']),
+                    'letzte_aktualisierung' => current_time('mysql')
+                );
+                
+                $wpdb->update(
+                    $wpdb->prefix . 'klage_debtors',
+                    $debtor_data,
+                    array('id' => $case->debtor_id),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'),
+                    array('%d')
+                );
+            }
+        }
+        
+        // Update financial data if exists
+        if (isset($post_data['damages_loss'])) {
+            $financial_data = array(
+                'damages_loss' => floatval($post_data['damages_loss']),
+                'partner_fees' => floatval($post_data['partner_fees']),
+                'communication_fees' => floatval($post_data['communication_fees']),
+                'court_fees' => floatval($post_data['court_fees'])
+            );
+            
+            // Recalculate totals
+            $vat = ($financial_data['partner_fees'] + $financial_data['communication_fees']) * 0.19;
+            $total = $financial_data['damages_loss'] + $financial_data['partner_fees'] + $financial_data['communication_fees'] + $financial_data['court_fees'] + $vat;
+            
+            $financial_data['vat'] = $vat;
+            $financial_data['total'] = $total;
+            
+            $wpdb->update(
+                $wpdb->prefix . 'klage_financial',
+                $financial_data,
+                array('case_id' => $case_id),
+                array('%f', '%f', '%f', '%f', '%f', '%f'),
+                array('%d')
+            );
+        }
+        
+        if ($result !== false) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall wurde aktualisiert.</p></div>';
+            
+            // Log the update
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_audit',
+                    array(
+                        'case_id' => $case_id,
+                        'action' => 'case_updated',
+                        'details' => 'Fall wurde über Admin-Interface bearbeitet',
+                        'user_id' => get_current_user_id()
+                    ),
+                    array('%d', '%s', '%s', '%d')
+                );
+            }
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Fall konnte nicht aktualisiert werden.</p></div>';
+        }
+    }
 }
