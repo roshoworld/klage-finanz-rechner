@@ -937,39 +937,53 @@ class CAH_Admin_Dashboard {
     private function render_import_page() {
         ?>
         <div class="wrap">
-            <h1>📊 CSV Import - Forderungen.com</h1>
+            <h1>📊 CSV Import - Klage.Click v1.2.0</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.6 - Forderungen.com Data Model!</strong></p>
-                <p>CSV-Template jetzt mit exakten Forderungen.com Feldnamen für nahtlose Integration.</p>
+                <p><strong>🚀 v1.2.0 - Dual Template System!</strong></p>
+                <p>Wählen Sie zwischen Forderungen.com Import (17 Felder) oder Comprehensive Internal (57 Felder)</p>
+            </div>
+            
+            <!-- Template Selection -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #0073aa;">📊 Forderungen.com Template</h3>
+                    <p>Exakte 17 Felder für Forderungen.com CSV-Exports</p>
+                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=klage-click-import&action=template&template_type=forderungen'), 'download_template'); ?>" class="button button-primary">
+                        📥 Forderungen.com Template
+                    </a>
+                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                        <strong>Felder:</strong> Fall-ID, Mandant, Schuldner-Details, Beweise, Dokumente
+                    </div>
+                </div>
+                
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="color: #0073aa;">🎯 Comprehensive Template</h3>
+                    <p>Vollständige 57 Felder für interne Datenverwaltung</p>
+                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=klage-click-import&action=template&template_type=comprehensive'), 'download_template'); ?>" class="button button-secondary">
+                        📥 Comprehensive Template
+                    </a>
+                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                        <strong>Felder:</strong> Alle 57 Felder inkl. EGVP, Timeline, Risikobewertung
+                    </div>
+                </div>
             </div>
             
             <!-- Step-by-Step Process -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
                 <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
-                    <h3 style="color: #0073aa;">1️⃣ Template herunterladen</h3>
-                    <p>Laden Sie die Forderungen.com-kompatible CSV-Vorlage herunter</p>
-                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=klage-click-import&action=template'), 'download_template'); ?>" class="button button-primary">
-                        📥 Template downloaden
-                    </a>
+                    <h3 style="color: #0073aa;">1️⃣ Template wählen</h3>
+                    <p>Wählen Sie das passende Template für Ihre Datenquelle</p>
                 </div>
                 
                 <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
                     <h3 style="color: #0073aa;">2️⃣ Daten vorbereiten</h3>
-                    <p>Füllen Sie die CSV mit Ihren Forderungsdaten aus</p>
-                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
-                        <strong>Unterstützte Felder:</strong><br>
-                        Fall-ID, Mandant, Schuldner-Details, Beträge, Dokumente
-                    </div>
+                    <p>Füllen Sie die CSV mit Ihren Daten aus</p>
                 </div>
                 
                 <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
                     <h3 style="color: #0073aa;">3️⃣ Import durchführen</h3>
                     <p>Laden Sie die CSV hoch und prüfen Sie die Vorschau</p>
-                    <div style="margin-top: 10px; color: #666; font-size: 14px;">
-                        <strong>Automatisch erstellt:</strong><br>
-                        Fälle + Schuldner + Finanzberechnungen
-                    </div>
                 </div>
             </div>
             
@@ -1025,10 +1039,11 @@ class CAH_Admin_Dashboard {
             
             <!-- Template Structure Info -->
             <div class="postbox" style="margin-top: 30px;">
-                <h2 class="hndle">📋 Forderungen.com Template-Struktur (Exakte Feldnamen)</h2>
+                <h2 class="hndle">📋 Forderungen.com Template-Struktur (17 Felder)</h2>
                 <div class="inside" style="padding: 20px;">
                     <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                         <p><strong>✅ Template verwendet exakte Forderungen.com Feldnamen für nahtlose Integration!</strong></p>
+                        <p><strong>🎯 Automatische Erweiterung:</strong> Die 17 Forderungen.com Felder werden automatisch um interne Felder erweitert</p>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -1097,6 +1112,48 @@ class CAH_Admin_Dashboard {
                                     <td style="border: 1px solid #ddd; padding: 6px;"><strong>Vorname</strong></td>
                                     <td style="border: 1px solid #ddd; padding: 6px;">Max</td>
                                 </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Nachname</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Mustermann</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Adresse</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstraße 123</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Postleitzahl</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">12345</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Stadt</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstadt</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Land</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Deutschland</td>
+                                </tr>
+                            </table>
+                            
+                            <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                                <strong>💡 Hinweis:</strong> Firmenname bleibt leer für Privatpersonen, wird ausgefüllt für Unternehmen.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <h4 style="color: #856404; margin-top: 0;">🔗 Integration mit Forderungen.com</h4>
+                        <ol>
+                            <li><strong>Exportieren:</strong> Daten aus Forderungen.com als CSV exportieren</li>
+                            <li><strong>Direkt importieren:</strong> Forderungen.com CSV direkt in Klage.Click Hub hochladen</li>
+                            <li><strong>Automatische Erweiterung:</strong> 17 Felder werden zu 57 Feldern erweitert</li>
+                            <li><strong>GDPR-Standard:</strong> Fälle werden automatisch mit €548.11 DSGVO-Berechnungen erstellt</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
                                 <tr>
                                     <td style="border: 1px solid #ddd; padding: 6px;"><strong>Nachname</strong></td>
                                     <td style="border: 1px solid #ddd; padding: 6px;">Mustermann</td>
