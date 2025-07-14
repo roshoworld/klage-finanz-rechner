@@ -1050,65 +1050,68 @@ class CAH_Admin_Dashboard {
         // Add BOM for UTF-8 Excel compatibility
         $content = chr(0xEF) . chr(0xBB) . chr(0xBF);
         
-        // CSV Header
+        // CSV Header - EXACT Forderungen.com field names
         $header = array(
-            'Fall-ID',
-            'Fall-Status', 
-            'Brief-Status',
+            'Fall-ID (CSV)',
+            'Fall-Status',
+            'Brief-Status', 
+            'Briefe',
             'Mandant',
+            'Schuldner',
             'Einreichungsdatum',
             'Beweise',
+            'Dokumente',
+            'links zu Dokumenten',
             'Firmenname',
             'Vorname',
-            'Nachname', 
+            'Nachname',
             'Adresse',
             'Postleitzahl',
             'Stadt',
-            'Land',
-            'Email',
-            'Telefon',
-            'Notizen'
+            'Land'
         );
         
         $content .= implode(';', $header) . "\n";
         
-        // Sample data
+        // Sample data matching Forderungen.com structure
         $samples = array(
             array(
-                'SPAM-2024-0001',
-                'draft',
-                'pending',
-                'Ihre Firma GmbH',
-                '2024-01-15',
-                'SPAM E-Mail ohne Einwilligung',
-                '',
-                'Max',
-                'Mustermann',
-                'Musterstraße 123',
-                '12345',
-                'Musterstadt',
-                'Deutschland',
-                'spam@example.com',
-                '+49123456789',
-                'Mehrfache SPAM-Emails trotz Widerspruch'
+                'SPAM-2024-0001',               // Fall-ID (CSV)
+                'draft',                        // Fall-Status
+                'pending',                      // Brief-Status
+                '1',                           // Briefe
+                'Ihre Firma GmbH',             // Mandant
+                'Max Mustermann',              // Schuldner
+                '2024-01-15',                  // Einreichungsdatum
+                'SPAM E-Mail ohne Einwilligung', // Beweise
+                'E-Mail Screenshot',           // Dokumente
+                'https://example.com/doc1.pdf', // links zu Dokumenten
+                '',                            // Firmenname (leer für Privatperson)
+                'Max',                         // Vorname
+                'Mustermann',                  // Nachname
+                'Musterstraße 123',            // Adresse
+                '12345',                       // Postleitzahl
+                'Musterstadt',                 // Stadt
+                'Deutschland'                  // Land
             ),
             array(
                 'SPAM-2024-0002',
                 'processing',
                 'sent',
+                '2',
                 'Ihre Firma GmbH',
+                'Beispiel AG',
                 '2024-01-16',
                 'Newsletter ohne Double-Opt-In',
-                'Beispiel AG',
+                'E-Mail Verlauf, Opt-In Nachweis',
+                'https://example.com/doc2.pdf',
+                'Beispiel AG',                 // Firmenname (für Unternehmen)
                 'Erika',
                 'Beispiel',
                 'Beispielweg 456',
                 '54321',
                 'Beispielhausen',
-                'Deutschland',
-                'newsletter@beispiel-ag.de',
-                '+49987654321',
-                'Firmennewsletter ohne Zustimmung'
+                'Deutschland'
             )
         );
         
