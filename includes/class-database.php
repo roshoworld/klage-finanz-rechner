@@ -163,17 +163,60 @@ class CAH_Database {
             
             'klage_debtors' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_debtors (
                 id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                debtors_name varchar(100) NOT NULL,
-                debtors_company varchar(100),
-                debtors_first_name varchar(50),
-                debtors_last_name varchar(50),
+                
+                -- Basic Information
+                debtors_name varchar(200) NOT NULL,
+                debtors_company varchar(200),
+                debtors_first_name varchar(100),
+                debtors_last_name varchar(100),
                 debtors_email varchar(255),
+                debtors_phone varchar(50),
+                debtors_fax varchar(50),
+                
+                -- Address Information
                 debtors_address varchar(200),
-                debtors_postal_code varchar(10),
+                debtors_street varchar(150),
+                debtors_house_number varchar(20),
+                debtors_address_addition varchar(100),
+                debtors_postal_code varchar(20),
                 debtors_city varchar(100),
-                debtors_country varchar(50) DEFAULT 'Deutschland',
+                debtors_state varchar(100),
+                debtors_country varchar(100) DEFAULT 'Deutschland',
+                
+                -- Legal Information
+                rechtsform varchar(50) DEFAULT 'natuerliche_person',
+                handelsregister_nr varchar(50),
+                ustid varchar(50),
+                geschaeftsfuehrer varchar(200),
+                
+                -- Additional Contact
+                website varchar(255),
+                social_media text,
+                
+                -- Financial Information
+                zahlungsverhalten varchar(20) DEFAULT 'unbekannt',
+                bonität varchar(20) DEFAULT 'unbekannt',
+                
+                -- Legal Status
+                insolvenz_status varchar(20) DEFAULT 'nein',
+                pfändung_status varchar(20) DEFAULT 'nein',
+                
+                -- Communication preferences
+                bevorzugte_sprache varchar(5) DEFAULT 'de',
+                kommunikation_email tinyint(1) DEFAULT 1,
+                kommunikation_post tinyint(1) DEFAULT 1,
+                
+                -- Metadata
+                datenquelle varchar(50) DEFAULT 'manual',
+                verifiziert tinyint(1) DEFAULT 0,
+                letzte_aktualisierung datetime DEFAULT NULL,
+                
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id)
+                PRIMARY KEY (id),
+                KEY debtors_name (debtors_name),
+                KEY debtors_email (debtors_email),
+                KEY debtors_postal_code (debtors_postal_code),
+                KEY debtors_city (debtors_city)
             ) $charset_collate",
             
             'klage_financial_fields' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_financial_fields (
