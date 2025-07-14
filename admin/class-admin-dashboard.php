@@ -1428,7 +1428,13 @@ class CAH_Admin_Dashboard {
             
             // Check for required Forderungen.com fields
             $required_fields = array('Fall-ID (CSV)', 'Nachname');
-            $optional_forderungen_fields = array('Fall-Status', 'Brief-Status', 'Mandant', 'Schuldner', 'Einreichungsdatum', 'Beweise');
+            $optional_forderungen_fields = array(
+                'Fall-Status', 'Brief-Status', 'Mandant', 'Schuldner', 'Einreichungsdatum', 'Beweise',
+                'Dokumente', 'Firmenname', 'Vorname', 'Adresse', 'Postleitzahl', 'Stadt', 'Land',
+                'E-Mail', 'Telefon', 'Rechtsform', 'Verfahrensart', 'Streitwert', 'Schadenersatz',
+                'Anwaltskosten', 'Gerichtskosten', 'Gesamtbetrag', 'Gericht zuständig', 'Erfolgsaussicht',
+                'Komplexität', 'Bearbeitungsstatus', 'Datenquelle'
+            );
             
             $missing_required = array();
             foreach ($required_fields as $field) {
