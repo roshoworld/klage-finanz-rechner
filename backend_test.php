@@ -104,7 +104,9 @@ class CourtAutomationHubTester {
     public function runAllTests() {
         $this->testPluginInitialization();
         $this->testDatabaseSchemaCreation();
-        $this->testCSVTemplateGeneration();
+        $this->testDualTemplateSystem();
+        $this->testForderungenTemplateGeneration();
+        $this->testComprehensiveTemplateGeneration();
         $this->testFieldMapping();
         $this->testDataValidation();
         $this->testImportProcessing();
