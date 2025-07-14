@@ -580,7 +580,7 @@ class CAH_Admin_Dashboard {
                 <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
                     <h3 style="color: #0073aa;">1️⃣ Template herunterladen</h3>
                     <p>Laden Sie die Forderungen.com-kompatible CSV-Vorlage herunter</p>
-                    <a href="<?php echo admin_url('admin.php?page=klage-click-import&action=template'); ?>" class="button button-primary">
+                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=klage-click-import&action=template'), 'download_template'); ?>" class="button button-primary">
                         📥 Template downloaden
                     </a>
                 </div>
