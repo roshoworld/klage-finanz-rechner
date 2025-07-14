@@ -933,8 +933,8 @@ class CAH_Admin_Dashboard {
             <h1>📊 CSV Import - Forderungen.com</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.5 - Template Download Fix!</strong></p>
-                <p>CSV-Templates werden jetzt über frühe WordPress-Hooks heruntergeladen (admin_init).</p>
+                <p><strong>🚀 v1.1.6 - Forderungen.com Data Model!</strong></p>
+                <p>CSV-Template jetzt mit exakten Forderungen.com Feldnamen für nahtlose Integration.</p>
             </div>
             
             <!-- Step-by-Step Process -->
