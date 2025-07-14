@@ -918,18 +918,12 @@ class CAH_Admin_Dashboard {
     public function admin_page_import() {
         global $wpdb;
         
-        // Handle template download FIRST before any output
-        if (isset($_GET['action']) && $_GET['action'] === 'template') {
-            $this->download_template_direct();
-            exit; // Important: Stop execution after download
-        }
-        
         // Handle import actions
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import_action'])) {
             $this->handle_import_action();
         }
         
-        // Render the import page
+        // Render the import page (download is handled in admin_init)
         $this->render_import_page();
     }
     
