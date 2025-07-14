@@ -481,7 +481,7 @@ class CAH_Admin_Dashboard {
             </a>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.4 - Complete Case Management!</strong></p>
+                <p><strong>🚀 v1.1.5 - Complete Case Management!</strong></p>
                 <p>Vollständige Fall-Verwaltung mit Erstellen, Bearbeiten, Filtern und Bulk-Aktionen.</p>
             </div>
             
