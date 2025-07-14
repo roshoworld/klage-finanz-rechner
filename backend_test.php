@@ -823,8 +823,11 @@ class CourtAutomationHubTester {
         $critical_tests = array(
             'Enhanced schema tables creation',
             'Verify 57-field structure in klage_cases',
-            '57-field template structure verification',
-            'Comprehensive data processing'
+            'Dual template system implementation',
+            '17 Forderungen.com fields verification',
+            '57-field comprehensive structure',
+            'Forderungen.com import processing',
+            'Automatic field extension (17 to 57)'
         );
         
         foreach ($critical_tests as $critical_test) {
