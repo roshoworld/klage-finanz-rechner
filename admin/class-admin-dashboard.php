@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Template Download Fix v1.1.5
+ * Admin Dashboard class - Forderungen.com Data Model v1.1.6
  */
 
 if (!defined('ABSPATH')) {
