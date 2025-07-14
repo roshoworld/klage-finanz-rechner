@@ -50,8 +50,15 @@ class CAH_Admin_Dashboard {
     }
     
     private function send_template_download() {
-        // Create filename
-        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
+        // Check template type
+        $template_type = $_GET['template_type'] ?? 'comprehensive';
+        
+        // Create filename based on template type
+        if ($template_type === 'forderungen') {
+            $filename = 'forderungen_com_import_template_' . date('Y-m-d') . '.csv';
+        } else {
+            $filename = 'klage_click_comprehensive_template_' . date('Y-m-d') . '.csv';
+        }
         
         // Get file content
         $content = $this->get_template_content();
