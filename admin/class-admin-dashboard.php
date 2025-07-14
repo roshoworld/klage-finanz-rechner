@@ -1137,11 +1137,12 @@ class CAH_Admin_Dashboard {
         // Add BOM for UTF-8 Excel compatibility
         $content = chr(0xEF) . chr(0xBB) . chr(0xBF);
         
-        // CSV Header - EXACT Forderungen.com field names
+        // CSV Header - Complete 57-field Forderungen.com Master Data Structure
         $header = array(
+            // Core Case Information (1-10)
             'Fall-ID (CSV)',
             'Fall-Status',
-            'Brief-Status', 
+            'Brief-Status',
             'Briefe',
             'Mandant',
             'Schuldner',
@@ -1149,20 +1150,75 @@ class CAH_Admin_Dashboard {
             'Beweise',
             'Dokumente',
             'links zu Dokumenten',
+            
+            // Debtor Personal Information (11-20)
             'Firmenname',
             'Vorname',
             'Nachname',
             'Adresse',
+            'Straße',
+            'Hausnummer',
+            'Adresszusatz',
             'Postleitzahl',
             'Stadt',
-            'Land'
+            'Land',
+            
+            // Contact Information (21-25)
+            'E-Mail',
+            'Telefon',
+            'Fax',
+            'Website',
+            'Social Media',
+            
+            // Legal Information (26-32)
+            'Rechtsform',
+            'Handelsregister-Nr',
+            'USt-ID',
+            'Geschäftsführer',
+            'Verfahrensart',
+            'Rechtsgrundlage',
+            'Kategorie',
+            
+            // Financial Information (33-42)
+            'Streitwert',
+            'Schadenersatz',
+            'Anwaltskosten',
+            'Gerichtskosten',
+            'Nebenkosten',
+            'Auslagen',
+            'Mahnkosten',
+            'Vollstreckungskosten',
+            'Zinsen',
+            'Gesamtbetrag',
+            
+            // Timeline & Deadlines (43-48)
+            'Zeitraum von',
+            'Zeitraum bis',
+            'Deadline Antwort',
+            'Deadline Zahlung',
+            'Mahnung Datum',
+            'Klage Datum',
+            
+            // Court & Legal Processing (49-53)
+            'Gericht zuständig',
+            'EGVP Aktenzeichen',
+            'XJustiz UUID',
+            'Erfolgsaussicht',
+            'Risiko Bewertung',
+            
+            // Additional Metadata (54-57)
+            'Komplexität',
+            'Priorität intern',
+            'Bearbeitungsstatus',
+            'Datenquelle'
         );
         
         $content .= implode(';', $header) . "\n";
         
-        // Sample data matching Forderungen.com structure
+        // Sample data matching complete Forderungen.com structure
         $samples = array(
             array(
+                // Core Case Information (1-10)
                 'SPAM-2024-0001',               // Fall-ID (CSV)
                 'draft',                        // Fall-Status
                 'pending',                      // Brief-Status
@@ -1173,15 +1229,70 @@ class CAH_Admin_Dashboard {
                 'SPAM E-Mail ohne Einwilligung', // Beweise
                 'E-Mail Screenshot',           // Dokumente
                 'https://example.com/doc1.pdf', // links zu Dokumenten
+                
+                // Debtor Personal Information (11-20)
                 '',                            // Firmenname (leer für Privatperson)
                 'Max',                         // Vorname
                 'Mustermann',                  // Nachname
                 'Musterstraße 123',            // Adresse
+                'Musterstraße',                // Straße
+                '123',                         // Hausnummer
+                '',                            // Adresszusatz
                 '12345',                       // Postleitzahl
                 'Musterstadt',                 // Stadt
-                'Deutschland'                  // Land
+                'Deutschland',                 // Land
+                
+                // Contact Information (21-25)
+                'max.mustermann@example.com',  // E-Mail
+                '+49 123 456789',              // Telefon
+                '',                            // Fax
+                '',                            // Website
+                '',                            // Social Media
+                
+                // Legal Information (26-32)
+                'natuerliche_person',          // Rechtsform
+                '',                            // Handelsregister-Nr
+                '',                            // USt-ID
+                '',                            // Geschäftsführer
+                'mahnverfahren',               // Verfahrensart
+                'DSGVO Art. 82',               // Rechtsgrundlage
+                'GDPR_SPAM',                   // Kategorie
+                
+                // Financial Information (33-42)
+                '548.11',                      // Streitwert
+                '350.00',                      // Schadenersatz
+                '96.90',                       // Anwaltskosten
+                '32.00',                       // Gerichtskosten
+                '13.36',                       // Nebenkosten
+                '0.00',                        // Auslagen
+                '0.00',                        // Mahnkosten
+                '0.00',                        // Vollstreckungskosten
+                '0.00',                        // Zinsen
+                '548.11',                      // Gesamtbetrag
+                
+                // Timeline & Deadlines (43-48)
+                '2024-01-01',                  // Zeitraum von
+                '2024-01-15',                  // Zeitraum bis
+                '2024-02-15',                  // Deadline Antwort
+                '2024-03-15',                  // Deadline Zahlung
+                '',                            // Mahnung Datum
+                '',                            // Klage Datum
+                
+                // Court & Legal Processing (49-53)
+                'Amtsgericht Frankfurt',       // Gericht zuständig
+                '',                            // EGVP Aktenzeichen
+                '',                            // XJustiz UUID
+                'hoch',                        // Erfolgsaussicht
+                'niedrig',                     // Risiko Bewertung
+                
+                // Additional Metadata (54-57)
+                'standard',                    // Komplexität
+                'normal',                      // Priorität intern
+                'neu',                         // Bearbeitungsstatus
+                'forderungen_com'              // Datenquelle
             ),
             array(
+                // Core Case Information (1-10)
                 'SPAM-2024-0002',
                 'processing',
                 'sent',
@@ -1192,13 +1303,67 @@ class CAH_Admin_Dashboard {
                 'Newsletter ohne Double-Opt-In',
                 'E-Mail Verlauf, Opt-In Nachweis',
                 'https://example.com/doc2.pdf',
+                
+                // Debtor Personal Information (11-20)
                 'Beispiel AG',                 // Firmenname (für Unternehmen)
                 'Erika',
                 'Beispiel',
                 'Beispielweg 456',
+                'Beispielweg',
+                '456',
+                'Hinterhaus',
                 '54321',
                 'Beispielhausen',
-                'Deutschland'
+                'Deutschland',
+                
+                // Contact Information (21-25)
+                'info@beispiel-ag.de',
+                '+49 321 654987',
+                '+49 321 654988',
+                'www.beispiel-ag.de',
+                'twitter.com/beispiel',
+                
+                // Legal Information (26-32)
+                'AG',
+                'HRB 123456',
+                'DE123456789',
+                'Erika Beispiel',
+                'klage',
+                'DSGVO Art. 82',
+                'GDPR_NEWSLETTER',
+                
+                // Financial Information (33-42)
+                '548.11',
+                '350.00',
+                '96.90',
+                '32.00',
+                '13.36',
+                '0.00',
+                '25.00',
+                '0.00',
+                '5.48',
+                '573.11',
+                
+                // Timeline & Deadlines (43-48)
+                '2024-01-01',
+                '2024-01-16',
+                '2024-02-16',
+                '2024-03-16',
+                '2024-02-01',
+                '',
+                
+                // Court & Legal Processing (49-53)
+                'Amtsgericht München',
+                '',
+                '',
+                'mittel',
+                'niedrig',
+                
+                // Additional Metadata (54-57)
+                'komplex',
+                'hoch',
+                'bearbeitung',
+                'forderungen_com'
             )
         );
         
