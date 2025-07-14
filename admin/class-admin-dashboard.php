@@ -446,22 +446,123 @@ class CAH_Admin_Dashboard {
     public function admin_page_import() {
         global $wpdb;
         
+        // Handle template download FIRST before any output
+        if (isset($_GET['action']) && $_GET['action'] === 'template') {
+            $this->download_template_direct();
+            exit; // Important: Stop execution after download
+        }
+        
         // Handle import actions
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['import_action'])) {
             $this->handle_import_action();
         }
         
-        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'upload';
-        
-        switch ($action) {
-            case 'template':
-                // Redirect to AJAX endpoint for proper file download
-                wp_redirect(admin_url('admin-ajax.php?action=klage_download_template&_wpnonce=' . wp_create_nonce('download_template')));
-                exit;
-            default:
-                $this->render_import_page();
-                break;
+        // Render the import page
+        $this->render_import_page();
+    }
+    
+    private function download_template_direct() {
+        // Verify nonce for security
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'download_template')) {
+            wp_die('Security check failed');
         }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_die('Insufficient permissions');
+        }
+        
+        // Clear any existing output
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Set download headers
+        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
+        
+        header('Content-Type: application/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Content-Length: ' . strlen($this->get_template_content()));
+        
+        // Output CSV content
+        echo $this->get_template_content();
+        exit;
+    }
+    
+    private function get_template_content() {
+        // Add BOM for UTF-8 Excel compatibility
+        $content = chr(0xEF) . chr(0xBB) . chr(0xBF);
+        
+        // CSV Header
+        $header = array(
+            'Fall-ID',
+            'Fall-Status', 
+            'Brief-Status',
+            'Mandant',
+            'Einreichungsdatum',
+            'Beweise',
+            'Firmenname',
+            'Vorname',
+            'Nachname', 
+            'Adresse',
+            'Postleitzahl',
+            'Stadt',
+            'Land',
+            'Email',
+            'Telefon',
+            'Notizen'
+        );
+        
+        $content .= implode(';', $header) . "\n";
+        
+        // Sample data
+        $samples = array(
+            array(
+                'SPAM-2024-0001',
+                'draft',
+                'pending',
+                'Ihre Firma GmbH',
+                '2024-01-15',
+                'SPAM E-Mail ohne Einwilligung',
+                '',
+                'Max',
+                'Mustermann',
+                'Musterstraße 123',
+                '12345',
+                'Musterstadt',
+                'Deutschland',
+                'spam@example.com',
+                '+49123456789',
+                'Mehrfache SPAM-Emails trotz Widerspruch'
+            ),
+            array(
+                'SPAM-2024-0002',
+                'processing',
+                'sent',
+                'Ihre Firma GmbH',
+                '2024-01-16',
+                'Newsletter ohne Double-Opt-In',
+                'Beispiel AG',
+                'Erika',
+                'Beispiel',
+                'Beispielweg 456',
+                '54321',
+                'Beispielhausen',
+                'Deutschland',
+                'newsletter@beispiel-ag.de',
+                '+49987654321',
+                'Firmennewsletter ohne Zustimmung'
+            )
+        );
+        
+        foreach ($samples as $row) {
+            $content .= implode(';', $row) . "\n";
+        }
+        
+        return $content;
     }
     
     private function render_import_page() {
