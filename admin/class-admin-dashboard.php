@@ -927,36 +927,7 @@ class CAH_Admin_Dashboard {
         $this->render_import_page();
     }
     
-    private function download_template_direct() {
-        // Verify nonce for security
-        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'download_template')) {
-            wp_die('Security check failed');
-        }
-        
-        // Check permissions
-        if (!current_user_can('manage_options')) {
-            wp_die('Insufficient permissions');
-        }
-        
-        // Clear any existing output
-        if (ob_get_level()) {
-            ob_end_clean();
-        }
-        
-        // Set download headers
-        $filename = 'forderungen_import_template_' . date('Y-m-d') . '.csv';
-        
-        header('Content-Type: application/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Content-Length: ' . strlen($this->get_template_content()));
-        
-        // Output CSV content
-        echo $this->get_template_content();
-        exit;
-    }
+    private function render_import_page() {
     
     private function get_template_content() {
         // Add BOM for UTF-8 Excel compatibility
