@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Template Fix + Case Management v1.1.4
+ * Admin Dashboard class - Template Download Fix v1.1.5
  */
 
 if (!defined('ABSPATH')) {
