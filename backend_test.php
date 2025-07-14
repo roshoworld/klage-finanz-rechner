@@ -1,7 +1,7 @@
 <?php
 /**
  * Backend Test Suite for Court Automation Hub WordPress Plugin
- * Tests the 57-field master data structure implementation
+ * Tests the dual template system (Forderungen.com 17 fields + Comprehensive 57 fields)
  */
 
 // WordPress test environment setup
@@ -9,6 +9,9 @@ if (!defined('ABSPATH')) {
     // Mock WordPress environment for testing
     define('ABSPATH', '/tmp/wordpress/');
     define('WP_DEBUG', true);
+    define('CAH_PLUGIN_URL', 'http://localhost/wp-content/plugins/court-automation-hub/');
+    define('CAH_PLUGIN_PATH', '/app/');
+    define('CAH_PLUGIN_VERSION', '1.2.0');
     
     // Mock WordPress functions
     function wp_die($message) { die($message); }
@@ -25,6 +28,27 @@ if (!defined('ABSPATH')) {
     function esc_html__($text, $domain = 'default') { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
     function date_i18n($format, $timestamp = null) { return date($format, $timestamp ?: time()); }
     function number_format_i18n($number, $decimals = 0) { return number_format($number, $decimals); }
+    function plugin_dir_url($file) { return CAH_PLUGIN_URL; }
+    function plugin_dir_path($file) { return CAH_PLUGIN_PATH; }
+    function plugin_basename($file) { return basename($file); }
+    function load_plugin_textdomain($domain, $deprecated, $plugin_rel_path) { return true; }
+    function add_action($hook, $callback, $priority = 10, $accepted_args = 1) { return true; }
+    function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $function, $icon_url = '', $position = null) { return true; }
+    function add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function) { return true; }
+    function register_setting($option_group, $option_name, $args = array()) { return true; }
+    function register_activation_hook($file, $callback) { return true; }
+    function register_deactivation_hook($file, $callback) { return true; }
+    function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) { return true; }
+    function wp_enqueue_style($handle, $src = '', $deps = array(), $ver = false, $media = 'all') { return true; }
+    function wp_localize_script($handle, $object_name, $l10n) { return true; }
+    function get_role($role) { return new MockRole(); }
+    function flush_rewrite_rules($hard = true) { return true; }
+    function is_admin() { return true; }
+    
+    // Mock Role class
+    class MockRole {
+        public function add_cap($cap) { return true; }
+    }
     
     // Mock wpdb class
     class MockWPDB {
