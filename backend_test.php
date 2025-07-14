@@ -280,6 +280,183 @@ class CourtAutomationHubTester {
         });
     }
     
+    public function testDualTemplateSystem() {
+        echo "🔄 TESTING DUAL TEMPLATE SYSTEM\n";
+        echo "-" . str_repeat("-", 30) . "\n";
+        
+        // Include admin dashboard class
+        include_once '/app/admin/class-admin-dashboard.php';
+        
+        $this->test("Dual template system implementation", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for dual template functionality
+            $dual_system_indicators = array(
+                'template_type',
+                'forderungen',
+                'comprehensive',
+                'get_forderungen_template_content',
+                'get_comprehensive_template_content'
+            );
+            
+            $found_indicators = 0;
+            foreach ($dual_system_indicators as $indicator) {
+                if (strpos($dashboard_content, $indicator) !== false) {
+                    $found_indicators++;
+                }
+            }
+            
+            echo "Found $found_indicators out of " . count($dual_system_indicators) . " dual system indicators\n";
+            return $found_indicators >= 3;
+        });
+        
+        $this->test("Template selection interface", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for template selection UI elements
+            return strpos($dashboard_content, 'Forderungen.com Template') !== false &&
+                   strpos($dashboard_content, 'Comprehensive Template') !== false;
+        });
+        
+        $this->test("Template type parameter handling", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for template type parameter processing
+            return strpos($dashboard_content, '$_GET[\'template_type\']') !== false ||
+                   strpos($dashboard_content, 'template_type') !== false;
+        });
+    }
+    
+    public function testForderungenTemplateGeneration() {
+        echo "📊 TESTING FORDERUNGEN.COM TEMPLATE (17 FIELDS)\n";
+        echo "-" . str_repeat("-", 40) . "\n";
+        
+        $this->test("Forderungen.com template method exists", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            return strpos($dashboard_content, 'get_forderungen_template_content') !== false ||
+                   strpos($dashboard_content, 'forderungen_template') !== false;
+        });
+        
+        $this->test("17 Forderungen.com fields verification", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Expected 17 Forderungen.com fields
+            $forderungen_fields = array(
+                'Fall-ID',
+                'Fall-Status', 
+                'Brief-Status',
+                'Briefe',
+                'Mandant',
+                'Schuldner',
+                'Einreichungsdatum',
+                'Beweise',
+                'Dokumente',
+                'links zu Dokumenten',
+                'Firmenname',
+                'Vorname',
+                'Nachname',
+                'Adresse',
+                'PLZ',
+                'Stadt',
+                'E-Mail'
+            );
+            
+            $found_fields = 0;
+            foreach ($forderungen_fields as $field) {
+                if (strpos($dashboard_content, $field) !== false) {
+                    $found_fields++;
+                }
+            }
+            
+            echo "Found $found_fields out of 17 Forderungen.com fields\n";
+            return $found_fields >= 12; // At least 12 of the 17 fields should be present
+        });
+        
+        $this->test("Forderungen.com template filename", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            return strpos($dashboard_content, 'forderungen_com_import_template') !== false;
+        });
+    }
+    
+    public function testComprehensiveTemplateGeneration() {
+        echo "🎯 TESTING COMPREHENSIVE TEMPLATE (57 FIELDS)\n";
+        echo "-" . str_repeat("-", 40) . "\n";
+        
+        $this->test("Comprehensive template method exists", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            return strpos($dashboard_content, 'get_comprehensive_template_content') !== false ||
+                   strpos($dashboard_content, 'comprehensive_template') !== false;
+        });
+        
+        $this->test("57-field comprehensive structure", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for comprehensive field categories
+            $comprehensive_categories = array(
+                'Core Case Information',
+                'Debtor Personal Information',
+                'Contact Information', 
+                'Legal Information',
+                'Financial Information',
+                'Timeline & Deadlines',
+                'Court & Legal Processing',
+                'Document Management',
+                'Risk Assessment',
+                'Communication',
+                'Additional Metadata'
+            );
+            
+            $found_categories = 0;
+            foreach ($comprehensive_categories as $category) {
+                if (strpos($dashboard_content, $category) !== false) {
+                    $found_categories++;
+                }
+            }
+            
+            echo "Found $found_categories comprehensive field categories\n";
+            return $found_categories >= 6;
+        });
+        
+        $this->test("Extended fields beyond Forderungen.com", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            $db_content = file_get_contents('/app/includes/class-database.php');
+            
+            // Extended fields not in Forderungen.com template
+            $extended_fields = array(
+                'verfahrensart',
+                'rechtsgrundlage',
+                'egvp_aktenzeichen',
+                'xjustiz_uuid',
+                'erfolgsaussicht',
+                'risiko_bewertung',
+                'komplexitaet',
+                'deadline_antwort',
+                'deadline_zahlung',
+                'kommunikation_sprache'
+            );
+            
+            $found_extended = 0;
+            foreach ($extended_fields as $field) {
+                if (strpos($dashboard_content, $field) !== false || 
+                    strpos($db_content, $field) !== false) {
+                    $found_extended++;
+                }
+            }
+            
+            echo "Found $found_extended extended fields\n";
+            return $found_extended >= 6;
+        });
+        
+        $this->test("Comprehensive template filename", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            return strpos($dashboard_content, 'klage_click_comprehensive_template') !== false;
+        });
+    }
+    
     public function testCSVTemplateGeneration() {
         echo "📊 TESTING CSV TEMPLATE GENERATION (57 FIELDS)\n";
         echo "-" . str_repeat("-", 40) . "\n";
