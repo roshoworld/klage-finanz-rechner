@@ -1134,10 +1134,96 @@ class CAH_Admin_Dashboard {
     }
     
     private function get_template_content() {
+        // Check if this is a Forderungen.com specific template request
+        if (isset($_GET['template_type']) && $_GET['template_type'] === 'forderungen') {
+            return $this->get_forderungen_template_content();
+        }
+        
+        // Default: Return comprehensive 57-field template for internal use
+        return $this->get_comprehensive_template_content();
+    }
+    
+    private function get_forderungen_template_content() {
         // Add BOM for UTF-8 Excel compatibility
         $content = chr(0xEF) . chr(0xBB) . chr(0xBF);
         
-        // CSV Header - Complete 57-field Forderungen.com Master Data Structure
+        // CSV Header - EXACT 17 fields from Forderungen.com system
+        $header = array(
+            'Fall-ID (CSV)',
+            'Fall-Status',
+            'Brief-Status',
+            'Briefe',
+            'Mandant',
+            'Schuldner',
+            'Einreichungsdatum',
+            'Beweise',
+            'Dokumente',
+            'links zu Dokumenten',
+            'Firmenname',
+            'Vorname',
+            'Nachname',
+            'Adresse',
+            'Postleitzahl',
+            'Stadt',
+            'Land'
+        );
+        
+        $content .= implode(';', $header) . "\n";
+        
+        // Sample data matching exact Forderungen.com structure
+        $samples = array(
+            array(
+                'SPAM-2024-0001',               // Fall-ID (CSV)
+                'draft',                        // Fall-Status
+                'pending',                      // Brief-Status
+                '1',                           // Briefe
+                'Ihre Firma GmbH',             // Mandant
+                'Max Mustermann',              // Schuldner
+                '2024-01-15',                  // Einreichungsdatum
+                'SPAM E-Mail ohne Einwilligung', // Beweise
+                'E-Mail Screenshot',           // Dokumente
+                'https://example.com/doc1.pdf', // links zu Dokumenten
+                '',                            // Firmenname (leer für Privatperson)
+                'Max',                         // Vorname
+                'Mustermann',                  // Nachname
+                'Musterstraße 123',            // Adresse
+                '12345',                       // Postleitzahl
+                'Musterstadt',                 // Stadt
+                'Deutschland'                  // Land
+            ),
+            array(
+                'SPAM-2024-0002',
+                'processing',
+                'sent',
+                '2',
+                'Ihre Firma GmbH',
+                'Beispiel AG',
+                '2024-01-16',
+                'Newsletter ohne Double-Opt-In',
+                'E-Mail Verlauf, Opt-In Nachweis',
+                'https://example.com/doc2.pdf',
+                'Beispiel AG',                 // Firmenname (für Unternehmen)
+                'Erika',
+                'Beispiel',
+                'Beispielweg 456',
+                '54321',
+                'Beispielhausen',
+                'Deutschland'
+            )
+        );
+        
+        foreach ($samples as $row) {
+            $content .= implode(';', $row) . "\n";
+        }
+        
+        return $content;
+    }
+    
+    private function get_comprehensive_template_content() {
+        // Add BOM for UTF-8 Excel compatibility
+        $content = chr(0xEF) . chr(0xBB) . chr(0xBF);
+        
+        // CSV Header - Complete 57-field Internal Master Data Structure
         $header = array(
             // Core Case Information (1-10)
             'Fall-ID (CSV)',
@@ -1215,7 +1301,7 @@ class CAH_Admin_Dashboard {
         
         $content .= implode(';', $header) . "\n";
         
-        // Sample data matching complete Forderungen.com structure
+        // Sample data matching complete structure
         $samples = array(
             array(
                 // Core Case Information (1-10)
@@ -1289,81 +1375,7 @@ class CAH_Admin_Dashboard {
                 'standard',                    // Komplexität
                 'normal',                      // Priorität intern
                 'neu',                         // Bearbeitungsstatus
-                'forderungen_com'              // Datenquelle
-            ),
-            array(
-                // Core Case Information (1-10)
-                'SPAM-2024-0002',
-                'processing',
-                'sent',
-                '2',
-                'Ihre Firma GmbH',
-                'Beispiel AG',
-                '2024-01-16',
-                'Newsletter ohne Double-Opt-In',
-                'E-Mail Verlauf, Opt-In Nachweis',
-                'https://example.com/doc2.pdf',
-                
-                // Debtor Personal Information (11-20)
-                'Beispiel AG',                 // Firmenname (für Unternehmen)
-                'Erika',
-                'Beispiel',
-                'Beispielweg 456',
-                'Beispielweg',
-                '456',
-                'Hinterhaus',
-                '54321',
-                'Beispielhausen',
-                'Deutschland',
-                
-                // Contact Information (21-25)
-                'info@beispiel-ag.de',
-                '+49 321 654987',
-                '+49 321 654988',
-                'www.beispiel-ag.de',
-                'twitter.com/beispiel',
-                
-                // Legal Information (26-32)
-                'AG',
-                'HRB 123456',
-                'DE123456789',
-                'Erika Beispiel',
-                'klage',
-                'DSGVO Art. 82',
-                'GDPR_NEWSLETTER',
-                
-                // Financial Information (33-42)
-                '548.11',
-                '350.00',
-                '96.90',
-                '32.00',
-                '13.36',
-                '0.00',
-                '25.00',
-                '0.00',
-                '5.48',
-                '573.11',
-                
-                // Timeline & Deadlines (43-48)
-                '2024-01-01',
-                '2024-01-16',
-                '2024-02-16',
-                '2024-03-16',
-                '2024-02-01',
-                '',
-                
-                // Court & Legal Processing (49-53)
-                'Amtsgericht München',
-                '',
-                '',
-                'mittel',
-                'niedrig',
-                
-                // Additional Metadata (54-57)
-                'komplex',
-                'hoch',
-                'bearbeitung',
-                'forderungen_com'
+                'internal'                     // Datenquelle
             )
         );
         
