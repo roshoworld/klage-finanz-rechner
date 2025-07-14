@@ -157,6 +157,165 @@ class CAH_Admin_Dashboard {
         <?php
     }
     
+    private function render_add_case_form() {
+        ?>
+        <div class="wrap">
+            <h1>Neuen GDPR Spam Fall erstellen</h1>
+            
+            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
+                <p><strong>🚀 v1.1.4 - Case Creation!</strong></p>
+                <p>Erstellen Sie einen neuen GDPR SPAM-Fall mit automatischer €548.11 Berechnung.</p>
+            </div>
+            
+            <form method="post">
+                <?php wp_nonce_field('create_case', 'create_case_nonce'); ?>
+                <input type="hidden" name="action" value="create_case">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    
+                    <!-- Case Information -->
+                    <div class="postbox">
+                        <h2 class="hndle">📋 Fall-Informationen</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="case_id">Fall-ID</label></th>
+                                    <td>
+                                        <input type="text" id="case_id" name="case_id" class="regular-text" 
+                                               value="SPAM-<?php echo date('Y'); ?>-<?php echo str_pad(wp_rand(1, 9999), 4, '0', STR_PAD_LEFT); ?>" required>
+                                        <p class="description">Eindeutige Fall-Kennung</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_status">Status</label></th>
+                                    <td>
+                                        <select id="case_status" name="case_status" class="regular-text">
+                                            <option value="draft">📝 Entwurf</option>
+                                            <option value="processing">⚡ In Bearbeitung</option>
+                                            <option value="completed">✅ Abgeschlossen</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_priority">Priorität</label></th>
+                                    <td>
+                                        <select id="case_priority" name="case_priority" class="regular-text">
+                                            <option value="medium">🟡 Medium</option>
+                                            <option value="high">🟠 Hoch</option>
+                                            <option value="low">🟢 Niedrig</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="case_notes">Notizen</label></th>
+                                    <td>
+                                        <textarea id="case_notes" name="case_notes" class="large-text" rows="4" 
+                                                  placeholder="Interne Notizen zum Fall..."></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Evidence -->
+                    <div class="postbox">
+                        <h2 class="hndle">📧 E-Mail Evidenz</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row"><label for="emails_sender_email">Spam-Absender</label></th>
+                                    <td>
+                                        <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text" required>
+                                        <p class="description">E-Mail-Adresse des Spam-Absenders</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="emails_user_email">Betroffene E-Mail</label></th>
+                                    <td>
+                                        <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text" required>
+                                        <p class="description">E-Mail-Adresse des Geschädigten</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="emails_received_date">Empfangsdatum</label></th>
+                                    <td>
+                                        <input type="date" id="emails_received_date" name="emails_received_date" class="regular-text" 
+                                               value="<?php echo date('Y-m-d'); ?>" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="emails_subject">E-Mail Betreff</label></th>
+                                    <td>
+                                        <input type="text" id="emails_subject" name="emails_subject" class="regular-text" 
+                                               placeholder="Betreff der Spam-E-Mail">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="emails_content">E-Mail Inhalt</label></th>
+                                    <td>
+                                        <textarea id="emails_content" name="emails_content" class="large-text" rows="6" 
+                                                  placeholder="Vollständiger Inhalt der Spam-E-Mail" required></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Calculation -->
+                <div class="postbox" style="margin-top: 20px;">
+                    <h2 class="hndle">💰 Automatische DSGVO-Berechnung</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <div style="background: #f0f8ff; padding: 15px; border-radius: 5px;">
+                            <p><strong>📊 Standard DSGVO-Beträge werden automatisch angewendet:</strong></p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0;">
+                                <div><strong>💰 Grundschaden:</strong> €350.00</div>
+                                <div><strong>⚖️ Anwaltskosten:</strong> €96.90</div>
+                                <div><strong>📞 Kommunikation:</strong> €13.36</div>
+                                <div><strong>🏛️ Gerichtskosten:</strong> €32.00</div>
+                                <div><strong>📊 MwSt (19%):</strong> €87.85</div>
+                                <div style="background: #0073aa; color: white; padding: 10px; border-radius: 5px; text-align: center;">
+                                    <strong>🎯 GESAMTSUMME: €548.11</strong>
+                                </div>
+                            </div>
+                            <p><em>Diese Beträge können nach der Erstellung im Fall-Editor angepasst werden.</em></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit -->
+                <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
+                    <p class="submit" style="margin: 0;">
+                        <input type="submit" class="button button-primary button-large" value="💾 Fall erstellen (€548.11)">
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">Abbrechen</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+        <?php
+    }
+    
+    private function handle_case_actions() {
+        if (!isset($_POST['action'])) {
+            return;
+        }
+        
+        $action = sanitize_text_field($_POST['action']);
+        
+        switch ($action) {
+            case 'create_case':
+                if (wp_verify_nonce($_POST['create_case_nonce'], 'create_case')) {
+                    $this->create_new_case();
+                }
+                break;
+            case 'update_case':
+                if (wp_verify_nonce($_POST['update_case_nonce'], 'update_case')) {
+                    $this->update_case();
+                }
+                break;
+        }
+    }
+    
     public function admin_page_cases() {
         global $wpdb;
         
