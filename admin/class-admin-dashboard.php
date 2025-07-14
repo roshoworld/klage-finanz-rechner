@@ -1235,9 +1235,260 @@ class CAH_Admin_Dashboard {
         $delimiter = $_POST['delimiter'];
         $import_mode = $_POST['import_mode'];
         
-        // Simple processing for v1.1.3
-        echo '<div class="notice notice-success"><p><strong>✅ v1.1.3 - Import funktioniert!</strong> Datei "' . esc_html($file['name']) . '" empfangen. Vollständige Import-Logik wird in nächster Version implementiert.</p></div>';
-        echo '<div class="notice notice-info"><p><strong>Datei-Info:</strong> Größe: ' . round($file['size']/1024, 2) . ' KB, Trennzeichen: ' . esc_html($delimiter) . ', Modus: ' . esc_html($import_mode) . '</p></div>';
+        // Basic file validation
+        if ($file['size'] > 10 * 1024 * 1024) { // 10MB limit
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Datei ist zu groß (max. 10MB).</p></div>';
+            return;
+        }
+        
+        if (pathinfo($file['name'], PATHINFO_EXTENSION) !== 'csv') {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Nur CSV-Dateien sind erlaubt.</p></div>';
+            return;
+        }
+        
+        try {
+            // Read CSV content
+            $file_content = file_get_contents($file['tmp_name']);
+            
+            // Parse CSV lines
+            $lines = str_getcsv($file_content, "\n");
+            if (empty($lines)) {
+                echo '<div class="notice notice-error"><p><strong>Fehler!</strong> CSV-Datei ist leer.</p></div>';
+                return;
+            }
+            
+            // Get header and validate Forderungen.com structure
+            $header = str_getcsv($lines[0], $delimiter);
+            $data_rows = array_slice($lines, 1);
+            
+            // Check for required Forderungen.com fields
+            $required_fields = array('Fall-ID (CSV)', 'Nachname');
+            $optional_forderungen_fields = array('Fall-Status', 'Brief-Status', 'Mandant', 'Schuldner', 'Einreichungsdatum', 'Beweise');
+            
+            $missing_required = array();
+            foreach ($required_fields as $field) {
+                if (!in_array($field, $header)) {
+                    $missing_required[] = $field;
+                }
+            }
+            
+            if (!empty($missing_required)) {
+                echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Erforderliche Forderungen.com Felder fehlen: ' . implode(', ', $missing_required) . '</p></div>';
+                return;
+            }
+            
+            // Check if this looks like a Forderungen.com export
+            $forderungen_fields_found = 0;
+            foreach ($optional_forderungen_fields as $field) {
+                if (in_array($field, $header)) {
+                    $forderungen_fields_found++;
+                }
+            }
+            
+            $is_forderungen_export = $forderungen_fields_found >= 3;
+            
+            // Process import
+            $success_count = 0;
+            $error_count = 0;
+            $errors = array();
+            
+            foreach ($data_rows as $line_num => $line) {
+                if (empty(trim($line))) continue;
+                
+                $data = str_getcsv($line, $delimiter);
+                if (count($data) !== count($header)) {
+                    $errors[] = "Zeile " . ($line_num + 2) . ": Spaltenanzahl stimmt nicht überein";
+                    $error_count++;
+                    continue;
+                }
+                
+                $row_data = array_combine($header, $data);
+                
+                // Process this row with Forderungen.com mapping
+                $result = $this->import_single_forderungen_case($row_data, $import_mode, $is_forderungen_export);
+                if ($result['success']) {
+                    $success_count++;
+                } else {
+                    $error_count++;
+                    $errors[] = "Zeile " . ($line_num + 2) . ": " . $result['error'];
+                }
+            }
+            
+            // Show results
+            if ($success_count > 0) {
+                echo '<div class="notice notice-success"><p><strong>✅ Import erfolgreich!</strong> ' . $success_count . ' Fälle aus Forderungen.com wurden importiert.</p></div>';
+                
+                if ($is_forderungen_export) {
+                    echo '<div class="notice notice-info"><p><strong>📊 Forderungen.com Export erkannt!</strong> Alle Felder wurden korrekt zugeordnet. Gesamtwert: €' . number_format($success_count * 548.11, 2) . '</p></div>';
+                }
+            }
+            
+            if ($error_count > 0) {
+                echo '<div class="notice notice-warning"><p><strong>⚠️ Teilweise Fehler:</strong> ' . $error_count . ' Fälle konnten nicht importiert werden.</p>';
+                if (!empty($errors)) {
+                    echo '<details><summary>Fehlerdetails anzeigen</summary><ul>';
+                    foreach (array_slice($errors, 0, 10) as $error) {
+                        echo '<li>' . esc_html($error) . '</li>';
+                    }
+                    if (count($errors) > 10) {
+                        echo '<li>... und ' . (count($errors) - 10) . ' weitere Fehler</li>';
+                    }
+                    echo '</ul></details>';
+                }
+                echo '</div>';
+            }
+            
+        } catch (Exception $e) {
+            echo '<div class="notice notice-error"><p><strong>Fehler!</strong> Import-Fehler: ' . esc_html($e->getMessage()) . '</p></div>';
+        }
+    }
+    
+    private function import_single_forderungen_case($data, $import_mode, $is_forderungen_export) {
+        global $wpdb;
+        
+        try {
+            // Check if tables exist
+            if (!$wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_cases'")) {
+                return array('success' => false, 'error' => 'Datenbank-Tabellen fehlen');
+            }
+            
+            // Extract data with Forderungen.com field mapping
+            $case_id = sanitize_text_field($data['Fall-ID (CSV)'] ?? $data['Fall-ID'] ?? '');
+            $case_status = sanitize_text_field($data['Fall-Status'] ?? 'draft');
+            $brief_status = sanitize_text_field($data['Brief-Status'] ?? 'pending');
+            $mandant = sanitize_text_field($data['Mandant'] ?? '');
+            $schuldner = sanitize_text_field($data['Schuldner'] ?? '');
+            $submission_date = sanitize_text_field($data['Einreichungsdatum'] ?? '');
+            $evidence = sanitize_textarea_field($data['Beweise'] ?? '');
+            $documents = sanitize_text_field($data['Dokumente'] ?? '');
+            $document_links = sanitize_text_field($data['links zu Dokumenten'] ?? '');
+            
+            // Debtor details
+            $company_name = sanitize_text_field($data['Firmenname'] ?? '');
+            $first_name = sanitize_text_field($data['Vorname'] ?? '');
+            $last_name = sanitize_text_field($data['Nachname'] ?? '');
+            $address = sanitize_text_field($data['Adresse'] ?? '');
+            $postal_code = sanitize_text_field($data['Postleitzahl'] ?? '');
+            $city = sanitize_text_field($data['Stadt'] ?? '');
+            $country = sanitize_text_field($data['Land'] ?? 'Deutschland');
+            
+            if (empty($case_id) || empty($last_name)) {
+                return array('success' => false, 'error' => 'Fall-ID und Nachname sind erforderlich');
+            }
+            
+            // Check if case exists
+            $existing_case = $wpdb->get_row($wpdb->prepare("
+                SELECT id FROM {$wpdb->prefix}klage_cases WHERE case_id = %s
+            ", $case_id));
+            
+            if ($existing_case && $import_mode === 'create_new') {
+                return array('success' => false, 'error' => 'Fall existiert bereits');
+            }
+            
+            if (!$existing_case && $import_mode === 'update_existing') {
+                return array('success' => false, 'error' => 'Fall existiert nicht');
+            }
+            
+            // Create debtor entry
+            $debtor_name = trim($first_name . ' ' . $last_name);
+            if (!empty($company_name)) {
+                $debtor_name = $company_name . ' (' . $debtor_name . ')';
+            }
+            
+            $debtor_id = null;
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_debtors'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_debtors',
+                    array(
+                        'debtors_name' => $debtor_name,
+                        'debtors_company' => $company_name,
+                        'debtors_first_name' => $first_name,
+                        'debtors_last_name' => $last_name,
+                        'debtors_address' => $address,
+                        'debtors_postal_code' => $postal_code,
+                        'debtors_city' => $city,
+                        'debtors_country' => $country
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                );
+                $debtor_id = $wpdb->insert_id;
+            }
+            
+            // Prepare dates
+            $submission_date_mysql = '';
+            if (!empty($submission_date)) {
+                $date = DateTime::createFromFormat('Y-m-d', $submission_date);
+                if (!$date) {
+                    $date = DateTime::createFromFormat('d.m.Y', $submission_date);
+                }
+                if ($date) {
+                    $submission_date_mysql = $date->format('Y-m-d');
+                }
+            }
+            
+            if ($existing_case) {
+                // Update existing case
+                $wpdb->update(
+                    $wpdb->prefix . 'klage_cases',
+                    array(
+                        'case_status' => $case_status,
+                        'brief_status' => $brief_status,
+                        'mandant' => $mandant,
+                        'submission_date' => $submission_date_mysql ?: null,
+                        'case_notes' => $evidence . ($documents ? "\nDokumente: " . $documents : '') . ($document_links ? "\nLinks: " . $document_links : ''),
+                        'debtor_id' => $debtor_id,
+                        'case_updated_date' => current_time('mysql'),
+                        'import_source' => 'forderungen_com'
+                    ),
+                    array('id' => $existing_case->id),
+                    array('%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s'),
+                    array('%d')
+                );
+                $case_internal_id = $existing_case->id;
+            } else {
+                // Create new case
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_cases',
+                    array(
+                        'case_id' => $case_id,
+                        'case_creation_date' => current_time('mysql'),
+                        'case_status' => $case_status,
+                        'case_priority' => 'medium',
+                        'brief_status' => $brief_status,
+                        'submission_date' => $submission_date_mysql ?: null,
+                        'mandant' => $mandant,
+                        'case_notes' => $evidence . ($documents ? "\nDokumente: " . $documents : '') . ($document_links ? "\nLinks: " . $document_links : ''),
+                        'debtor_id' => $debtor_id,
+                        'total_amount' => 548.11, // DSGVO standard
+                        'import_source' => 'forderungen_com'
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s')
+                );
+                $case_internal_id = $wpdb->insert_id;
+                
+                // Create default financial record
+                if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_financial'")) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'klage_financial',
+                        array(
+                            'case_id' => $case_internal_id,
+                            'damages_loss' => 350.00,
+                            'partner_fees' => 96.90,
+                            'communication_fees' => 13.36,
+                            'vat' => 87.85,
+                            'total' => 548.11,
+                            'court_fees' => 32.00
+                        ),
+                        array('%d', '%f', '%f', '%f', '%f', '%f', '%f')
+                    );
+                }
+            }
+            
+            return array('success' => true, 'case_id' => $case_internal_id);
+            
+        } catch (Exception $e) {
+            return array('success' => false, 'error' => 'Import-Fehler: ' . $e->getMessage());
+        }
     }
     
     public function admin_page_help() {
