@@ -158,6 +158,104 @@ class CAH_Admin_Dashboard {
     }
     
     public function admin_page_cases() {
+        global $wpdb;
+        
+        // Handle case actions
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->handle_case_actions();
+        }
+        
+        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'list';
+        $case_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        switch ($action) {
+            case 'add':
+                $this->render_add_case_form();
+                break;
+            case 'edit':
+                $this->render_edit_case_form($case_id);
+                break;
+            case 'view':
+                $this->render_view_case($case_id);
+                break;
+            case 'delete':
+                $this->handle_delete_case($case_id);
+                $this->render_cases_list();
+                break;
+            default:
+                $this->render_cases_list();
+                break;
+        }
+    }
+    
+    private function render_cases_list() {
+        global $wpdb;
+        
+        // Handle bulk actions
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action_nonce'])) {
+            if (wp_verify_nonce($_POST['bulk_action_nonce'], 'bulk_actions')) {
+                $this->handle_bulk_actions();
+            }
+        }
+        
+        // Get filter parameters
+        $status_filter = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+        
+        // Build query with filters
+        $where_conditions = array('1=1');
+        $query_params = array();
+        
+        if (!empty($status_filter)) {
+            $where_conditions[] = 'c.case_status = %s';
+            $query_params[] = $status_filter;
+        }
+        
+        if (!empty($search)) {
+            $where_conditions[] = '(c.case_id LIKE %s OR e.emails_sender_email LIKE %s)';
+            $search_term = '%' . $wpdb->esc_like($search) . '%';
+            $query_params[] = $search_term;
+            $query_params[] = $search_term;
+        }
+        
+        $where_clause = implode(' AND ', $where_conditions);
+        
+        // Check if tables exist
+        $tables_exist = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_cases'");
+        
+        if (!$tables_exist) {
+            $cases = array();
+        } else {
+            $query = "
+                SELECT 
+                    c.id,
+                    c.case_id,
+                    c.case_creation_date,
+                    c.case_status,
+                    c.case_priority,
+                    c.total_amount,
+                    e.emails_sender_email
+                FROM {$wpdb->prefix}klage_cases c
+                LEFT JOIN {$wpdb->prefix}klage_emails e ON c.id = e.case_id
+                WHERE {$where_clause}
+                ORDER BY c.case_creation_date DESC
+                LIMIT 50
+            ";
+            
+            if (!empty($query_params)) {
+                $cases = $wpdb->get_results($wpdb->prepare($query, $query_params));
+            } else {
+                $cases = $wpdb->get_results($query);
+            }
+        }
+        
+        // Get statistics
+        $total_cases = $tables_exist ? ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases") ?? 0) : 0;
+        $draft_cases = $tables_exist ? ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'draft'") ?? 0) : 0;
+        $processing_cases = $tables_exist ? ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'processing'") ?? 0) : 0;
+        $completed_cases = $tables_exist ? ($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}klage_cases WHERE case_status = 'completed'") ?? 0) : 0;
+        $total_value = $tables_exist ? ($wpdb->get_var("SELECT SUM(total_amount) FROM {$wpdb->prefix}klage_cases") ?? 0) : 0;
+        
         ?>
         <div class="wrap">
             <h1 class="wp-heading-inline">GDPR Spam Fälle</h1>
@@ -166,33 +264,190 @@ class CAH_Admin_Dashboard {
             </a>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.3 - Case Management!</strong></p>
-                <p>Vollständige Fall-Verwaltung wird in v1.1.4 implementiert. Aktuell: Basis-Funktionalität verfügbar.</p>
+                <p><strong>🚀 v1.1.4 - Complete Case Management!</strong></p>
+                <p>Vollständige Fall-Verwaltung mit Erstellen, Bearbeiten, Filtern und Bulk-Aktionen.</p>
             </div>
             
-            <div class="postbox">
-                <h2 class="hndle">📋 Case Management Features (v1.1.4)</h2>
-                <div class="inside" style="padding: 20px;">
-                    <ul>
-                        <li>✅ <strong>Fall-Erstellung</strong> mit automatischen DSGVO-Berechnungen</li>
-                        <li>✅ <strong>Fall-Übersicht</strong> mit Filtering und Suche</li>
-                        <li>✅ <strong>Fall-Bearbeitung</strong> mit Finanz-Rechner Integration</li>
-                        <li>✅ <strong>Status-Management</strong> (Draft → Processing → Completed)</li>
-                        <li>✅ <strong>Bulk-Aktionen</strong> für mehrere Fälle gleichzeitig</li>
-                        <li>✅ <strong>CSV Export</strong> für externe Bearbeitung</li>
-                    </ul>
-                    
-                    <div style="margin-top: 20px;">
-                        <h4>🎯 Verfügbare Aktionen:</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                            <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-primary">📊 CSV Import verwenden</a>
-                            <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-secondary">🧮 Finanzrechner nutzen</a>
-                            <a href="<?php echo admin_url('admin.php?page=klage-click-help'); ?>" class="button button-secondary">📚 Anleitung lesen</a>
-                        </div>
-                    </div>
+            <!-- Statistics Dashboard -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0; color: #0073aa; font-size: 24px;"><?php echo esc_html($total_cases); ?></h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Gesamt Fälle</p>
+                </div>
+                <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0; color: #ff9800; font-size: 24px;"><?php echo esc_html($draft_cases); ?></h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Entwürfe</p>
+                </div>
+                <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0; color: #2196f3; font-size: 24px;"><?php echo esc_html($processing_cases); ?></h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">In Bearbeitung</p>
+                </div>
+                <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0; color: #4caf50; font-size: 24px;"><?php echo esc_html($completed_cases); ?></h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Abgeschlossen</p>
+                </div>
+                <div style="background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center;">
+                    <h3 style="margin: 0; color: #0073aa; font-size: 20px;">€<?php echo esc_html(number_format($total_value, 2)); ?></h3>
+                    <p style="margin: 5px 0 0 0; color: #666;">Gesamtwert</p>
                 </div>
             </div>
+            
+            <?php if (!$tables_exist): ?>
+                <div class="notice notice-warning">
+                    <p><strong>⚠️ Datenbank-Tabellen fehlen!</strong> Gehen Sie zu <a href="<?php echo admin_url('admin.php?page=klage-click-settings'); ?>">Einstellungen</a> und erstellen Sie die Tabellen.</p>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Filters -->
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <form method="get" style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+                    <input type="hidden" name="page" value="klage-click-cases">
+                    
+                    <div>
+                        <label for="status" style="display: block; margin-bottom: 5px; font-weight: bold;">Status:</label>
+                        <select name="status" id="status">
+                            <option value="">Alle Status</option>
+                            <option value="draft" <?php selected($status_filter, 'draft'); ?>>📝 Entwurf</option>
+                            <option value="processing" <?php selected($status_filter, 'processing'); ?>>⚡ In Bearbeitung</option>
+                            <option value="completed" <?php selected($status_filter, 'completed'); ?>>✅ Abgeschlossen</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="search" style="display: block; margin-bottom: 5px; font-weight: bold;">Suche:</label>
+                        <input type="text" name="search" id="search" value="<?php echo esc_attr($search); ?>" 
+                               placeholder="Fall-ID oder E-Mail..." style="width: 200px;">
+                    </div>
+                    
+                    <div>
+                        <input type="submit" class="button" value="🔍 Filtern">
+                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button">🗑️ Zurücksetzen</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Cases Table -->
+            <form method="post" id="cases-filter">
+                <?php wp_nonce_field('bulk_actions', 'bulk_action_nonce'); ?>
+                
+                <div class="tablenav top">
+                    <div class="alignleft actions">
+                        <select name="bulk_action">
+                            <option value="">Bulk-Aktionen</option>
+                            <option value="status_processing">Status → In Bearbeitung</option>
+                            <option value="status_completed">Status → Abgeschlossen</option>
+                            <option value="delete">Löschen</option>
+                        </select>
+                        <input type="submit" class="button action" value="Anwenden">
+                    </div>
+                    
+                    <div class="alignright">
+                        <span style="color: #666;"><?php echo count($cases); ?> von <?php echo $total_cases; ?> Fällen</span>
+                    </div>
+                </div>
+                
+                <table class="wp-list-table widefat fixed striped">
+                    <thead>
+                        <tr>
+                            <td class="manage-column column-cb check-column">
+                                <input type="checkbox" id="cb-select-all">
+                            </td>
+                            <th>Fall-ID</th>
+                            <th>Status</th>
+                            <th>E-Mail Absender</th>
+                            <th>Betrag</th>
+                            <th>Erstellt</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($cases)): ?>
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">
+                                    <?php if (!$tables_exist): ?>
+                                        <p><strong>Datenbank-Tabellen müssen erst erstellt werden.</strong></p>
+                                        <a href="<?php echo admin_url('admin.php?page=klage-click-settings'); ?>" class="button button-primary">
+                                            🔧 Tabellen erstellen
+                                        </a>
+                                    <?php elseif (!empty($search) || !empty($status_filter)): ?>
+                                        <p>Keine Fälle gefunden, die den Filterkriterien entsprechen.</p>
+                                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button">Filter zurücksetzen</a>
+                                    <?php else: ?>
+                                        <p>Keine Fälle gefunden. Erstellen Sie Ihren ersten Fall!</p>
+                                        <div style="margin-top: 15px;">
+                                            <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="button button-primary" style="margin-right: 10px;">
+                                                📝 Neuen Fall erstellen
+                                            </a>
+                                            <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary">
+                                                📊 CSV Import verwenden
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($cases as $case): ?>
+                                <tr>
+                                    <th scope="row" class="check-column">
+                                        <input type="checkbox" name="case_ids[]" value="<?php echo esc_attr($case->id); ?>">
+                                    </th>
+                                    <td><strong><?php echo esc_html($case->case_id); ?></strong></td>
+                                    <td>
+                                        <span class="status-badge status-<?php echo esc_attr($case->case_status); ?>">
+                                            <?php 
+                                            $status_icons = array(
+                                                'draft' => '📝 Entwurf',
+                                                'processing' => '⚡ In Bearbeitung',
+                                                'completed' => '✅ Abgeschlossen'
+                                            );
+                                            echo $status_icons[$case->case_status] ?? esc_html($case->case_status); 
+                                            ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo esc_html($case->emails_sender_email ?: '-'); ?></td>
+                                    <td><strong>€<?php echo esc_html(number_format($case->total_amount, 2)); ?></strong></td>
+                                    <td><?php echo esc_html(date_i18n('d.m.Y', strtotime($case->case_creation_date))); ?></td>
+                                    <td>
+                                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case->id); ?>" 
+                                           class="button button-small" title="Fall ansehen">👁️</a>
+                                        <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=edit&id=' . $case->id); ?>" 
+                                           class="button button-small" title="Fall bearbeiten">✏️</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </form>
         </div>
+        
+        <style>
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-draft { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cce5ff; color: #004085; }
+        .status-completed { background: #d4edda; color: #155724; }
+        </style>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAll = document.getElementById('cb-select-all');
+            const checkboxes = document.querySelectorAll('input[name="case_ids[]"]');
+            
+            if (selectAll) {
+                selectAll.addEventListener('change', function() {
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = selectAll.checked;
+                    });
+                });
+            }
+        });
+        </script>
         <?php
     }
     
