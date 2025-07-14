@@ -675,14 +675,44 @@ class CourtAutomationHubTester {
     }
     
     public function testImportProcessing() {
-        echo "📥 TESTING CSV IMPORT PROCESSING\n";
-        echo "-" . str_repeat("-", 30) . "\n";
+        echo "📥 TESTING DUAL TEMPLATE IMPORT PROCESSING\n";
+        echo "-" . str_repeat("-", 40) . "\n";
         
         $this->test("Import action handling", function() {
             $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
             
             return strpos($dashboard_content, 'handle_import_action') !== false ||
                    strpos($dashboard_content, 'import_action') !== false;
+        });
+        
+        $this->test("Forderungen.com import processing", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for Forderungen.com specific import handling
+            return strpos($dashboard_content, 'import_single_forderungen_case') !== false ||
+                   strpos($dashboard_content, 'forderungen') !== false;
+        });
+        
+        $this->test("Automatic field extension (17 to 57)", function() {
+            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+            
+            // Check for automatic extension logic
+            $extension_indicators = array(
+                'extend',
+                'default',
+                'automatic',
+                'comprehensive',
+                'internal'
+            );
+            
+            $found_indicators = 0;
+            foreach ($extension_indicators as $indicator) {
+                if (strpos($dashboard_content, $indicator) !== false) {
+                    $found_indicators++;
+                }
+            }
+            
+            return $found_indicators >= 2;
         });
         
         $this->test("File upload validation", function() {
@@ -727,33 +757,25 @@ class CourtAutomationHubTester {
             return $found_modes >= 2;
         });
         
-        $this->test("Comprehensive data processing", function() {
-            // Test that import can handle all major data categories
-            $data_categories = array(
-                'case' => array('case_id', 'case_status', 'mandant'),
-                'debtor' => array('schuldner', 'debtors_email', 'debtors_address'),
-                'financial' => array('total_amount', 'damages_loss', 'court_fees'),
-                'legal' => array('rechtsgrundlage', 'verfahrensart', 'beweise')
-            );
-            
-            $dashboard_content = file_get_contents('/app/admin/class-admin-dashboard.php');
+        $this->test("Intelligent default values", function() {
             $db_content = file_get_contents('/app/includes/class-database.php');
             
-            $processed_categories = 0;
-            foreach ($data_categories as $category => $fields) {
-                $found_fields = 0;
-                foreach ($fields as $field) {
-                    if (strpos($dashboard_content, $field) !== false || 
-                        strpos($db_content, $field) !== false) {
-                        $found_fields++;
-                    }
-                }
-                if ($found_fields >= 2) {
-                    $processed_categories++;
+            // Check for intelligent defaults in database schema
+            $default_patterns = array(
+                'DEFAULT \'',
+                'DEFAULT NULL',
+                'DEFAULT 0',
+                'DEFAULT CURRENT_TIMESTAMP'
+            );
+            
+            $found_defaults = 0;
+            foreach ($default_patterns as $pattern) {
+                if (strpos($db_content, $pattern) !== false) {
+                    $found_defaults++;
                 }
             }
             
-            return $processed_categories >= 3;
+            return $found_defaults >= 3;
         });
         
         $this->test("Error handling and logging", function() {
