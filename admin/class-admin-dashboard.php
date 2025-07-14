@@ -1154,48 +1154,6 @@ class CAH_Admin_Dashboard {
         </div>
         <?php
     }
-                                <tr>
-                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Nachname</strong></td>
-                                    <td style="border: 1px solid #ddd; padding: 6px;">Mustermann</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Adresse</strong></td>
-                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstraße 123</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Postleitzahl</strong></td>
-                                    <td style="border: 1px solid #ddd; padding: 6px;">12345</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Stadt</strong></td>
-                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstadt</td>
-                                </tr>
-                                <tr>
-                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Land</strong></td>
-                                    <td style="border: 1px solid #ddd; padding: 6px;">Deutschland</td>
-                                </tr>
-                            </table>
-                            
-                            <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 15px;">
-                                <strong>💡 Hinweis:</strong> Firmenname bleibt leer für Privatpersonen, wird ausgefüllt für Unternehmen.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                        <h4 style="color: #856404; margin-top: 0;">🔗 Integration mit Forderungen.com</h4>
-                        <ol>
-                            <li><strong>Exportieren:</strong> Daten aus Forderungen.com als CSV exportieren</li>
-                            <li><strong>Anpassen:</strong> CSV-Datei bei Bedarf bearbeiten</li>
-                            <li><strong>Importieren:</strong> Direkt in Klage.Click Hub hochladen</li>
-                            <li><strong>Automatisch:</strong> Fälle werden mit €548.11 DSGVO-Berechnungen erstellt</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
-    }
     
     private function get_template_content() {
         // Check if this is a Forderungen.com specific template request
