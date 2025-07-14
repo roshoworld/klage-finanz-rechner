@@ -1517,26 +1517,80 @@ class CAH_Admin_Dashboard {
                 return array('success' => false, 'error' => 'Datenbank-Tabellen fehlen');
             }
             
-            // Extract data with Forderungen.com field mapping
+            // Extract core case data with complete field mapping
             $case_id = sanitize_text_field($data['Fall-ID (CSV)'] ?? $data['Fall-ID'] ?? '');
             $case_status = sanitize_text_field($data['Fall-Status'] ?? 'draft');
             $brief_status = sanitize_text_field($data['Brief-Status'] ?? 'pending');
+            $briefe = intval($data['Briefe'] ?? 1);
             $mandant = sanitize_text_field($data['Mandant'] ?? '');
             $schuldner = sanitize_text_field($data['Schuldner'] ?? '');
             $submission_date = sanitize_text_field($data['Einreichungsdatum'] ?? '');
-            $evidence = sanitize_textarea_field($data['Beweise'] ?? '');
-            $documents = sanitize_text_field($data['Dokumente'] ?? '');
+            $beweise = sanitize_textarea_field($data['Beweise'] ?? '');
+            $dokumente = sanitize_text_field($data['Dokumente'] ?? '');
             $document_links = sanitize_text_field($data['links zu Dokumenten'] ?? '');
             
-            // Debtor details
+            // Debtor personal information
             $company_name = sanitize_text_field($data['Firmenname'] ?? '');
             $first_name = sanitize_text_field($data['Vorname'] ?? '');
             $last_name = sanitize_text_field($data['Nachname'] ?? '');
             $address = sanitize_text_field($data['Adresse'] ?? '');
+            $street = sanitize_text_field($data['Straße'] ?? '');
+            $house_number = sanitize_text_field($data['Hausnummer'] ?? '');
+            $address_addition = sanitize_text_field($data['Adresszusatz'] ?? '');
             $postal_code = sanitize_text_field($data['Postleitzahl'] ?? '');
             $city = sanitize_text_field($data['Stadt'] ?? '');
             $country = sanitize_text_field($data['Land'] ?? 'Deutschland');
             
+            // Contact information
+            $email = sanitize_email($data['E-Mail'] ?? '');
+            $phone = sanitize_text_field($data['Telefon'] ?? '');
+            $fax = sanitize_text_field($data['Fax'] ?? '');
+            $website = sanitize_url($data['Website'] ?? '');
+            $social_media = sanitize_text_field($data['Social Media'] ?? '');
+            
+            // Legal information
+            $rechtsform = sanitize_text_field($data['Rechtsform'] ?? 'natuerliche_person');
+            $handelsregister_nr = sanitize_text_field($data['Handelsregister-Nr'] ?? '');
+            $ustid = sanitize_text_field($data['USt-ID'] ?? '');
+            $geschaeftsfuehrer = sanitize_text_field($data['Geschäftsführer'] ?? '');
+            $verfahrensart = sanitize_text_field($data['Verfahrensart'] ?? 'mahnverfahren');
+            $rechtsgrundlage = sanitize_text_field($data['Rechtsgrundlage'] ?? 'DSGVO Art. 82');
+            $kategorie = sanitize_text_field($data['Kategorie'] ?? 'GDPR_SPAM');
+            
+            // Financial information
+            $streitwert = floatval($data['Streitwert'] ?? 548.11);
+            $schadenersatz = floatval($data['Schadenersatz'] ?? 350.00);
+            $anwaltskosten = floatval($data['Anwaltskosten'] ?? 96.90);
+            $gerichtskosten = floatval($data['Gerichtskosten'] ?? 32.00);
+            $nebenkosten = floatval($data['Nebenkosten'] ?? 13.36);
+            $auslagen = floatval($data['Auslagen'] ?? 0.00);
+            $mahnkosten = floatval($data['Mahnkosten'] ?? 0.00);
+            $vollstreckungskosten = floatval($data['Vollstreckungskosten'] ?? 0.00);
+            $zinsen = floatval($data['Zinsen'] ?? 0.00);
+            $gesamtbetrag = floatval($data['Gesamtbetrag'] ?? 548.11);
+            
+            // Timeline & Deadlines
+            $zeitraum_von = sanitize_text_field($data['Zeitraum von'] ?? '');
+            $zeitraum_bis = sanitize_text_field($data['Zeitraum bis'] ?? '');
+            $deadline_antwort = sanitize_text_field($data['Deadline Antwort'] ?? '');
+            $deadline_zahlung = sanitize_text_field($data['Deadline Zahlung'] ?? '');
+            $mahnung_datum = sanitize_text_field($data['Mahnung Datum'] ?? '');
+            $klage_datum = sanitize_text_field($data['Klage Datum'] ?? '');
+            
+            // Court & Legal Processing
+            $gericht_zustaendig = sanitize_text_field($data['Gericht zuständig'] ?? '');
+            $egvp_aktenzeichen = sanitize_text_field($data['EGVP Aktenzeichen'] ?? '');
+            $xjustiz_uuid = sanitize_text_field($data['XJustiz UUID'] ?? '');
+            $erfolgsaussicht = sanitize_text_field($data['Erfolgsaussicht'] ?? 'hoch');
+            $risiko_bewertung = sanitize_text_field($data['Risiko Bewertung'] ?? 'niedrig');
+            
+            // Additional Metadata
+            $komplexitaet = sanitize_text_field($data['Komplexität'] ?? 'standard');
+            $prioritaet_intern = sanitize_text_field($data['Priorität intern'] ?? 'normal');
+            $bearbeitungsstatus = sanitize_text_field($data['Bearbeitungsstatus'] ?? 'neu');
+            $datenquelle = sanitize_text_field($data['Datenquelle'] ?? 'forderungen_com');
+            
+            // Validation
             if (empty($case_id) || empty($last_name)) {
                 return array('success' => false, 'error' => 'Fall-ID und Nachname sind erforderlich');
             }
@@ -1554,7 +1608,7 @@ class CAH_Admin_Dashboard {
                 return array('success' => false, 'error' => 'Fall existiert nicht');
             }
             
-            // Create debtor entry
+            // Create comprehensive debtor entry
             $debtor_name = trim($first_name . ' ' . $last_name);
             if (!empty($company_name)) {
                 $debtor_name = $company_name . ' (' . $debtor_name . ')';
@@ -1569,84 +1623,198 @@ class CAH_Admin_Dashboard {
                         'debtors_company' => $company_name,
                         'debtors_first_name' => $first_name,
                         'debtors_last_name' => $last_name,
+                        'debtors_email' => $email,
+                        'debtors_phone' => $phone,
+                        'debtors_fax' => $fax,
                         'debtors_address' => $address,
+                        'debtors_street' => $street,
+                        'debtors_house_number' => $house_number,
+                        'debtors_address_addition' => $address_addition,
                         'debtors_postal_code' => $postal_code,
                         'debtors_city' => $city,
-                        'debtors_country' => $country
+                        'debtors_country' => $country,
+                        'rechtsform' => $rechtsform,
+                        'handelsregister_nr' => $handelsregister_nr,
+                        'ustid' => $ustid,
+                        'geschaeftsfuehrer' => $geschaeftsfuehrer,
+                        'website' => $website,
+                        'social_media' => $social_media,
+                        'datenquelle' => $datenquelle,
+                        'letzte_aktualisierung' => current_time('mysql')
                     ),
-                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
                 );
                 $debtor_id = $wpdb->insert_id;
             }
             
             // Prepare dates
-            $submission_date_mysql = '';
-            if (!empty($submission_date)) {
-                $date = DateTime::createFromFormat('Y-m-d', $submission_date);
-                if (!$date) {
-                    $date = DateTime::createFromFormat('d.m.Y', $submission_date);
-                }
-                if ($date) {
-                    $submission_date_mysql = $date->format('Y-m-d');
-                }
-            }
+            $submission_date_mysql = $this->parse_date($submission_date);
+            $zeitraum_von_mysql = $this->parse_date($zeitraum_von);
+            $zeitraum_bis_mysql = $this->parse_date($zeitraum_bis);
+            $deadline_antwort_mysql = $this->parse_date($deadline_antwort);
+            $deadline_zahlung_mysql = $this->parse_date($deadline_zahlung);
+            $mahnung_datum_mysql = $this->parse_date($mahnung_datum);
+            $klage_datum_mysql = $this->parse_date($klage_datum);
             
             if ($existing_case) {
-                // Update existing case
+                // Update existing case with all fields
                 $wpdb->update(
                     $wpdb->prefix . 'klage_cases',
                     array(
                         'case_status' => $case_status,
                         'brief_status' => $brief_status,
+                        'briefe' => $briefe,
                         'mandant' => $mandant,
-                        'submission_date' => $submission_date_mysql ?: null,
-                        'case_notes' => $evidence . ($documents ? "\nDokumente: " . $documents : '') . ($document_links ? "\nLinks: " . $document_links : ''),
+                        'schuldner' => $schuldner,
+                        'submission_date' => $submission_date_mysql,
+                        'beweise' => $beweise,
+                        'dokumente' => $dokumente,
+                        'links_zu_dokumenten' => $document_links,
                         'debtor_id' => $debtor_id,
+                        'verfahrensart' => $verfahrensart,
+                        'rechtsgrundlage' => $rechtsgrundlage,
+                        'zeitraum_von' => $zeitraum_von_mysql,
+                        'zeitraum_bis' => $zeitraum_bis_mysql,
+                        'schadenhoehe' => $schadenersatz,
+                        'gericht_zustaendig' => $gericht_zustaendig,
+                        'egvp_aktenzeichen' => $egvp_aktenzeichen,
+                        'xjustiz_uuid' => $xjustiz_uuid,
+                        'verfahrenswert' => $streitwert,
+                        'deadline_antwort' => $deadline_antwort_mysql,
+                        'deadline_zahlung' => $deadline_zahlung_mysql,
+                        'mahnung_datum' => $mahnung_datum_mysql,
+                        'klage_datum' => $klage_datum_mysql,
+                        'erfolgsaussicht' => $erfolgsaussicht,
+                        'risiko_bewertung' => $risiko_bewertung,
+                        'komplexitaet' => $komplexitaet,
+                        'kategorie' => $kategorie,
+                        'prioritaet_intern' => $prioritaet_intern,
+                        'bearbeitungsstatus' => $bearbeitungsstatus,
+                        'total_amount' => $gesamtbetrag,
                         'case_updated_date' => current_time('mysql'),
-                        'import_source' => 'forderungen_com'
+                        'import_source' => $datenquelle
                     ),
                     array('id' => $existing_case->id),
-                    array('%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s'),
+                    array('%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%f', '%s', '%s', '%s', '%f', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s', '%s'),
                     array('%d')
                 );
                 $case_internal_id = $existing_case->id;
             } else {
-                // Create new case
+                // Create new case with all fields
                 $wpdb->insert(
                     $wpdb->prefix . 'klage_cases',
                     array(
                         'case_id' => $case_id,
                         'case_creation_date' => current_time('mysql'),
                         'case_status' => $case_status,
-                        'case_priority' => 'medium',
+                        'case_priority' => $prioritaet_intern,
                         'brief_status' => $brief_status,
-                        'submission_date' => $submission_date_mysql ?: null,
+                        'briefe' => $briefe,
                         'mandant' => $mandant,
-                        'case_notes' => $evidence . ($documents ? "\nDokumente: " . $documents : '') . ($document_links ? "\nLinks: " . $document_links : ''),
+                        'schuldner' => $schuldner,
+                        'submission_date' => $submission_date_mysql,
+                        'beweise' => $beweise,
+                        'dokumente' => $dokumente,
+                        'links_zu_dokumenten' => $document_links,
                         'debtor_id' => $debtor_id,
-                        'total_amount' => 548.11, // DSGVO standard
-                        'import_source' => 'forderungen_com'
+                        'verfahrensart' => $verfahrensart,
+                        'rechtsgrundlage' => $rechtsgrundlage,
+                        'zeitraum_von' => $zeitraum_von_mysql,
+                        'zeitraum_bis' => $zeitraum_bis_mysql,
+                        'schadenhoehe' => $schadenersatz,
+                        'gericht_zustaendig' => $gericht_zustaendig,
+                        'egvp_aktenzeichen' => $egvp_aktenzeichen,
+                        'xjustiz_uuid' => $xjustiz_uuid,
+                        'verfahrenswert' => $streitwert,
+                        'deadline_antwort' => $deadline_antwort_mysql,
+                        'deadline_zahlung' => $deadline_zahlung_mysql,
+                        'mahnung_datum' => $mahnung_datum_mysql,
+                        'klage_datum' => $klage_datum_mysql,
+                        'erfolgsaussicht' => $erfolgsaussicht,
+                        'risiko_bewertung' => $risiko_bewertung,
+                        'komplexitaet' => $komplexitaet,
+                        'kategorie' => $kategorie,
+                        'prioritaet_intern' => $prioritaet_intern,
+                        'bearbeitungsstatus' => $bearbeitungsstatus,
+                        'total_amount' => $gesamtbetrag,
+                        'import_source' => $datenquelle
                     ),
-                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s')
+                    array('%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%f', '%s', '%s', '%s', '%f', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s')
                 );
                 $case_internal_id = $wpdb->insert_id;
+            }
+            
+            // Create comprehensive financial record
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_financial'")) {
+                // Check if financial record exists
+                $existing_financial = $wpdb->get_var($wpdb->prepare("
+                    SELECT id FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
+                ", $case_internal_id));
                 
-                // Create default financial record
-                if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_financial'")) {
+                if ($existing_financial) {
+                    // Update existing financial record
+                    $wpdb->update(
+                        $wpdb->prefix . 'klage_financial',
+                        array(
+                            'streitwert' => $streitwert,
+                            'schadenersatz' => $schadenersatz,
+                            'anwaltskosten' => $anwaltskosten,
+                            'gerichtskosten' => $gerichtskosten,
+                            'nebenkosten' => $nebenkosten,
+                            'auslagen' => $auslagen,
+                            'mahnkosten' => $mahnkosten,
+                            'vollstreckungskosten' => $vollstreckungskosten,
+                            'zinsen' => $zinsen,
+                            'total' => $gesamtbetrag,
+                            'damages_loss' => $schadenersatz,
+                            'partner_fees' => $anwaltskosten,
+                            'communication_fees' => $nebenkosten,
+                            'vat' => $zinsen,
+                            'court_fees' => $gerichtskosten
+                        ),
+                        array('id' => $existing_financial),
+                        array('%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f'),
+                        array('%d')
+                    );
+                } else {
+                    // Create new financial record
                     $wpdb->insert(
                         $wpdb->prefix . 'klage_financial',
                         array(
                             'case_id' => $case_internal_id,
-                            'damages_loss' => 350.00,
-                            'partner_fees' => 96.90,
-                            'communication_fees' => 13.36,
-                            'vat' => 87.85,
-                            'total' => 548.11,
-                            'court_fees' => 32.00
+                            'streitwert' => $streitwert,
+                            'schadenersatz' => $schadenersatz,
+                            'anwaltskosten' => $anwaltskosten,
+                            'gerichtskosten' => $gerichtskosten,
+                            'nebenkosten' => $nebenkosten,
+                            'auslagen' => $auslagen,
+                            'mahnkosten' => $mahnkosten,
+                            'vollstreckungskosten' => $vollstreckungskosten,
+                            'zinsen' => $zinsen,
+                            'total' => $gesamtbetrag,
+                            'damages_loss' => $schadenersatz,
+                            'partner_fees' => $anwaltskosten,
+                            'communication_fees' => $nebenkosten,
+                            'vat' => $zinsen,
+                            'court_fees' => $gerichtskosten
                         ),
-                        array('%d', '%f', '%f', '%f', '%f', '%f', '%f')
+                        array('%d', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f')
                     );
                 }
+            }
+            
+            // Create audit trail entry
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_audit',
+                    array(
+                        'case_id' => $case_internal_id,
+                        'action' => $existing_case ? 'case_updated' : 'case_created',
+                        'details' => 'Imported from ' . $datenquelle . ' with 57-field master data',
+                        'user_id' => get_current_user_id()
+                    ),
+                    array('%d', '%s', '%s', '%d')
+                );
             }
             
             return array('success' => true, 'case_id' => $case_internal_id);
@@ -1654,6 +1822,25 @@ class CAH_Admin_Dashboard {
         } catch (Exception $e) {
             return array('success' => false, 'error' => 'Import-Fehler: ' . $e->getMessage());
         }
+    }
+    
+    private function parse_date($date_string) {
+        if (empty($date_string)) {
+            return null;
+        }
+        
+        // Try Y-m-d format first
+        $date = DateTime::createFromFormat('Y-m-d', $date_string);
+        if (!$date) {
+            // Try d.m.Y format
+            $date = DateTime::createFromFormat('d.m.Y', $date_string);
+        }
+        if (!$date) {
+            // Try d/m/Y format
+            $date = DateTime::createFromFormat('d/m/Y', $date_string);
+        }
+        
+        return $date ? $date->format('Y-m-d') : null;
     }
     
     public function admin_page_help() {
