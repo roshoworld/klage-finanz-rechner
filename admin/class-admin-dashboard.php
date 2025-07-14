@@ -1018,27 +1018,114 @@ class CAH_Admin_Dashboard {
             
             <!-- Template Structure Info -->
             <div class="postbox" style="margin-top: 30px;">
-                <h2 class="hndle">📋 Template-Struktur (Forderungen.com kompatibel)</h2>
+                <h2 class="hndle">📋 Forderungen.com Template-Struktur (Exakte Feldnamen)</h2>
                 <div class="inside" style="padding: 20px;">
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                        <p><strong>✅ Template verwendet exakte Forderungen.com Feldnamen für nahtlose Integration!</strong></p>
+                    </div>
+                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div>
-                            <h4 style="color: #0073aa;">📋 Erforderliche Felder</h4>
-                            <ul style="list-style-type: disc; margin-left: 20px;">
-                                <li><strong>Fall-ID:</strong> SPAM-2024-0001</li>
-                                <li><strong>Nachname:</strong> Pflichtfeld</li>
-                                <li><strong>Vorname:</strong> Empfohlen</li>
-                                <li><strong>Email:</strong> Für SPAM-Nachweis</li>
-                            </ul>
+                            <h4 style="color: #0073aa;">📋 Fall-Informationen (Forderungen.com)</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <tr style="background: #f8f9fa;">
+                                    <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Feldname</th>
+                                    <th style="border: 1px solid #ddd; padding: 6px;">Beispiel</th>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Fall-ID (CSV)</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">SPAM-2024-0001</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Fall-Status</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">draft, processing</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Brief-Status</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">pending, sent</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Briefe</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">1, 2, 3</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Mandant</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Ihre Firma GmbH</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Schuldner</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Max Mustermann</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Einreichungsdatum</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">2024-01-15</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Beweise</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">SPAM E-Mail ohne Einwilligung</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Dokumente</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">E-Mail Screenshot</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>links zu Dokumenten</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">https://example.com/doc.pdf</td>
+                                </tr>
+                            </table>
                         </div>
+                        
                         <div>
-                            <h4 style="color: #0073aa;">💰 Automatische Berechnung</h4>
-                            <ul style="list-style-type: disc; margin-left: 20px;">
-                                <li>Grundschaden: €350.00</li>
-                                <li>Anwaltskosten: €96.90</li>
-                                <li>Gesamtsumme: €548.11</li>
-                                <li>DSGVO-Standard pro Fall</li>
-                            </ul>
+                            <h4 style="color: #0073aa;">👤 Schuldner-Details (Forderungen.com)</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <tr style="background: #f8f9fa;">
+                                    <th style="border: 1px solid #ddd; padding: 6px; text-align: left;">Feldname</th>
+                                    <th style="border: 1px solid #ddd; padding: 6px;">Beispiel</th>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Firmenname</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Beispiel AG (oder leer)</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Vorname</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Max</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Nachname</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Mustermann</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Adresse</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstraße 123</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Postleitzahl</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">12345</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Stadt</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Musterstadt</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #ddd; padding: 6px;"><strong>Land</strong></td>
+                                    <td style="border: 1px solid #ddd; padding: 6px;">Deutschland</td>
+                                </tr>
+                            </table>
+                            
+                            <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <strong>💡 Hinweis:</strong> Firmenname bleibt leer für Privatpersonen, wird ausgefüllt für Unternehmen.
+                            </div>
                         </div>
+                    </div>
+                    
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <h4 style="color: #856404; margin-top: 0;">🔗 Integration mit Forderungen.com</h4>
+                        <ol>
+                            <li><strong>Exportieren:</strong> Daten aus Forderungen.com als CSV exportieren</li>
+                            <li><strong>Anpassen:</strong> CSV-Datei bei Bedarf bearbeiten</li>
+                            <li><strong>Importieren:</strong> Direkt in Klage.Click Hub hochladen</li>
+                            <li><strong>Automatisch:</strong> Fälle werden mit €548.11 DSGVO-Berechnungen erstellt</li>
+                        </ol>
                     </div>
                 </div>
             </div>
