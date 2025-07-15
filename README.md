@@ -139,4 +139,4 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](https://w
 
 ---
 
-**Built for the German Legal Industry** • **WordPress Plugin** • **Production Ready v1.2.3** ✅
+**Built for the German Legal Industry** • **WordPress Plugin** • **Production Ready v1.2.4** ✅
