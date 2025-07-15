@@ -194,10 +194,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hotfix v1.2.5 verification completed - all three critical issues resolved"
-    - "Complete debtor form with 9 fields working correctly"
-    - "Redesigned case creation form structure implemented"
-    - "Status and priority change action handlers working"
+    - "Hotfix v1.2.6 verification completed - both remaining critical issues resolved"
+    - "Case creation validation logic fixed for mixed debtor/email fields"
+    - "GET-based action handlers for status and priority changes implemented"
+    - "Meaningful data detection vs field presence working correctly"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
