@@ -2808,8 +2808,14 @@ class CAH_Admin_Dashboard {
                 $errors[] = 'Fall-ID ist erforderlich.';
             }
             
-            if (empty($debtors_last_name)) {
+            // Only require debtor last name if we're not doing email-based creation
+            if (!$has_email_fields && empty($debtors_last_name)) {
                 $errors[] = 'Nachname des Schuldners ist erforderlich.';
+            }
+            
+            // For email-based creation, require sender email
+            if ($has_email_fields && empty($sender_email)) {
+                $errors[] = 'Absender-E-Mail ist erforderlich.';
             }
             
             if (!empty($errors)) {
@@ -2817,6 +2823,12 @@ class CAH_Admin_Dashboard {
                 echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
                 echo 'case_id: "' . esc_html($case_id) . '" (length: ' . strlen($case_id) . ')<br>';
                 echo 'debtors_last_name: "' . esc_html($debtors_last_name) . '" (length: ' . strlen($debtors_last_name) . ')<br>';
+                echo 'has_debtor_fields: ' . ($has_debtor_fields ? 'true' : 'false') . '<br>';
+                echo 'has_email_fields: ' . ($has_email_fields ? 'true' : 'false') . '<br>';
+                if ($has_email_fields) {
+                    echo 'sender_email: "' . esc_html($sender_email) . '"<br>';
+                    echo 'user_email: "' . esc_html($user_email) . '"<br>';
+                }
                 echo 'POST data keys: ' . implode(', ', array_keys($_POST)) . '</p></div>';
                 return;
             }
