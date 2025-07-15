@@ -2956,13 +2956,13 @@ class CAH_Admin_Dashboard {
                     );
                 }
                 
-                echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall "' . esc_html($case_id) . '" wurde erfolgreich erstellt.</p></div>';
+                echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall "' . esc_html($case_id) . '" wurde erfolgreich erstellt' . ($has_email_fields ? ' (aus E-Mail)' : '') . '.</p></div>';
                 
                 // Clear form by redirecting to avoid resubmission
                 echo '<script>
                     setTimeout(function() {
                         window.location.href = "' . admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_internal_id) . '";
-                    }, 2000);
+                    }, 3000);
                 </script>';
                 
             } else {
