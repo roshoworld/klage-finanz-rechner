@@ -3403,4 +3403,106 @@ class CAH_Admin_Dashboard {
             echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Priorität konnte nicht geändert werden.</p></div>';
         }
     }
+    
+    private function handle_get_status_change($case_id) {
+        global $wpdb;
+        
+        // Get new status from URL parameter
+        $new_status = isset($_GET['new_status']) ? sanitize_text_field($_GET['new_status']) : '';
+        
+        if (!$case_id || empty($new_status)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Fall-ID oder Status fehlt.</p></div>';
+            return;
+        }
+        
+        // Validate status
+        $valid_statuses = array('draft', 'pending', 'processing', 'completed', 'cancelled');
+        if (!in_array($new_status, $valid_statuses)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Ungültiger Status.</p></div>';
+            return;
+        }
+        
+        // Update status
+        $result = $wpdb->update(
+            $wpdb->prefix . 'klage_cases',
+            array(
+                'case_status' => $new_status,
+                'case_updated_date' => current_time('mysql')
+            ),
+            array('id' => $case_id),
+            array('%s', '%s'),
+            array('%d')
+        );
+        
+        if ($result !== false) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Status wurde geändert.</p></div>';
+            
+            // Log the change
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_audit',
+                    array(
+                        'case_id' => $case_id,
+                        'action' => 'status_changed',
+                        'details' => 'Status zu "' . $new_status . '" geändert',
+                        'user_id' => get_current_user_id()
+                    ),
+                    array('%d', '%s', '%s', '%d')
+                );
+            }
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Status konnte nicht geändert werden.</p></div>';
+        }
+    }
+    
+    private function handle_get_priority_change($case_id) {
+        global $wpdb;
+        
+        // Get new priority from URL parameter
+        $new_priority = isset($_GET['new_priority']) ? sanitize_text_field($_GET['new_priority']) : '';
+        
+        if (!$case_id || empty($new_priority)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Fall-ID oder Priorität fehlt.</p></div>';
+            return;
+        }
+        
+        // Validate priority
+        $valid_priorities = array('low', 'medium', 'high', 'urgent');
+        if (!in_array($new_priority, $valid_priorities)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Ungültige Priorität.</p></div>';
+            return;
+        }
+        
+        // Update priority
+        $result = $wpdb->update(
+            $wpdb->prefix . 'klage_cases',
+            array(
+                'case_priority' => $new_priority,
+                'case_updated_date' => current_time('mysql')
+            ),
+            array('id' => $case_id),
+            array('%s', '%s'),
+            array('%d')
+        );
+        
+        if ($result !== false) {
+            echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Priorität wurde geändert.</p></div>';
+            
+            // Log the change
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'klage_audit',
+                    array(
+                        'case_id' => $case_id,
+                        'action' => 'priority_changed',
+                        'details' => 'Priorität zu "' . $new_priority . '" geändert',
+                        'user_id' => get_current_user_id()
+                    ),
+                    array('%d', '%s', '%s', '%d')
+                );
+            }
+        } else {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Priorität konnte nicht geändert werden.</p></div>';
+        }
+    }
 }
