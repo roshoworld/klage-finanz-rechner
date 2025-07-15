@@ -173,16 +173,16 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.5"
-  test_sequence: 5
+  version: "1.6"
+  test_sequence: 6
   run_ui: false
 
 test_plan:
   current_focus:
-    - "All high priority backend tasks completed successfully"
-    - "Hotfix v1.2.2 verification completed - case creation methods working"
-    - "Hotfix v1.2.3 verification completed - bulk actions and enhanced validation working"
-    - "Hotfix v1.2.4 verification completed - email-based case creation working"
+    - "Hotfix v1.2.5 verification completed - all three critical issues resolved"
+    - "Complete debtor form with 9 fields working correctly"
+    - "Redesigned case creation form structure implemented"
+    - "Status and priority change action handlers working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
