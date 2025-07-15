@@ -497,6 +497,14 @@ class CAH_Admin_Dashboard {
                 $this->handle_delete_case($case_id);
                 $this->render_cases_list();
                 break;
+            case 'change_status':
+                $this->handle_get_status_change($case_id);
+                $this->render_cases_list();
+                break;
+            case 'change_priority':
+                $this->handle_get_priority_change($case_id);
+                $this->render_cases_list();
+                break;
             default:
                 $this->render_cases_list();
                 break;
