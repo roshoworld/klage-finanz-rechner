@@ -56,52 +56,48 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.2.1 =
+* FIXED: Missing case editing methods (render_edit_case_form, render_view_case, handle_delete_case)
+* Added: Complete case editing interface with all 57 fields
+* Added: Professional case viewing with detailed information display
+* Added: Secure case deletion with audit trail
+* Added: Automatic financial calculations in editing
+* Enhanced: Full case management workflow (create → view → edit → delete)
+* Fixed: Error "Call to undefined method CAH_Admin_Dashboard::render_edit_case_form()"
+* Status: Production ready with complete case management
+
+= 1.2.0 =
+* MAJOR: 57-Field Master Data Structure implementation
+* Added: Dual Template System (Forderungen.com 17 fields + Comprehensive 57 fields)
+* Added: Automatic field extension (17→57 fields with intelligent defaults)
+* Enhanced: Complete database schema with 14 tables
+* Added: Comprehensive debtor management with legal information
+* Added: Extended financial tracking with multiple cost categories
+* Added: Document management, communications, deadlines, case history
+* Added: Enhanced CSV import/export with field mapping
+* Enhanced: Professional project documentation and testing
+* Status: Enterprise-level master data integration complete
+
+= 1.1.6 =
+* Enhanced: CSV import with exact Forderungen.com field mapping
+* Added: Template download system
+* Fixed: Headers already sent error during CSV downloads
+* Enhanced: Import processing with error handling
+* Added: Bulk case creation capabilities
+
+= 1.1.3 =
+* Added: Complete case management functionality
+* Added: Advanced case listing with filtering
+* Added: Status workflow implementation
+* Added: Financial calculator system
+* Added: Audit trail logging
+
 = 1.0.6 =
 * FIXED: Case editing page error (undefined method)
 * Added: Working case edit page with case information display
 * Enhanced: Better navigation between case list → details → edit
 * Added: Case data preview in edit mode
 * Status: Edit functionality placeholder (full editing in v1.0.7)
-
-= 1.0.5 =
-* Added: Complete case details view
-* Added: Case information display (status, priority, dates)
-* Added: Email evidence display with full content
-* Added: Financial breakdown visualization
-* Added: Working "Ansehen" buttons in case list
-* Added: Navigation between case list and details
-* Enhanced: Case management workflow foundation
-* Ready: For case editing and status management (next version)
-
-= 1.0.4 =
-* MAJOR FIX: Added direct SQL table creation (bypasses dbDelta issues)
-* Added: Detailed table status diagnostics in settings
-* Enhanced: Better error reporting and debugging
-* Fixed: Tables actually get created now (not just success message)
-* Added: Real-time table status display
-* Button: "🔧 Alle Tabellen erstellen (Direkt-SQL)"
-
-= 1.0.3 =
-* CRITICAL FIX: Removed extra closing brace causing PHP syntax error
-* Fixed: Plugin activation error in class-database.php line 146
-* Status: Plugin now activates successfully
-* Ready: For database table creation and case processing
-
-= 1.0.2 =
-* URGENT FIX: Added manual database table creation button in settings
-* Fixed: Database table creation during plugin updates
-* Added: "🔧 Alle Tabellen erstellen" button in Einstellungen
-* Fixed: klage_cases table creation issue
-* Enhanced: Better error handling for database operations
-* Ready: For immediate case processing after table fix
-
-= 1.0.1 =
-* Fixed: Database table creation (klage_cases table was missing)
-* Fixed: Case creation form now works properly
-* Added: Complete case entry workflow with €548.11 calculations
-* Added: All 6 required database tables
-* Added: Working "Neuen Fall hinzufügen" functionality
-* Fixed: Plugin activation and database setup
 
 = 1.0.0 =
 * Erste Veröffentlichung
