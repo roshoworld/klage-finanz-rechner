@@ -91,8 +91,8 @@ php tests/test_master_data.php
 ```
 
 ### Version Control
-- **Current**: v1.2.1 (Production Ready)
-- **Previous**: v1.2.0 (Master data integration)
+- **Current**: v1.2.2 (Production Ready)
+- **Previous**: v1.2.1 (Case editing fix)
 - **Next**: v1.3.0 (Enhanced editing interface)
 
 ## 🏢 Business Impact
