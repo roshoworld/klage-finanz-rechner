@@ -2875,6 +2875,15 @@ class CAH_Admin_Dashboard {
                     $debtor_id = $wpdb->insert_id;
                 } else {
                     echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Schuldner konnte nicht erstellt werden.</p></div>';
+                    echo '<div class="notice notice-error"><p><strong>Datenbank-Fehler:</strong> ' . esc_html($wpdb->last_error) . '</p></div>';
+                    echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
+                    echo 'Tabelle: ' . $wpdb->prefix . 'klage_debtors<br>';
+                    echo 'Debtor Name: "' . esc_html($debtor_name) . '"<br>';
+                    echo 'Company: "' . esc_html($debtors_company) . '"<br>';
+                    echo 'First Name: "' . esc_html($debtors_first_name) . '"<br>';
+                    echo 'Last Name: "' . esc_html($debtors_last_name) . '"<br>';
+                    echo 'Email: "' . esc_html($debtors_email) . '"<br>';
+                    echo '</p></div>';
                     return;
                 }
             }
