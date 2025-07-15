@@ -2925,4 +2925,186 @@ class CAH_Admin_Dashboard {
         // Use the existing handle_case_update method
         $this->handle_case_update($case_id, $_POST);
     }
+    
+    private function handle_bulk_actions() {
+        global $wpdb;
+        
+        if (!isset($_POST['bulk_action']) || empty($_POST['bulk_action'])) {
+            return;
+        }
+        
+        $action = sanitize_text_field($_POST['bulk_action']);
+        $case_ids = isset($_POST['case_ids']) ? array_map('intval', $_POST['case_ids']) : array();
+        
+        if (empty($case_ids)) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Keine Fälle ausgewählt.</p></div>';
+            return;
+        }
+        
+        $success_count = 0;
+        $error_count = 0;
+        
+        switch ($action) {
+            case 'delete':
+                foreach ($case_ids as $case_id) {
+                    // Get case for logging
+                    $case = $wpdb->get_row($wpdb->prepare("
+                        SELECT case_id FROM {$wpdb->prefix}klage_cases WHERE id = %d
+                    ", $case_id));
+                    
+                    if ($case) {
+                        // Delete from related tables first
+                        $wpdb->delete($wpdb->prefix . 'klage_financial', array('case_id' => $case_id), array('%d'));
+                        $wpdb->delete($wpdb->prefix . 'klage_audit', array('case_id' => $case_id), array('%d'));
+                        
+                        // Delete main case
+                        $result = $wpdb->delete($wpdb->prefix . 'klage_cases', array('id' => $case_id), array('%d'));
+                        
+                        if ($result) {
+                            $success_count++;
+                            
+                            // Log the deletion
+                            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                                $wpdb->insert(
+                                    $wpdb->prefix . 'klage_audit',
+                                    array(
+                                        'case_id' => 0,
+                                        'action' => 'case_deleted_bulk',
+                                        'details' => 'Fall "' . $case->case_id . '" wurde per Bulk-Aktion gelöscht',
+                                        'user_id' => get_current_user_id()
+                                    ),
+                                    array('%d', '%s', '%s', '%d')
+                                );
+                            }
+                        } else {
+                            $error_count++;
+                        }
+                    } else {
+                        $error_count++;
+                    }
+                }
+                
+                if ($success_count > 0) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> ' . $success_count . ' Fälle wurden gelöscht.</p></div>';
+                }
+                if ($error_count > 0) {
+                    echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> ' . $error_count . ' Fälle konnten nicht gelöscht werden.</p></div>';
+                }
+                break;
+                
+            case 'change_status':
+                if (!isset($_POST['new_status']) || empty($_POST['new_status'])) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Kein neuer Status ausgewählt.</p></div>';
+                    return;
+                }
+                
+                $new_status = sanitize_text_field($_POST['new_status']);
+                $valid_statuses = array('draft', 'pending', 'processing', 'completed', 'cancelled');
+                
+                if (!in_array($new_status, $valid_statuses)) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Ungültiger Status.</p></div>';
+                    return;
+                }
+                
+                foreach ($case_ids as $case_id) {
+                    $result = $wpdb->update(
+                        $wpdb->prefix . 'klage_cases',
+                        array(
+                            'case_status' => $new_status,
+                            'case_updated_date' => current_time('mysql')
+                        ),
+                        array('id' => $case_id),
+                        array('%s', '%s'),
+                        array('%d')
+                    );
+                    
+                    if ($result !== false) {
+                        $success_count++;
+                        
+                        // Log the status change
+                        if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                            $wpdb->insert(
+                                $wpdb->prefix . 'klage_audit',
+                                array(
+                                    'case_id' => $case_id,
+                                    'action' => 'case_status_changed_bulk',
+                                    'details' => 'Status zu "' . $new_status . '" geändert per Bulk-Aktion',
+                                    'user_id' => get_current_user_id()
+                                ),
+                                array('%d', '%s', '%s', '%d')
+                            );
+                        }
+                    } else {
+                        $error_count++;
+                    }
+                }
+                
+                if ($success_count > 0) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Status von ' . $success_count . ' Fällen wurde geändert.</p></div>';
+                }
+                if ($error_count > 0) {
+                    echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Status von ' . $error_count . ' Fällen konnte nicht geändert werden.</p></div>';
+                }
+                break;
+                
+            case 'change_priority':
+                if (!isset($_POST['new_priority']) || empty($_POST['new_priority'])) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Keine neue Priorität ausgewählt.</p></div>';
+                    return;
+                }
+                
+                $new_priority = sanitize_text_field($_POST['new_priority']);
+                $valid_priorities = array('low', 'medium', 'high', 'urgent');
+                
+                if (!in_array($new_priority, $valid_priorities)) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Ungültige Priorität.</p></div>';
+                    return;
+                }
+                
+                foreach ($case_ids as $case_id) {
+                    $result = $wpdb->update(
+                        $wpdb->prefix . 'klage_cases',
+                        array(
+                            'case_priority' => $new_priority,
+                            'case_updated_date' => current_time('mysql')
+                        ),
+                        array('id' => $case_id),
+                        array('%s', '%s'),
+                        array('%d')
+                    );
+                    
+                    if ($result !== false) {
+                        $success_count++;
+                        
+                        // Log the priority change
+                        if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                            $wpdb->insert(
+                                $wpdb->prefix . 'klage_audit',
+                                array(
+                                    'case_id' => $case_id,
+                                    'action' => 'case_priority_changed_bulk',
+                                    'details' => 'Priorität zu "' . $new_priority . '" geändert per Bulk-Aktion',
+                                    'user_id' => get_current_user_id()
+                                ),
+                                array('%d', '%s', '%s', '%d')
+                            );
+                        }
+                    } else {
+                        $error_count++;
+                    }
+                }
+                
+                if ($success_count > 0) {
+                    echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Priorität von ' . $success_count . ' Fällen wurde geändert.</p></div>';
+                }
+                if ($error_count > 0) {
+                    echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Priorität von ' . $error_count . ' Fällen konnte nicht geändert werden.</p></div>';
+                }
+                break;
+                
+            default:
+                echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Unbekannte Aktion.</p></div>';
+                break;
+        }
+    }
 }
