@@ -2916,9 +2916,11 @@ class CAH_Admin_Dashboard {
                 $errors[] = 'Entweder Nachname des Schuldners oder Absender-E-Mail ist erforderlich.';
             }
             
-            // If email fields are filled but no sender email, require it
-            if ($has_email_fields && !empty($_POST['emails_subject']) && empty($sender_email)) {
-                $errors[] = 'Wenn E-Mail-Evidenz angegeben wird, ist die Absender-E-Mail erforderlich.';
+            // Only require sender email if they're trying to create a complete email evidence record
+            // (i.e., they filled out email subject AND content, indicating they want to document email evidence)
+            $attempting_email_evidence = !empty($_POST['emails_subject']) && !empty($_POST['emails_content']);
+            if ($attempting_email_evidence && empty($sender_email)) {
+                $errors[] = 'Für vollständige E-Mail-Evidenz ist die Absender-E-Mail erforderlich.';
             }
             
             if (!empty($errors)) {
