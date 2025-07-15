@@ -98,6 +98,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: Plugin initialization successful. Main plugin file exists, constants defined (CAH_PLUGIN_URL, CAH_PLUGIN_PATH, CAH_PLUGIN_VERSION), and all required classes can be loaded including database, admin dashboard, and case manager components."
 
+  - task: "Hotfix v1.2.2 - Case Creation Methods Implementation"
+    implemented: true
+    working: true
+    file: "/app/admin/class-admin-dashboard.php"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Critical hotfix verification - need to test create_new_case() and update_case() methods that were added to resolve case creation failures"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Hotfix v1.2.2 verification successful. Both create_new_case() and update_case() methods properly implemented. Complete case creation workflow functional including: form validation & sanitization, debtor record creation with 9 comprehensive fields, case creation with 14 key fields from 57-field structure, financial record generation with GDPR standard amounts (€548.11), audit trail logging, and success feedback with redirect. Security measures (nonce verification) in place. Integration with existing handle_case_update() method working. Version updated to 1.2.2. All 7 critical tests passed (100% success rate). Case creation issue resolved."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
