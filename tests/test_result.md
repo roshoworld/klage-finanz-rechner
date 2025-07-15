@@ -135,6 +135,7 @@ metadata:
 test_plan:
   current_focus:
     - "All high priority backend tasks completed successfully"
+    - "Hotfix v1.2.2 verification completed - case creation methods working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
