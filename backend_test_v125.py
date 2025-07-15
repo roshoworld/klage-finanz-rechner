@@ -161,7 +161,7 @@ class V125Tester:
                 content = f.read()
             
             # Check for required field validation (last name should be required)
-            required_validation = 'debtors_last_name.*required' in content or 'required.*debtors_last_name' in content
+            required_validation = bool(re.search(r'debtors_last_name.*required|required.*debtors_last_name', content))
             
             return required_validation
         
