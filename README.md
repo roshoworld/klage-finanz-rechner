@@ -1,4 +1,4 @@
-# Klage.Click Court Automation Hub v1.2.4
+# Klage.Click Court Automation Hub v1.2.5
 
 **Enterprise Legal Automation Platform for German Courts**
 
