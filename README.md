@@ -91,8 +91,8 @@ php tests/test_master_data.php
 ```
 
 ### Version Control
-- **Current**: v1.2.5 (Production Ready)
-- **Previous**: v1.2.4 (Email-based case creation)
+- **Current**: v1.2.6 (Production Ready)
+- **Previous**: v1.2.5 (Complete case creation overhaul)
 - **Next**: v1.3.0 (Enhanced editing interface)
 
 ## 🏢 Business Impact
