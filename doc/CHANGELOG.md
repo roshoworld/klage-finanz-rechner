@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.2.1 (June 2025) - Bug Fix Release ✅
+
+### 🐛 Critical Bug Fixes
+- **Fixed**: Missing case editing methods causing "Call to undefined method" error
+- **Added**: Complete `render_edit_case_form()` method with full 57-field editing interface
+- **Added**: Professional `render_view_case()` method with detailed case display
+- **Added**: Secure `handle_delete_case()` method with audit trail
+- **Added**: Comprehensive `handle_case_update()` method with financial calculations
+
+### 🔧 Technical Improvements
+- Full case management workflow (create → view → edit → delete)
+- WordPress nonce security for all case operations
+- Automatic financial calculations (VAT, totals)
+- German language interface with professional styling
+- Complete audit trail logging for all case changes
+
+### 📝 User Experience
+- Professional case editing interface with all 57 fields
+- Read-only case viewing with print functionality
+- Secure case deletion with confirmation
+- Real-time financial calculations in editing
+- Success/error notifications for all operations
+
+### 🧪 Testing & Quality
+- All methods tested and working
+- Security nonce verification implemented
+- Data sanitization for all inputs
+- Error handling for edge cases
+
+---
+
 ## v1.2.0 (June 2025) - Master Data Integration Complete ✅
 
 ### 🆕 Major Features Added
