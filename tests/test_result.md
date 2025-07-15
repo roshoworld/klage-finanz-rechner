@@ -128,6 +128,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: Hotfix v1.2.3 verification successful. All 23 tests passed (100% success rate). handle_bulk_actions() method properly implemented with complete bulk operations including: bulk delete with cascade deletion from related tables, bulk status change (draft/processing/completed), bulk priority change (low/medium/high/urgent), comprehensive error handling and success feedback. Enhanced validation in create_new_case() with detailed error messages, debug information display (field lengths, POST data keys), field-specific validation messages. Audit trail logging for all bulk operations with user tracking. Security measures (nonce verification) in place. Integration with existing case list functionality preserved. Version updated to 1.2.3. Both critical issues resolved successfully."
 
+  - task: "Hotfix v1.2.4 - Email-based Case Creation Support"
+    implemented: true
+    working: true
+    file: "/app/admin/class-admin-dashboard.php"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Critical hotfix v1.2.4 verification - need to test smart form type detection, adaptive validation, and email-based case creation that were added to resolve 'Nachname des Schuldners ist erforderlich' error when creating cases from email evidence"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Hotfix v1.2.4 verification successful. All 24 tests passed (100% success rate). Smart form type detection implemented with has_debtor_fields and has_email_fields logic. Adaptive data processing handles both manual and email-based case creation appropriately. Enhanced validation logic provides different requirements for each form type (debtor last name for manual, sender email for email-based). Email integration extracts debtor info from sender email and preserves complete email details in case notes. Backward compatibility maintained for manual forms and CSV import. Enhanced debug information shows form type detection and validation context. Email-based success messages differentiated with '(aus E-Mail)' indicator. Version updated to 1.2.4. Critical email-based case creation issue resolved successfully."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
