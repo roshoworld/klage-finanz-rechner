@@ -56,6 +56,16 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.2.4 =
+* HOTFIX: Fixed case creation to support both manual and email-based case creation
+* Added: Support for email-based case creation from spam emails
+* Enhanced: Automatic debtor extraction from email sender information
+* Fixed: Validation now adapts to different case creation types
+* Enhanced: Better debug information showing form type detection
+* Added: Email details automatically added to case notes for email-based cases
+* Fixed: Cases can now be created from email evidence without manual debtor entry
+* Status: Complete case creation workflow for both manual and email-based cases
+
 = 1.2.3 =
 * HOTFIX: Added missing handle_bulk_actions() method for case list operations
 * HOTFIX: Enhanced case creation validation with detailed error messages
