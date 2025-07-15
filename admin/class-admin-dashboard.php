@@ -2749,16 +2749,57 @@ class CAH_Admin_Dashboard {
             $submission_date = sanitize_text_field($_POST['submission_date']);
             $case_notes = sanitize_textarea_field($_POST['case_notes']);
             
-            // Debtor information
-            $debtors_first_name = sanitize_text_field($_POST['debtors_first_name']);
-            $debtors_last_name = sanitize_text_field($_POST['debtors_last_name']);
-            $debtors_company = sanitize_text_field($_POST['debtors_company']);
-            $debtors_email = sanitize_email($_POST['debtors_email']);
-            $debtors_phone = sanitize_text_field($_POST['debtors_phone']);
-            $debtors_address = sanitize_text_field($_POST['debtors_address']);
-            $debtors_postal_code = sanitize_text_field($_POST['debtors_postal_code']);
-            $debtors_city = sanitize_text_field($_POST['debtors_city']);
-            $debtors_country = sanitize_text_field($_POST['debtors_country']) ?: 'Deutschland';
+            // Debtor information (check if we have debtor fields or email fields)
+            $has_debtor_fields = isset($_POST['debtors_first_name']) || isset($_POST['debtors_last_name']);
+            $has_email_fields = isset($_POST['emails_sender_email']) || isset($_POST['emails_user_email']);
+            
+            if ($has_debtor_fields) {
+                // Manual case creation with debtor information
+                $debtors_first_name = sanitize_text_field($_POST['debtors_first_name']);
+                $debtors_last_name = sanitize_text_field($_POST['debtors_last_name']);
+                $debtors_company = sanitize_text_field($_POST['debtors_company']);
+                $debtors_email = sanitize_email($_POST['debtors_email']);
+                $debtors_phone = sanitize_text_field($_POST['debtors_phone']);
+                $debtors_address = sanitize_text_field($_POST['debtors_address']);
+                $debtors_postal_code = sanitize_text_field($_POST['debtors_postal_code']);
+                $debtors_city = sanitize_text_field($_POST['debtors_city']);
+                $debtors_country = sanitize_text_field($_POST['debtors_country']) ?: 'Deutschland';
+            } elseif ($has_email_fields) {
+                // Email-based case creation - extract debtor info from email
+                $sender_email = sanitize_email($_POST['emails_sender_email']);
+                $user_email = sanitize_email($_POST['emails_user_email']);
+                $email_subject = sanitize_text_field($_POST['emails_subject']);
+                $email_content = sanitize_textarea_field($_POST['emails_content']);
+                
+                // Use sender email as debtor (assuming spam sender is the debtor)
+                $debtors_email = $sender_email;
+                $debtors_first_name = '';
+                $debtors_last_name = $sender_email; // Use email as last name for now
+                $debtors_company = '';
+                $debtors_phone = '';
+                $debtors_address = '';
+                $debtors_postal_code = '';
+                $debtors_city = '';
+                $debtors_country = 'Deutschland';
+                
+                // Add email information to case notes
+                $case_notes .= "\n\n--- Email Details ---\n";
+                $case_notes .= "Sender: " . $sender_email . "\n";
+                $case_notes .= "User: " . $user_email . "\n";
+                $case_notes .= "Subject: " . $email_subject . "\n";
+                $case_notes .= "Content: " . $email_content . "\n";
+            } else {
+                // No debtor or email information available
+                $debtors_first_name = '';
+                $debtors_last_name = 'Unbekannt';
+                $debtors_company = '';
+                $debtors_email = '';
+                $debtors_phone = '';
+                $debtors_address = '';
+                $debtors_postal_code = '';
+                $debtors_city = '';
+                $debtors_country = 'Deutschland';
+            }
             
             // Validation with detailed error messages
             $errors = array();
