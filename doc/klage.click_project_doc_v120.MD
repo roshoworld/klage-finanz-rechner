@@ -409,12 +409,13 @@ class CAH_Admin_Dashboard {
 
 ## 📋 Version History & Roadmap
 
-### Version 1.2.0 (Current)
+### Version 1.2.1 (Current)
 - **Release Date**: June 2025
-- **Major Features**: 57-field master data, dual template system
+- **Major Features**: Complete case management workflow, bug fixes
 - **Database**: 14-table comprehensive schema
-- **Import/Export**: Forderungen.com integration
+- **Import/Export**: Dual template system with 57-field master data
 - **Status**: Production Ready ✅
+- **Critical Fix**: Case editing methods implemented
 
 ### Previous Versions
 - **v1.1.6**: Enhanced CSV import, Forderungen.com compatibility
