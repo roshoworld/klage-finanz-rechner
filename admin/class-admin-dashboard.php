@@ -378,6 +378,24 @@ class CAH_Admin_Dashboard {
                     $this->update_case();
                 }
                 break;
+            case 'change_status':
+                if (wp_verify_nonce($_POST['change_status_nonce'], 'change_status')) {
+                    $this->handle_status_change();
+                }
+                break;
+            case 'change_priority':
+                if (wp_verify_nonce($_POST['change_priority_nonce'], 'change_priority')) {
+                    $this->handle_priority_change();
+                }
+                break;
+            default:
+                if (!empty($action)) {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Unbekannte Aktion: "' . esc_html($action) . '"</p></div>';
+                    echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
+                    echo 'Verfügbare Aktionen: create_case, update_case, change_status, change_priority<br>';
+                    echo 'POST data: ' . print_r($_POST, true) . '</p></div>';
+                }
+                break;
         }
     }
     
