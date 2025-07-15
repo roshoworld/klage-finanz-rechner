@@ -56,6 +56,17 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.2.3 =
+* HOTFIX: Added missing handle_bulk_actions() method for case list operations
+* HOTFIX: Enhanced case creation validation with detailed error messages
+* Added: Bulk delete functionality with audit trail
+* Added: Bulk status change functionality
+* Added: Bulk priority change functionality
+* Enhanced: Better validation error reporting with debug information
+* Fixed: Case list deletion buttons now work properly
+* Fixed: Case creation validation shows specific field errors
+* Status: Complete case management workflow fully functional
+
 = 1.2.2 =
 * HOTFIX: Added missing create_new_case() method for case creation
 * HOTFIX: Added missing update_case() method for case updates
