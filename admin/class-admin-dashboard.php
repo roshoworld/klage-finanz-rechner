@@ -2760,9 +2760,23 @@ class CAH_Admin_Dashboard {
             $debtors_city = sanitize_text_field($_POST['debtors_city']);
             $debtors_country = sanitize_text_field($_POST['debtors_country']) ?: 'Deutschland';
             
-            // Validation
-            if (empty($case_id) || empty($debtors_last_name)) {
-                echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Fall-ID und Nachname sind erforderlich.</p></div>';
+            // Validation with detailed error messages
+            $errors = array();
+            
+            if (empty($case_id)) {
+                $errors[] = 'Fall-ID ist erforderlich.';
+            }
+            
+            if (empty($debtors_last_name)) {
+                $errors[] = 'Nachname des Schuldners ist erforderlich.';
+            }
+            
+            if (!empty($errors)) {
+                echo '<div class="notice notice-error"><p><strong>Fehler:</strong><br>' . implode('<br>', $errors) . '</p></div>';
+                echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
+                echo 'case_id: "' . esc_html($case_id) . '" (length: ' . strlen($case_id) . ')<br>';
+                echo 'debtors_last_name: "' . esc_html($debtors_last_name) . '" (length: ' . strlen($debtors_last_name) . ')<br>';
+                echo 'POST data keys: ' . implode(', ', array_keys($_POST)) . '</p></div>';
                 return;
             }
             
