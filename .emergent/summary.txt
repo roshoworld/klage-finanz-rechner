@@ -1,23 +1,28 @@
 <analysis>
-The AI engineer's trajectory chronicles the development of the Klage.Click Court Automation Platform as a WordPress plugin. The process was highly iterative, marked by persistent debugging of core plugin functionalities, particularly related to PHP syntax errors,  failures (requiring a switch to direct SQL), and recurring headers already sent issues during file downloads. Initial efforts focused on establishing a functional base, including case creation and viewing, and fixing an  error for case editing.
+The trajectory chronicles the iterative development and stabilization of the Klage.Click Court Automation Platform as a WordPress plugin. Initially, the AI engineer established core functionalities like case creation, viewing, and a financial calculator, along with a significant CSV import module for  data. A major milestone involved implementing a comprehensive 57-field master data model, initially for import and then refined to a dual-template system (17-field Forderungen.com specific and 57-field internal).
 
-Subsequent development cycles progressively enhanced the plugin: full case editing, advanced case listing with bulk actions, and an audit trail were implemented. A significant feature addition was the dynamic financial management system, coupled with a robust CSV import module specifically tailored for  data. The headers already sent error during CSV downloads proved exceptionally challenging, requiring multiple iterations of fixes, finally moving to an  hook for early processing. The trajectory concludes with the successful parsing of detailed  master data and a plan to implement an enterprise-level system in v1.2.0.
+A significant portion of the work focused on resolving critical, recurring bugs:
+*    failures led to a switch to direct SQL for database management.
+*   Persistent headers already sent errors during CSV downloads were resolved via an  hook and AJAX.
+*   A series of hotfixes (v1.2.1 to v1.2.6) addressed numerous  errors for case editing, creation, and bulk actions, along with refining complex validation logic, especially concerning manual vs. email-based case creation.
+*   Folder structure cleanup and comprehensive documentation were also performed.
+
+The work passed to me at a point where two new critical issues have been identified: an erroneous email validation requirement during case creation (when debtor data is present), and the loss of form data upon validation failure, which severely impacts user experience.
 </analysis>
 
 <product_requirements>
-The Klage.Click platform is a comprehensive, multi-purpose legal automation system for German courts, transforming legal violations into automated court proceedings. It targets high-value small claims (under €1,500), initially focusing on GDPR Spam Violations. The core is a WordPress plugin, Court Automation Hub, using custom database tables. Key functionalities include: backoffice management (document/variable CRUD, case/lawyer management), email intake with OCR/AI analysis, and document generation. The system should be in German, with money-related display removed from direct UI. Initial goal was to process 60 existing spam cases.
+The Klage.Click platform is a multi-purpose legal automation system for German courts, converting legal violations into automated court proceedings. It targets small claims (under €1,500), initially GDPR Spam Violations. The core is a WordPress plugin, Court Automation Hub, utilizing custom database tables. Key functionalities include backoffice management (document/variable CRUD, case/lawyer management), email intake with OCR/AI analysis, and document generation. The system must be in German, with money-related display removed from direct UI. Initial goal was to process 60 existing spam cases.
 
-Implementation progress includes: plugin activation, database table creation, admin dashboard, case creation with automatic €548.11 GDPR calculations, case viewing, and a partially working case editing feature. Subsequent requests expanded to full case editing, advanced case listing with filtering and bulk actions, status workflow (Draft, Processing, Completed), audit logging, and a dynamic financial calculator. A critical requirement emerged for a CSV import system, specifically to integrate with 's exact data model, enabling bulk case and debtor creation. The latest request confirms the integration of a comprehensive master data model (57 fields, including EGVP/XJustiz mapping) for an enterprise-level system.
+Current implementation includes: plugin activation, custom database tables (, , , , , , , ), an admin dashboard with case CRUD operations (creation, viewing, editing, deletion), comprehensive bulk actions, and a dynamic financial calculator with automatic GDPR calculations (€548.11). A critical  CSV import system supports both a 17-field external template and a comprehensive 57-field internal master data model, with intelligent mapping and validation. The plugin now handles both manual and email-based case creation and has extensive audit logging.
 </product_requirements>
 
 <key_technical_concepts>
-- **WordPress Plugin Development**: PHP, WordPress hooks (, ), filters.
-- **MySQL Database**: Custom tables (, , , ).
-- **PHP Syntax & Error Handling**: Extensive debugging of syntax errors, , ,  issues.
-- **CSV Data Processing**: Import/export, dynamic template generation, UTF-8 BOM, delimiter flexibility.
-- **AJAX**: Utilized for reliable file downloads in WordPress admin context.
-- **N8N Integration**: Planned for workflow automation.
-- **EGVP/XJustiz**: Future integration for German court systems.
+- **WordPress Plugin Development**: PHP, WordPress hooks (, ).
+- **MySQL Database**: Custom tables and direct SQL for schema management.
+- **PHP Error Handling**: Debugging syntax errors, undefined methods, headers already sent.
+- **CSV Data Processing**: Import/export, dynamic template generation, field mapping, validation.
+- **AJAX**: For reliable file downloads in WordPress admin.
+- **N8N/EGVP/XJustiz Integration**: Planned for workflow automation and German court systems.
 </key_technical_concepts>
 
 <code_architecture>
@@ -27,45 +32,41 @@ The application is structured as a WordPress plugin named Court Automation Hub.
 
 -   ****:
     -   **Importance**: Main plugin entry point, handles activation/deactivation, and initializes core classes.
-    -   **Changes Made**: Explicitly  during activation. Version updated from  to , then to . Contains the  hook for early download handling.
+    -   **Changes Made**: Explicitly  during activation. Plugin version updated iteratively from  to . Contains the  hook for early download handling.
 
 -   ****:
-    -   **Importance**: Manages custom database table creation and updates.
-    -   **Changes Made**: Switched from  to direct SQL . Added , , , and  tables. Added  and  fields to existing tables.
+    -   **Importance**: Manages custom database table creation and updates for the application's data models.
+    -   **Changes Made**: Switched from  to direct SQL . Added/enhanced ,  (with comprehensive fields), and new tables: , , , . Added  and  fields to existing tables.
 
 -   ****:
-    -   **Importance**: Core of the WordPress admin interface, handling dashboard, case listing, creation, editing, financial calculator, CSV import, and help pages.
-    -   **Changes Made**: Numerous and iterative. Initially focused on fixing . Expanded to include , , , , , .
-        *   Implementations for full case editing, advanced listing, bulk actions, and status workflows were added.
-        *   Significant refactoring and debugging for recurring PHP syntax errors (,  tokens outside context, missing braces, duplicate methods) often leading to file recreation from a clean backup (e.g.,  was used).
-        *   Implemented  (for dynamic financial fields), , , ,  (for CSV template download), and .
-        *   Integrated AJAX handlers for reliable template and calculator CSV downloads to bypass header issues.
-        *   Updated to precisely handle  CSV field names for import, including dynamic calculations.
+    -   **Importance**: Core of the WordPress admin interface, managing the dashboard, case listing, creation, editing, financial calculator, CSV import, and help pages.
+    -   **Changes Made**: This file received the most significant and iterative changes.
+        *   Initial fixes for  and other case CRUD methods (, , , ).
+        *   Implemented  for bulk delete, status, and priority changes.
+        *   Implemented  (for dynamic financial fields), , , .
+        *   **CSV Import**: Refactored to support a dual template system:  (17 fields) and  (57 fields). Logic was added to  and  to map  data to the full 57-field internal structure.
+        *   **Validation**: Iteratively refined case creation validation to adapt to manual vs. email-based inputs, requiring either meaningful debtor or email data. Enhanced error messages and debug info.
+        *   **UI**: Redesigned  to include a complete debtor information section and reorganize layout for better user experience.
+        *   **Action Handling**: Added  and  for POST requests, and corresponding GET-based handlers to fix Unknown action errors from case list links.
 
 -   ****:
     -   **Importance**: Handles CRUD operations for cases.
-    -   **Changes Made**: Created, and extended to support the comprehensive case management features, including case notes and updated dates.
+    -   **Changes Made**: Created and extended to support comprehensive case management features, including case notes and updated dates.
 
 -   ****:
-    -   **Importance**: Manages audit trail logging.
+    -   **Importance**: Manages audit trail logging for all key actions.
     -   **Changes Made**: Created with new  table integration.
 
 -   ****:
     -   **Importance**: Manages debtor data.
-    -   **Changes Made**: Created to handle  table, supporting automatic creation from CSV import (company vs. individual).
+    -   **Changes Made**: Created to handle  table, supporting automatic creation from CSV import (company vs. individual) and integration with case creation forms.
 
--   ****, ****, ****:
-    -   **Importance**: API endpoints, styling, and client-side interactivity.
-    -   **Changes Made**: Created as part of initial plugin structure. Mentioned in the trajectory but no specific code changes were detailed within the conversation excerpt provided.
-
--   **Documentation Files (, , etc.)**:
+-   **Documentation Files (, , , etc.)**:
     -   **Importance**: Provide essential information on plugin usage, deployment, and project scope.
-    -   **Changes Made**: Progressively updated throughout development to reflect new versions and clarify features.
+    -   **Changes Made**: Progressively updated throughout development to reflect new versions and clarify features. A new  directory was created to centralize documentation, and a  directory for test files. Versioning was rigorously applied across various documentation files for each release (v1.2.1-v1.2.6).
 </code_architecture>
 
 <pending_tasks>
-- Full implementation of case editing functionality (beyond basic rendering).
-- Further enhancements to the case status workflow (draft → processing → completed).
 - Enhancing case listing with filtering, sorting, and search capabilities.
 - Developing the email intake pipeline with OCR and AI analysis for case categorization.
 - Building the document generation engine for legal letters and court filings.
@@ -75,15 +76,15 @@ The application is structured as a WordPress plugin named Court Automation Hub.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer was finalizing the integration of the  master data model into the Court Automation Hub plugin, specifically for the CSV import functionality. This involved ensuring that the plugin's CSV template and import processing logic precisely matched the field names and structure of the user's provided  master data CSV.
+Immediately before this summary, the AI engineer was addressing two new critical issues reported by the user regarding case creation:
 
-The user initially provided a GitHub URL to the CSV file (Chat 305). The AI engineer attempted to fetch and analyze this file (Chat 306, 308), but initially failed due to access issues. After a retry prompt from the user (Chat 312), the AI engineer successfully accessed and analyzed the content of the master data CSV (Chat 314).
+1.  **Validation Logic Issue**: When creating a new GDPR Spam Case, the user reported an error Wenn E-Mail-Evidenz angegeben wird, ist die Absender-E-Mail erforderlich. (If email evidence is provided, the sender's email is required). Debug information showed that  had meaningful data (Hopp),  was true, but  was also true (likely due to  being filled), while  was empty. The current validation logic incorrectly requires  if *any* email-related field is present, even if the primary data for the case is coming from debtor fields. The system needs to intelligently prioritize debtor fields if they are meaningfully filled, or require email fields only if they are the primary source of data.
 
-Upon analysis, the AI engineer recognized the comprehensive nature of the provided master data, noting 57 fields (21 confirmed from  and 36 proposed for complete legal automation, including EGVP/XJustiz mapping and audit trail/GDPR compliance). The user then increased the budget (Chat 315).
+2.  **Form Data Loss**: A significant usability issue was raised: when the error appears the whole data that was already put in disappears and we need to start from scratch. Can you keep the session data? This indicates that upon validation failure, the form fields are not pre-populated with the user's previously entered data, leading to a frustrating experience.
 
-The current work concluded with the AI engineer acknowledging the increased budget and the detailed master data specification, planning to implement a full enterprise-level system for v1.2.0 based on this comprehensive data. This implies that the immediate task is to begin integrating the full 57-field structure into the plugin's data models and import processes.
+The AI engineer has acknowledged these two issues and stated the plan to fix them, starting with the validation logic and then the data loss. This is the immediate and pending work.
 </current_work>
 
 <optional_next_step>
-The next step is to begin implementing the full enterprise-level system for v1.2.0, integrating all 57 fields from the  master data.
+Fix the case creation validation logic to intelligently handle mixed debtor/email inputs and implement form data persistence on validation errors.
 </optional_next_step>
