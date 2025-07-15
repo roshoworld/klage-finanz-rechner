@@ -167,6 +167,7 @@ test_plan:
     - "All high priority backend tasks completed successfully"
     - "Hotfix v1.2.2 verification completed - case creation methods working"
     - "Hotfix v1.2.3 verification completed - bulk actions and enhanced validation working"
+    - "Hotfix v1.2.4 verification completed - email-based case creation working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
