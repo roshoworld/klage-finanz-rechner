@@ -143,6 +143,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: Hotfix v1.2.4 verification successful. All 24 tests passed (100% success rate). Smart form type detection implemented with has_debtor_fields and has_email_fields logic. Adaptive data processing handles both manual and email-based case creation appropriately. Enhanced validation logic provides different requirements for each form type (debtor last name for manual, sender email for email-based). Email integration extracts debtor info from sender email and preserves complete email details in case notes. Backward compatibility maintained for manual forms and CSV import. Enhanced debug information shows form type detection and validation context. Email-based success messages differentiated with '(aus E-Mail)' indicator. Version updated to 1.2.4. Critical email-based case creation issue resolved successfully."
 
+  - task: "Hotfix v1.2.5 - Complete Debtor Form and Action Handlers"
+    implemented: true
+    working: true
+    file: "/app/admin/class-admin-dashboard.php"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Critical hotfix v1.2.5 verification - need to test three critical issues: 1) Debtor Creation Failure with complete 9-field form, 2) Missing Debtor Fields in UI with redesigned form structure, 3) Status Change 'Unknown Action' with added action handlers"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Hotfix v1.2.5 verification successful. All 35 tests passed (100% success rate). All three critical issues resolved: Issue #1 - Complete debtor information form with all 9 fields (first_name, last_name, company, email, phone, address, postal_code, city, country) properly implemented with required field validation and German labels. Issue #2 - Redesigned case creation form structure with logical sections (Fall-Informationen, Schuldner-Informationen, E-Mail Evidenz), grid layout, WordPress postbox structure, and email evidence marked as optional. Issue #3 - Added missing action handlers including handle_status_change() and handle_priority_change() methods with proper nonce verification, status/priority validation, database updates, audit logging, and improved unknown action handling with debug info. Enhanced error reporting, database operations, and form field availability all working correctly. Version updated to 1.2.5. Plugin provides complete case management functionality."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
