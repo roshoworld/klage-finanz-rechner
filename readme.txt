@@ -1,30 +1,39 @@
 === Court Automation Hub ===
 Contributors: klageclick
-Tags: legal, automation, gdpr, spam, court
-Requires at least: 5.0
-Tested up to: 6.4
-Requires PHP: 7.4
-Stable tag: 1.0.6
+Tags: legal, automation, gdpr, spam, court, csv, import, financial
+Requires at least: 5.8
+Tested up to: 6.5
+Requires PHP: 8.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 
-Klage.Click Court Automation Platform für deutsche Gerichte mit KI-gestützter Verarbeitung.
+Klage.Click Court Automation Platform für deutsche Gerichte mit 57-Felder Master Data Integration.
 
 == Description ==
 
 Das Court Automation Hub Plugin ermöglicht die automatisierte Verarbeitung von DSGVO-Spam-Verstößen und anderen rechtlichen Ansprüchen über deutsche Amtsgerichte.
 
-**Hauptfunktionen:**
-* DSGVO-Spam-Fallverwaltung
-* Automatische Schadensberechnung
-* N8N-Integration für KI-Verarbeitung
-* Vollständige Audit-Protokollierung
-* Deutsche Gerichtssystem-Integration
+**Hauptfunktionen v1.2.1:**
+* 57-Felder Master Data Structure - Vollständige Datenverwaltung
+* Dual Template System - Forderungen.com (17 Felder) + Comprehensive (57 Felder)
+* Automatische DSGVO-Schadensberechnung (€548.11 Standard)
+* Bulk CSV Import/Export mit intelligenter Feldzuordnung
+* Vollständige Fall-Bearbeitung mit Audit-Trail
+* Deutsche Gerichtssystem-Integration (EGVP/XJustiz ready)
 
 **Für wen ist dieses Plugin?**
-* Rechtsanwälte
-* Inkassobüros
+* Rechtsanwälte und Kanzleien
+* Inkassobüros und Forderungsmanagement
 * Rechtliche Dienstleister
 * DSGVO-Compliance-Experten
+* Unternehmen mit Massenforderungen
+
+**Technische Highlights:**
+* 14 Datenbank-Tabellen für vollständige Datenverwaltung
+* Forderungen.com CSV-Kompatibilität
+* Automatische Felderweiterung (17 → 57 Felder)
+* WordPress Admin Integration
+* Umfassende Sicherheit und Validierung
 
 == Installation ==
 
