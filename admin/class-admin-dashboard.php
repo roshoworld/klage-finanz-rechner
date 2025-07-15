@@ -2920,9 +2920,12 @@ class CAH_Admin_Dashboard {
                 echo 'debtors_last_name: "' . esc_html($debtors_last_name) . '" (length: ' . strlen($debtors_last_name) . ')<br>';
                 echo 'has_debtor_fields: ' . ($has_debtor_fields ? 'true' : 'false') . '<br>';
                 echo 'has_email_fields: ' . ($has_email_fields ? 'true' : 'false') . '<br>';
+                echo 'has_meaningful_debtor_data: ' . ($has_meaningful_debtor_data ? 'true' : 'false') . '<br>';
+                echo 'has_meaningful_email_data: ' . ($has_meaningful_email_data ? 'true' : 'false') . '<br>';
                 if ($has_email_fields) {
                     echo 'sender_email: "' . esc_html($sender_email) . '"<br>';
                     echo 'user_email: "' . esc_html($user_email) . '"<br>';
+                    echo 'emails_subject: "' . esc_html($_POST['emails_subject'] ?? '') . '"<br>';
                 }
                 echo 'POST data keys: ' . implode(', ', array_keys($_POST)) . '</p></div>';
                 return;
