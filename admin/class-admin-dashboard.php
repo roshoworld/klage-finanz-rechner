@@ -2906,4 +2906,23 @@ class CAH_Admin_Dashboard {
             echo '<div class="notice notice-error"><p><strong>❌ Fehler:</strong> ' . esc_html($e->getMessage()) . '</p></div>';
         }
     }
+    
+    private function update_case() {
+        global $wpdb;
+        
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['update_case_nonce'], 'update_case')) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler.</p></div>';
+            return;
+        }
+        
+        $case_id = intval($_POST['case_id']);
+        if (!$case_id) {
+            echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Ungültige Fall-ID.</p></div>';
+            return;
+        }
+        
+        // Use the existing handle_case_update method
+        $this->handle_case_update($case_id, $_POST);
+    }
 }
