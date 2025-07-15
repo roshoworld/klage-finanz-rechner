@@ -158,6 +158,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: Hotfix v1.2.5 verification successful. All 35 tests passed (100% success rate). All three critical issues resolved: Issue #1 - Complete debtor information form with all 9 fields (first_name, last_name, company, email, phone, address, postal_code, city, country) properly implemented with required field validation and German labels. Issue #2 - Redesigned case creation form structure with logical sections (Fall-Informationen, Schuldner-Informationen, E-Mail Evidenz), grid layout, WordPress postbox structure, and email evidence marked as optional. Issue #3 - Added missing action handlers including handle_status_change() and handle_priority_change() methods with proper nonce verification, status/priority validation, database updates, audit logging, and improved unknown action handling with debug info. Enhanced error reporting, database operations, and form field availability all working correctly. Version updated to 1.2.5. Plugin provides complete case management functionality."
 
+  - task: "Hotfix v1.2.6 - Case Creation Validation Logic and Status Change GET Actions"
+    implemented: true
+    working: true
+    file: "/app/admin/class-admin-dashboard.php"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Critical hotfix v1.2.6 verification - need to test two critical issues: 1) Case Creation Validation Logic - Fixed to handle mixed debtor/email fields correctly, 2) Status Change Unknown Action - Added GET-based action handling for URL-based status changes"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Hotfix v1.2.6 verification successful. All 27 tests passed (100% success rate). Both critical issues resolved: Issue #1 RESOLVED - Case Creation Validation Logic: Enhanced validation logic now checks meaningful data vs field presence with has_meaningful_debtor_data and has_meaningful_email_data detection. Either/OR validation logic implemented requiring either meaningful debtor OR email data (not both). Enhanced debtor name validation checks for 'Unbekannt' values. Mixed field scenarios properly handled - debtor-only, email-only, both fields, and neither fields validation working correctly. Issue #2 RESOLVED - Status Change Unknown Action: Added handle_get_status_change() and handle_get_priority_change() methods with complete GET-based action handling. URL parameter handling for new_status and new_priority implemented. Proper validation for status (draft/pending/processing/completed/cancelled) and priority (low/medium/high/urgent) values. GET action routing integrated into admin_page_cases switch statement. Enhanced debug information shows meaningful data detection results, validation context, POST data keys, and field lengths. Specific error messages for different validation scenarios. Success feedback for status and priority changes. Improved unknown action handling with debug information. Version updated to 1.2.6. Both remaining critical issues from review request resolved successfully."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
