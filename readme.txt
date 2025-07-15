@@ -4,7 +4,7 @@ Tags: legal, automation, gdpr, spam, court, csv, import, financial
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 8.0
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPLv2 or later
 
 Klage.Click Court Automation Platform für deutsche Gerichte mit 57-Felder Master Data Integration.
