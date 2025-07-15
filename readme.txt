@@ -56,6 +56,18 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.2.5 =
+* CRITICAL FIX: Added missing debtor name fields to case creation form
+* FIXED: Debtor creation now works properly with complete form fields
+* FIXED: Status change "Unknown action" error with proper action handling
+* Added: handle_status_change() method for individual status changes
+* Added: handle_priority_change() method for individual priority changes
+* Enhanced: Better database error reporting for debtor creation
+* Enhanced: Case creation form now has complete debtor information section
+* Enhanced: Email evidence section made optional with clear labeling
+* Fixed: All case creation scenarios now work correctly
+* Status: Complete case creation and management workflow fully operational
+
 = 1.2.4 =
 * HOTFIX: Fixed case creation to support both manual and email-based case creation
 * Added: Support for email-based case creation from spam emails
