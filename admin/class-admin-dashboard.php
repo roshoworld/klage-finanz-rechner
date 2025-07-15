@@ -282,48 +282,121 @@ class CAH_Admin_Dashboard {
                         </div>
                     </div>
                     
-                    <!-- Email Evidence -->
+                    <!-- Debtor Information -->
                     <div class="postbox">
-                        <h2 class="hndle">📧 E-Mail Evidenz</h2>
+                        <h2 class="hndle">👤 Schuldner-Informationen</h2>
                         <div class="inside" style="padding: 20px;">
                             <table class="form-table">
                                 <tr>
-                                    <th scope="row"><label for="emails_sender_email">Spam-Absender</label></th>
+                                    <th scope="row"><label for="debtors_first_name">Vorname</label></th>
                                     <td>
-                                        <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text" required>
-                                        <p class="description">E-Mail-Adresse des Spam-Absenders</p>
+                                        <input type="text" id="debtors_first_name" name="debtors_first_name" class="regular-text">
+                                        <p class="description">Vorname des Schuldners</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><label for="emails_user_email">Betroffene E-Mail</label></th>
+                                    <th scope="row"><label for="debtors_last_name">Nachname</label></th>
                                     <td>
-                                        <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text" required>
-                                        <p class="description">E-Mail-Adresse des Geschädigten</p>
+                                        <input type="text" id="debtors_last_name" name="debtors_last_name" class="regular-text" required>
+                                        <p class="description">Nachname des Schuldners (erforderlich)</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><label for="emails_received_date">Empfangsdatum</label></th>
+                                    <th scope="row"><label for="debtors_company">Firma</label></th>
                                     <td>
-                                        <input type="date" id="emails_received_date" name="emails_received_date" class="regular-text" 
-                                               value="<?php echo date('Y-m-d'); ?>" required>
+                                        <input type="text" id="debtors_company" name="debtors_company" class="regular-text">
+                                        <p class="description">Firmenname (falls Unternehmen)</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><label for="emails_subject">E-Mail Betreff</label></th>
+                                    <th scope="row"><label for="debtors_email">E-Mail</label></th>
                                     <td>
-                                        <input type="text" id="emails_subject" name="emails_subject" class="regular-text" 
-                                               placeholder="Betreff der Spam-E-Mail">
+                                        <input type="email" id="debtors_email" name="debtors_email" class="regular-text">
+                                        <p class="description">E-Mail-Adresse des Schuldners</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><label for="emails_content">E-Mail Inhalt</label></th>
+                                    <th scope="row"><label for="debtors_phone">Telefon</label></th>
                                     <td>
-                                        <textarea id="emails_content" name="emails_content" class="large-text" rows="6" 
-                                                  placeholder="Vollständiger Inhalt der Spam-E-Mail" required></textarea>
+                                        <input type="tel" id="debtors_phone" name="debtors_phone" class="regular-text">
+                                        <p class="description">Telefonnummer des Schuldners</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_address">Adresse</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_address" name="debtors_address" class="regular-text">
+                                        <p class="description">Vollständige Adresse</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_postal_code">PLZ</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_postal_code" name="debtors_postal_code" class="regular-text">
+                                        <p class="description">Postleitzahl</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_city">Stadt</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_city" name="debtors_city" class="regular-text">
+                                        <p class="description">Stadt</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="debtors_country">Land</label></th>
+                                    <td>
+                                        <input type="text" id="debtors_country" name="debtors_country" class="regular-text" value="Deutschland">
+                                        <p class="description">Land</p>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Email Evidence -->
+                <div class="postbox" style="margin-top: 20px;">
+                    <h2 class="hndle">📧 E-Mail Evidenz (Optional)</h2>
+                    <div class="inside" style="padding: 20px;">
+                        <p><strong>Hinweis:</strong> Diese Felder sind optional und dienen zur Dokumentation der E-Mail-Evidenz.</p>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="emails_sender_email">Spam-Absender</label></th>
+                                <td>
+                                    <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text">
+                                    <p class="description">E-Mail-Adresse des Spam-Absenders</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="emails_user_email">Betroffene E-Mail</label></th>
+                                <td>
+                                    <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text">
+                                    <p class="description">E-Mail-Adresse des Geschädigten</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="emails_received_date">Empfangsdatum</label></th>
+                                <td>
+                                    <input type="date" id="emails_received_date" name="emails_received_date" class="regular-text" 
+                                           value="<?php echo date('Y-m-d'); ?>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="emails_subject">E-Mail Betreff</label></th>
+                                <td>
+                                    <input type="text" id="emails_subject" name="emails_subject" class="regular-text" 
+                                           placeholder="Betreff der Spam-E-Mail">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="emails_content">E-Mail Inhalt</label></th>
+                                <td>
+                                    <textarea id="emails_content" name="emails_content" class="large-text" rows="6" 
+                                              placeholder="Vollständiger Inhalt der Spam-E-Mail"></textarea>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
                 
