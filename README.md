@@ -91,8 +91,8 @@ php tests/test_master_data.php
 ```
 
 ### Version Control
-- **Current**: v1.2.0 (Production Ready)
-- **Previous**: v1.1.6 (Forderungen.com integration)
+- **Current**: v1.2.1 (Production Ready)
+- **Previous**: v1.2.0 (Master data integration)
 - **Next**: v1.3.0 (Enhanced editing interface)
 
 ## 🏢 Business Impact
