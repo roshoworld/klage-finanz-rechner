@@ -56,6 +56,15 @@ Alle deutschen Amtsgerichte mit EGVP-Unterstützung.
 
 == Changelog ==
 
+= 1.2.2 =
+* HOTFIX: Added missing create_new_case() method for case creation
+* HOTFIX: Added missing update_case() method for case updates
+* Fixed: Case creation form now works properly
+* Fixed: Error "Call to undefined method CAH_Admin_Dashboard::create_new_case()"
+* Enhanced: Complete case creation workflow with debtor and financial records
+* Enhanced: Automatic redirect to case view after successful creation
+* Status: All case management operations now functional
+
 = 1.2.1 =
 * FIXED: Missing case editing methods (render_edit_case_form, render_view_case, handle_delete_case)
 * Added: Complete case editing interface with all 57 fields
