@@ -2731,4 +2731,179 @@ class CAH_Admin_Dashboard {
             echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Fall konnte nicht aktualisiert werden.</p></div>';
         }
     }
+    
+    private function create_new_case() {
+        global $wpdb;
+        
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['create_case_nonce'], 'create_case')) {
+            echo '<div class="notice notice-error"><p>Sicherheitsfehler.</p></div>';
+            return;
+        }
+        
+        try {
+            // Sanitize and validate input data
+            $case_id = sanitize_text_field($_POST['case_id']);
+            $case_priority = sanitize_text_field($_POST['case_priority']);
+            $mandant = sanitize_text_field($_POST['mandant']);
+            $submission_date = sanitize_text_field($_POST['submission_date']);
+            $case_notes = sanitize_textarea_field($_POST['case_notes']);
+            
+            // Debtor information
+            $debtors_first_name = sanitize_text_field($_POST['debtors_first_name']);
+            $debtors_last_name = sanitize_text_field($_POST['debtors_last_name']);
+            $debtors_company = sanitize_text_field($_POST['debtors_company']);
+            $debtors_email = sanitize_email($_POST['debtors_email']);
+            $debtors_phone = sanitize_text_field($_POST['debtors_phone']);
+            $debtors_address = sanitize_text_field($_POST['debtors_address']);
+            $debtors_postal_code = sanitize_text_field($_POST['debtors_postal_code']);
+            $debtors_city = sanitize_text_field($_POST['debtors_city']);
+            $debtors_country = sanitize_text_field($_POST['debtors_country']) ?: 'Deutschland';
+            
+            // Validation
+            if (empty($case_id) || empty($debtors_last_name)) {
+                echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Fall-ID und Nachname sind erforderlich.</p></div>';
+                return;
+            }
+            
+            // Check if case ID already exists
+            $existing_case = $wpdb->get_var($wpdb->prepare("
+                SELECT id FROM {$wpdb->prefix}klage_cases WHERE case_id = %s
+            ", $case_id));
+            
+            if ($existing_case) {
+                echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Fall-ID "' . esc_html($case_id) . '" existiert bereits.</p></div>';
+                return;
+            }
+            
+            // Create debtor first
+            $debtor_name = trim($debtors_first_name . ' ' . $debtors_last_name);
+            if (!empty($debtors_company)) {
+                $debtor_name = $debtors_company . ' (' . $debtor_name . ')';
+            }
+            
+            $debtor_id = null;
+            if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_debtors'")) {
+                $result = $wpdb->insert(
+                    $wpdb->prefix . 'klage_debtors',
+                    array(
+                        'debtors_name' => $debtor_name,
+                        'debtors_company' => $debtors_company,
+                        'debtors_first_name' => $debtors_first_name,
+                        'debtors_last_name' => $debtors_last_name,
+                        'debtors_email' => $debtors_email,
+                        'debtors_phone' => $debtors_phone,
+                        'debtors_address' => $debtors_address,
+                        'debtors_postal_code' => $debtors_postal_code,
+                        'debtors_city' => $debtors_city,
+                        'debtors_country' => $debtors_country,
+                        'rechtsform' => !empty($debtors_company) ? 'unternehmen' : 'natuerliche_person',
+                        'datenquelle' => 'manual',
+                        'letzte_aktualisierung' => current_time('mysql')
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                );
+                
+                if ($result) {
+                    $debtor_id = $wpdb->insert_id;
+                } else {
+                    echo '<div class="notice notice-error"><p><strong>Fehler:</strong> Schuldner konnte nicht erstellt werden.</p></div>';
+                    return;
+                }
+            }
+            
+            // Prepare dates
+            $submission_date_mysql = null;
+            if (!empty($submission_date)) {
+                $submission_date_mysql = date('Y-m-d', strtotime($submission_date));
+            }
+            
+            // Create case
+            $case_data = array(
+                'case_id' => $case_id,
+                'case_creation_date' => current_time('mysql'),
+                'case_status' => 'draft',
+                'case_priority' => $case_priority,
+                'brief_status' => 'pending',
+                'mandant' => $mandant,
+                'submission_date' => $submission_date_mysql,
+                'case_notes' => $case_notes,
+                'debtor_id' => $debtor_id,
+                'total_amount' => 548.11, // Standard GDPR amount
+                'verfahrensart' => 'mahnverfahren',
+                'rechtsgrundlage' => 'DSGVO Art. 82',
+                'kategorie' => 'GDPR_SPAM',
+                'schadenhoehe' => 350.00,
+                'verfahrenswert' => 548.11,
+                'erfolgsaussicht' => 'hoch',
+                'risiko_bewertung' => 'niedrig',
+                'komplexitaet' => 'standard',
+                'prioritaet_intern' => $case_priority,
+                'bearbeitungsstatus' => 'neu',
+                'kommunikation_sprache' => 'de',
+                'import_source' => 'manual'
+            );
+            
+            $result = $wpdb->insert(
+                $wpdb->prefix . 'klage_cases',
+                $case_data,
+                array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s', '%s', '%s', '%f', '%f', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            );
+            
+            if ($result) {
+                $case_internal_id = $wpdb->insert_id;
+                
+                // Create standard financial record
+                if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_financial'")) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'klage_financial',
+                        array(
+                            'case_id' => $case_internal_id,
+                            'damages_loss' => 350.00,
+                            'partner_fees' => 96.90,
+                            'communication_fees' => 13.36,
+                            'vat' => 87.85,
+                            'total' => 548.11,
+                            'court_fees' => 32.00,
+                            'streitwert' => 548.11,
+                            'schadenersatz' => 350.00,
+                            'anwaltskosten' => 96.90,
+                            'gerichtskosten' => 32.00,
+                            'nebenkosten' => 13.36
+                        ),
+                        array('%d', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f')
+                    );
+                }
+                
+                // Create audit log entry
+                if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'klage_audit',
+                        array(
+                            'case_id' => $case_internal_id,
+                            'action' => 'case_created',
+                            'details' => 'Fall "' . $case_id . '" wurde manuell erstellt',
+                            'user_id' => get_current_user_id()
+                        ),
+                        array('%d', '%s', '%s', '%d')
+                    );
+                }
+                
+                echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall "' . esc_html($case_id) . '" wurde erfolgreich erstellt.</p></div>';
+                
+                // Clear form by redirecting to avoid resubmission
+                echo '<script>
+                    setTimeout(function() {
+                        window.location.href = "' . admin_url('admin.php?page=klage-click-cases&action=view&id=' . $case_internal_id) . '";
+                    }, 2000);
+                </script>';
+                
+            } else {
+                echo '<div class="notice notice-error"><p><strong>❌ Fehler:</strong> Fall konnte nicht erstellt werden. Datenbank-Fehler: ' . esc_html($wpdb->last_error) . '</p></div>';
+            }
+            
+        } catch (Exception $e) {
+            echo '<div class="notice notice-error"><p><strong>❌ Fehler:</strong> ' . esc_html($e->getMessage()) . '</p></div>';
+        }
+    }
 }
