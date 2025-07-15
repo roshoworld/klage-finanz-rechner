@@ -2899,14 +2899,18 @@ class CAH_Admin_Dashboard {
                 $errors[] = 'Fall-ID ist erforderlich.';
             }
             
-            // Only require debtor last name if we're not doing email-based creation
-            if (!$has_email_fields && empty($debtors_last_name)) {
-                $errors[] = 'Nachname des Schuldners ist erforderlich.';
+            // Check if we have meaningful data in either debtor or email fields
+            $has_meaningful_debtor_data = !empty($debtors_last_name) && $debtors_last_name !== 'Unbekannt';
+            $has_meaningful_email_data = !empty($sender_email);
+            
+            // Require either debtor last name OR sender email (not both)
+            if (!$has_meaningful_debtor_data && !$has_meaningful_email_data) {
+                $errors[] = 'Entweder Nachname des Schuldners oder Absender-E-Mail ist erforderlich.';
             }
             
-            // For email-based creation, require sender email
-            if ($has_email_fields && empty($sender_email)) {
-                $errors[] = 'Absender-E-Mail ist erforderlich.';
+            // If email fields are filled but no sender email, require it
+            if ($has_email_fields && !empty($_POST['emails_subject']) && empty($sender_email)) {
+                $errors[] = 'Wenn E-Mail-Evidenz angegeben wird, ist die Absender-E-Mail erforderlich.';
             }
             
             if (!empty($errors)) {
