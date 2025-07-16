@@ -429,7 +429,7 @@ class CAH_Database_Admin {
                 echo '<div class="template-item">';
                 echo '<h5>' . $template_info['name'] . '</h5>';
                 echo '<p>' . $template_info['description'] . '</p>';
-                echo '<a href="?page=cah-database-management&tab=import&action=download_template&table=' . $table_name . '&template=' . $template_key . '" class="button">Download Template</a>';
+                echo '<a href="?page=klage-click-database&tab=import&action=download_template&table=' . $table_name . '&template=' . $template_key . '" class="button">Download Template</a>';
                 echo '</div>';
             }
             
