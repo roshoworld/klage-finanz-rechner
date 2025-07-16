@@ -222,6 +222,13 @@ class CAH_Admin_Dashboard {
         <?php
     }
     
+    /**
+     * Get form data from POST request for form persistence
+     */
+    private function get_form_data() {
+        return $_POST ?? array();
+    }
+    
     private function render_add_case_form() {
         // Get previously submitted data for form persistence
         $form_data = $this->get_form_data();
