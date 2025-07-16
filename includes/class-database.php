@@ -646,19 +646,8 @@ class CAH_Database {
             PRIMARY KEY (id)
         ) $charset_collate;";
         
-        // Financial table
-        $sql_financial = "CREATE TABLE {$this->wpdb->prefix}klage_financial (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            case_id bigint(20) unsigned NOT NULL,
-            damages_loss decimal(10,2) DEFAULT 350.00,
-            partner_fees decimal(10,2) DEFAULT 96.90,
-            communication_fees decimal(10,2) DEFAULT 13.36,
-            vat decimal(10,2) DEFAULT 87.85,
-            total decimal(10,2) DEFAULT 548.11,
-            court_fees decimal(10,2) DEFAULT 32.00,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
+        // Financial table removed in v1.4.7 - moved to separate plugin
+        // Financial functionality now handled by court-automation-hub-financial-calculator plugin
         
         // Courts table
         $sql_courts = "CREATE TABLE {$this->wpdb->prefix}klage_courts (
