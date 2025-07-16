@@ -503,6 +503,177 @@ class CAH_Database_Admin {
     }
     
     /**
+     * Render table indexes view
+     */
+    private function render_table_indexes($table_name) {
+        echo '<h2>Indexes and Keys: ' . $table_name . '</h2>';
+        
+        // Current unique keys analysis
+        echo '<div class="unique-keys-info" style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">';
+        echo '<h4>📊 Current Unique Keys Analysis</h4>';
+        echo '<p><strong>Primary Key:</strong> <code>id</code> (Auto-increment)</p>';
+        echo '<p><strong>Unique Candidate Fields:</strong></p>';
+        echo '<ul>';
+        echo '<li><code>case_id</code> - Currently indexed but not unique (could be made unique)</li>';
+        echo '<li><code>mandant + case_id</code> - Combined unique key option</li>';
+        echo '<li><code>mandant + debtor_id + submission_date</code> - Business logic unique key</li>';
+        echo '</ul>';
+        echo '</div>';
+        
+        $indexes = $this->schema_manager->get_table_indexes($table_name);
+        
+        if (isset($indexes['error'])) {
+            echo '<div class="notice notice-error"><p>' . $indexes['error'] . '</p></div>';
+            return;
+        }
+        
+        echo '<div class="table-indexes">';
+        
+        // Current indexes
+        echo '<h3>Current Indexes and Keys</h3>';
+        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<th>Index Name</th>';
+        echo '<th>Columns</th>';
+        echo '<th>Type</th>';
+        echo '<th>Unique</th>';
+        echo '<th>Actions</th>';
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
+        foreach ($indexes as $index_name => $index_info) {
+            $columns_str = implode(', ', $index_info['columns']);
+            $type = $index_info['primary'] ? 'PRIMARY KEY' : ($index_info['unique'] ? 'UNIQUE KEY' : 'INDEX');
+            $unique_str = $index_info['unique'] ? 'Yes' : 'No';
+            
+            echo '<tr>';
+            echo '<td><strong>' . $index_name . '</strong></td>';
+            echo '<td>' . $columns_str . '</td>';
+            echo '<td>' . $type . '</td>';
+            echo '<td>' . $unique_str . '</td>';
+            echo '<td>';
+            
+            if (!$index_info['primary']) {
+                echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=drop_index&index=' . $index_name . '" class="button button-small button-link-delete" onclick="return confirm(\'Are you sure you want to drop this index?\')">Drop</a>';
+            } else {
+                echo '<span class="description">System key</span>';
+            }
+            
+            echo '</td>';
+            echo '</tr>';
+        }
+        
+        echo '</tbody>';
+        echo '</table>';
+        
+        // Unique key recommendations
+        echo '<h3>Unique Key Recommendations</h3>';
+        echo '<div class="unique-key-recommendations">';
+        echo '<div class="recommendation-card">';
+        echo '<h4>🔑 Make case_id Unique</h4>';
+        echo '<p>Currently <code>case_id</code> is indexed but not unique. This could prevent duplicate case IDs.</p>';
+        echo '<p><strong>SQL:</strong> <code>ALTER TABLE ' . $table_name . ' ADD UNIQUE KEY unique_case_id (case_id)</code></p>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=add_index&preset=unique_case_id" class="button button-primary">Add Unique Case ID</a>';
+        echo '</div>';
+        
+        echo '<div class="recommendation-card">';
+        echo '<h4>🔑 Mandant + Case ID Composite Unique Key</h4>';
+        echo '<p>Create a composite unique key combining mandant and case_id for business logic uniqueness.</p>';
+        echo '<p><strong>SQL:</strong> <code>ALTER TABLE ' . $table_name . ' ADD UNIQUE KEY unique_mandant_case (mandant, case_id)</code></p>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=add_index&preset=unique_mandant_case" class="button button-primary">Add Mandant + Case ID Unique</a>';
+        echo '</div>';
+        echo '</div>';
+        
+        echo '</div>';
+    }
+    
+    /**
+     * Render add index form
+     */
+    private function render_add_index_form($table_name) {
+        $preset = $_GET['preset'] ?? '';
+        
+        echo '<div class="unique-keys-info" style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">';
+        echo '<h4>🔑 About Unique Keys</h4>';
+        echo '<p><strong>Unique Key:</strong> Ensures no duplicate values in specified columns</p>';
+        echo '<p><strong>Regular Index:</strong> Improves query performance but allows duplicates</p>';
+        echo '<p><strong>Composite Key:</strong> Uniqueness across multiple columns combined</p>';
+        echo '</div>';
+        
+        echo '<h2>Add Index/Key to ' . $table_name . '</h2>';
+        
+        echo '<form method="post">';
+        wp_nonce_field('add_index');
+        echo '<input type="hidden" name="action" value="add_index">';
+        echo '<input type="hidden" name="table_name" value="' . $table_name . '">';
+        
+        echo '<table class="form-table">';
+        echo '<tr>';
+        echo '<th><label for="index_name">Index Name</label></th>';
+        echo '<td>';
+        
+        if ($preset === 'unique_case_id') {
+            echo '<input type="text" id="index_name" name="index_name" class="regular-text" value="unique_case_id" required>';
+        } elseif ($preset === 'unique_mandant_case') {
+            echo '<input type="text" id="index_name" name="index_name" class="regular-text" value="unique_mandant_case" required>';
+        } else {
+            echo '<input type="text" id="index_name" name="index_name" class="regular-text" placeholder="e.g., unique_case_number" required>';
+        }
+        
+        echo '</td>';
+        echo '</tr>';
+        
+        echo '<tr>';
+        echo '<th><label for="index_type">Index Type</label></th>';
+        echo '<td>';
+        echo '<select id="index_type" name="index_type" class="regular-text">';
+        echo '<option value="unique" ' . ($preset ? 'selected' : '') . '>UNIQUE KEY - Prevents duplicates</option>';
+        echo '<option value="index">INDEX - Performance only</option>';
+        echo '</select>';
+        echo '</td>';
+        echo '</tr>';
+        
+        echo '<tr>';
+        echo '<th><label for="index_columns">Columns</label></th>';
+        echo '<td>';
+        
+        // Get current columns
+        $current_schema = $this->schema_manager->get_current_table_schema($table_name);
+        $columns = array_keys($current_schema['columns']);
+        
+        echo '<div class="column-selection">';
+        
+        if ($preset === 'unique_case_id') {
+            echo '<label><input type="checkbox" name="index_columns[]" value="case_id" checked> case_id</label><br>';
+        } elseif ($preset === 'unique_mandant_case') {
+            echo '<label><input type="checkbox" name="index_columns[]" value="mandant" checked> mandant</label><br>';
+            echo '<label><input type="checkbox" name="index_columns[]" value="case_id" checked> case_id</label><br>';
+        } else {
+            foreach ($columns as $column) {
+                if (!in_array($column, array('id', 'created_at', 'updated_at'))) {
+                    echo '<label><input type="checkbox" name="index_columns[]" value="' . $column . '"> ' . $column . '</label><br>';
+                }
+            }
+        }
+        
+        echo '</div>';
+        echo '<p class="description">Select one or more columns for the index. Multiple columns create a composite index.</p>';
+        echo '</td>';
+        echo '</tr>';
+        
+        echo '</table>';
+        
+        echo '<div class="form-actions">';
+        echo '<button type="submit" class="button button-primary">Add Index/Key</button>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=indexes" class="button">Cancel</a>';
+        echo '</div>';
+        
+        echo '</form>';
+    }
+    
+    /**
      * Render data management tab
      */
     private function render_data_management_tab() {
