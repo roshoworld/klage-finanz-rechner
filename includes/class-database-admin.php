@@ -481,7 +481,7 @@ class CAH_Database_Admin {
         foreach (array_keys($this->schema_manager->get_complete_schema_definition()) as $table) {
             echo '<div class="export-item">';
             echo '<h4>' . $table . '</h4>';
-            echo '<a href="?page=cah-database-management&tab=import&action=export&table=' . $table . '" class="button">Export CSV</a>';
+            echo '<a href="?page=klage-click-database&tab=import&action=export&table=' . $table . '" class="button">Export CSV</a>';
             echo '</div>';
         }
         
