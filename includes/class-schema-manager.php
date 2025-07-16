@@ -571,6 +571,9 @@ class CAH_Schema_Manager {
             return array('success' => false, 'message' => 'Failed to modify column: ' . $this->wpdb->last_error);
         }
         
+        // Clear schema cache and refresh
+        $this->refresh_schema_cache();
+        
         return array('success' => true, 'message' => 'Column modified successfully');
     }
     
