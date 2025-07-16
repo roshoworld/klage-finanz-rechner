@@ -3310,4 +3310,39 @@ class CAH_Admin_Dashboard {
             echo '<div class="notice notice-error"><p><strong>❌ Fehler!</strong> Priorität konnte nicht geändert werden.</p></div>';
         }
     }
+    
+    /**
+     * Validate case data before creation/update
+     */
+    private function validate_case_data($case_data) {
+        $errors = array();
+        
+        // Required fields validation
+        if (empty($case_data['case_id'])) {
+            $errors[] = 'Fall-ID ist erforderlich.';
+        }
+        
+        if (empty($case_data['mandant'])) {
+            $errors[] = 'Mandant ist erforderlich.';
+        }
+        
+        // Validate case priority
+        $valid_priorities = array('low', 'medium', 'high', 'urgent');
+        if (!empty($case_data['case_priority']) && !in_array($case_data['case_priority'], $valid_priorities)) {
+            $errors[] = 'Ungültige Priorität.';
+        }
+        
+        // Validate case status
+        $valid_statuses = array('draft', 'pending', 'processing', 'completed', 'cancelled');
+        if (!empty($case_data['case_status']) && !in_array($case_data['case_status'], $valid_statuses)) {
+            $errors[] = 'Ungültiger Status.';
+        }
+        
+        // Validate submission date format
+        if (!empty($case_data['submission_date']) && !strtotime($case_data['submission_date'])) {
+            $errors[] = 'Ungültiges Datum-Format.';
+        }
+        
+        return $errors;
+    }
 }
