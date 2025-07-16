@@ -56,12 +56,28 @@ class CAH_Database {
             ustid varchar(50),
             geschaeftsfuehrer varchar(200),
             
+            -- Additional Contact
+            website varchar(255),
+            social_media text,
+            
             -- Financial Information
             finanzielle_situation varchar(50) DEFAULT 'unbekannt',
+            zahlungsverhalten varchar(20) DEFAULT 'unbekannt',
+            bonität varchar(20) DEFAULT 'unbekannt',
             
-            -- Data Source and Tracking
+            -- Legal Status
+            insolvenz_status varchar(20) DEFAULT 'nein',
+            pfändung_status varchar(20) DEFAULT 'nein',
+            
+            -- Communication preferences
+            bevorzugte_sprache varchar(5) DEFAULT 'de',
+            kommunikation_email tinyint(1) DEFAULT 1,
+            kommunikation_post tinyint(1) DEFAULT 1,
+            
+            -- Metadata
             datenquelle varchar(50) DEFAULT 'manual',
-            letzte_aktualisierung datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            verifiziert tinyint(1) DEFAULT 0,
+            letzte_aktualisierung datetime DEFAULT NULL,
             
             -- Timestamps
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
