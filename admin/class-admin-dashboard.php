@@ -816,7 +816,7 @@ class CAH_Admin_Dashboard {
         
         switch ($action) {
             case 'calculator':
-                $this->render_financial_calculator();
+                echo '<div class="wrap"><h1>🧮 Financial Calculator</h1><div class="notice notice-info"><p><strong>Financial Calculator moved to separate plugin.</strong> Please activate the "Court Automation Hub - Financial Calculator" plugin for advanced financial management.</p></div></div>';
                 break;
             default:
                 $this->render_financial_field_manager();
