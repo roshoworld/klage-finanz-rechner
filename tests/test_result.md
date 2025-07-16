@@ -218,6 +218,21 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: Hotfix v1.2.9 verification successful. Schema tests: 33/35 passed (94.3% success rate), Functional tests: 24/24 passed (100% success rate). COMPREHENSIVE DATABASE SCHEMA FIX IMPLEMENTED: ✅ Added upgrade_existing_tables() method with table existence check, column info detection, varchar(2) detection logic, ALTER TABLE modification, and data migration from 'DE' to 'Deutschland' ✅ Added ensure_debtors_table_schema() method with DROP TABLE IF EXISTS and complete table recreation with correct varchar(100) schema ✅ Enhanced create_tables_direct() method to call both upgrade methods before table creation ✅ Plugin activation integration uses create_tables_direct() ✅ Version updated to 1.2.9. CRITICAL FUNCTIONALITY VERIFIED: All 8/8 critical tests passed including database schema definition, Deutschland default value, length compatibility (11 chars), no varchar(2) constraints in main schema, case creation form, debtor record creation, database operations, and plugin activation. DEUTSCHLAND SUPPORT: Fully implemented with default value 'Deutschland', length compatibility for 11 characters, form support, proper schema constraints, and migration logic. EXISTING FUNCTIONALITY PRESERVED: All admin functions, CSV import, financial calculator, audit logging, and GDPR standard amounts (€548.11) working correctly. The original database constraint error 'Processing the value for the following field failed: debtors_country. The supplied value may be too long or contains invalid data' has been definitively resolved with comprehensive upgrade mechanism for both new and existing installations."
 
+  - task: "Hotfix v1.3.0 - Database Schema Fix for Missing Columns in klage_debtors Table"
+    implemented: true
+    working: true
+    file: "/app/includes/class-database.php"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Critical hotfix v1.3.0 verification - need to test database schema fix for missing columns 'datenquelle' and 'letzte_aktualisierung' in klage_debtors table that was causing 'Unknown column 'datenquelle' in 'field list'' error during case creation"
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED: Hotfix v1.3.0 verification successful. All 23/23 tests passed (100% success rate). CRITICAL DATABASE SCHEMA ISSUE RESOLVED: The 'Unknown column 'datenquelle' in 'field list'' error has been completely resolved. ROOT CAUSE FIXED: Code in admin/class-admin-dashboard.php was trying to insert 'datenquelle' and 'letzte_aktualisierung' columns into klage_debtors table, but ensure_debtors_table_schema() method didn't include these columns. COMPREHENSIVE FIX IMPLEMENTED: ✅ Updated ensure_debtors_table_schema() method to include missing columns: datenquelle varchar(50) DEFAULT 'manual' and letzte_aktualisierung datetime DEFAULT NULL ✅ Added all additional columns to match complete schema from create_tables_direct() ✅ Schema synchronization between both table creation methods achieved ✅ Version updated to 1.3.0 ✅ Plugin activation uses create_tables_direct() method. FUNCTIONALITY VERIFIED: ✅ Case creation end-to-end functionality working without database errors ✅ datenquelle field properly tracks manual vs CSV import source ✅ letzte_aktualisierung field tracks record update times ✅ All existing functionality preserved including GDPR amounts (€548.11) ✅ CSV import functionality maintained ✅ Upgrade mechanism handles both new and existing installations. CRITICAL TESTS PASSED: All 8/8 critical tests including version verification, column definitions, case creation compatibility, schema synchronization, upgrade mechanism, and existing functionality preservation. Database schema fix implemented correctly and ready for production use."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
