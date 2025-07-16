@@ -177,8 +177,48 @@ class CAH_Database_Admin {
      * Render schema management tab
      */
     private function render_schema_management_tab() {
+        $table_name = $_GET['table'] ?? 'klage_cases';
+        $action = $_GET['action'] ?? 'status';
+        
         echo '<div class="schema-management">';
-        echo '<h2>Schema Status</h2>';
+        
+        // Table selector
+        echo '<div class="table-selector">';
+        echo '<label for="schema-table-select">Select Table:</label>';
+        echo '<select id="schema-table-select" onchange="window.location.href=\'?page=klage-click-database&tab=schema&table=\' + this.value">';
+        
+        $tables = array_keys($this->schema_manager->get_complete_schema_definition());
+        foreach ($tables as $table) {
+            $selected = ($table === $table_name) ? 'selected' : '';
+            echo '<option value="' . $table . '" ' . $selected . '>' . $table . '</option>';
+        }
+        
+        echo '</select>';
+        echo '</div>';
+        
+        // Action buttons
+        echo '<div class="schema-actions">';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=status" class="button ' . ($action === 'status' ? 'button-primary' : '') . '">Schema Status</a>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=structure" class="button ' . ($action === 'structure' ? 'button-primary' : '') . '">Table Structure</a>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=add_column" class="button ' . ($action === 'add_column' ? 'button-primary' : '') . '">Add Column</a>';
+        echo '</div>';
+        
+        if ($action === 'status') {
+            $this->render_schema_status();
+        } elseif ($action === 'structure') {
+            $this->render_table_structure($table_name);
+        } elseif ($action === 'add_column') {
+            $this->render_add_column_form($table_name);
+        }
+        
+        echo '</div>';
+    }
+    
+    /**
+     * Render schema status overview
+     */
+    private function render_schema_status() {
+        echo '<h2>Schema Status Overview</h2>';
         
         $status = $this->schema_manager->get_schema_status();
         
@@ -222,64 +262,168 @@ class CAH_Database_Admin {
                 echo '</div>';
             }
             
+            echo '<div class="schema-actions">';
+            echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=structure" class="button button-small">View Structure</a>';
+            echo '</div>';
+            
             echo '</div>';
         }
         
         echo '</div>';
         
-        // Schema sync button
-        echo '<div class="schema-actions">';
+        // Global schema sync button
+        echo '<div class="global-schema-actions">';
         echo '<form method="post">';
         wp_nonce_field('sync_schema');
         echo '<input type="hidden" name="action" value="sync_schema">';
         echo '<button type="submit" class="button button-primary">Synchronize All Schemas</button>';
         echo '</form>';
         echo '</div>';
+    }
+    
+    /**
+     * Render table structure view
+     */
+    private function render_table_structure($table_name) {
+        echo '<h2>Table Structure: ' . $table_name . '</h2>';
+        
+        $current_schema = $this->schema_manager->get_current_table_schema($table_name);
+        $expected_schema = $this->schema_manager->get_complete_schema_definition()[$table_name] ?? null;
+        
+        if (!$current_schema) {
+            echo '<div class="notice notice-error"><p>Table does not exist in database</p></div>';
+            return;
+        }
+        
+        echo '<div class="table-structure">';
+        
+        // Current columns
+        echo '<h3>Current Columns</h3>';
+        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<thead>';
+        echo '<tr>';
+        echo '<th>Column Name</th>';
+        echo '<th>Type</th>';
+        echo '<th>Null</th>';
+        echo '<th>Default</th>';
+        echo '<th>Extra</th>';
+        echo '<th>Actions</th>';
+        echo '</tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        
+        foreach ($current_schema['columns'] as $column_name => $column_info) {
+            $is_expected = $expected_schema && isset($expected_schema['columns'][$column_name]);
+            $row_class = $is_expected ? '' : 'extra-column';
+            
+            echo '<tr class="' . $row_class . '">';
+            echo '<td><strong>' . $column_name . '</strong></td>';
+            echo '<td>' . $column_info['Type'] . '</td>';
+            echo '<td>' . $column_info['Null'] . '</td>';
+            echo '<td>' . $column_info['Default'] . '</td>';
+            echo '<td>' . $column_info['Extra'] . '</td>';
+            echo '<td>';
+            
+            if (!in_array($column_name, array('id', 'created_at', 'updated_at'))) {
+                echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=modify_column&column=' . $column_name . '" class="button button-small">Modify</a> ';
+                echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=drop_column&column=' . $column_name . '" class="button button-small button-link-delete" onclick="return confirm(\'Are you sure you want to drop this column?\')">Drop</a>';
+            } else {
+                echo '<span class="description">System column</span>';
+            }
+            
+            echo '</td>';
+            echo '</tr>';
+        }
+        
+        echo '</tbody>';
+        echo '</table>';
+        
+        // Expected vs Current comparison
+        if ($expected_schema) {
+            echo '<h3>Expected vs Current Schema</h3>';
+            $differences = $this->schema_manager->compare_schemas($table_name);
+            
+            if (empty($differences)) {
+                echo '<div class="notice notice-success"><p>Schema is synchronized</p></div>';
+            } else {
+                echo '<div class="notice notice-warning">';
+                echo '<p><strong>Schema differences found:</strong></p>';
+                echo '<ul>';
+                
+                if (isset($differences['missing_columns'])) {
+                    echo '<li>Missing columns: ' . implode(', ', $differences['missing_columns']) . '</li>';
+                }
+                
+                if (isset($differences['extra_columns'])) {
+                    echo '<li>Extra columns: ' . implode(', ', $differences['extra_columns']) . '</li>';
+                }
+                
+                echo '</ul>';
+                echo '</div>';
+            }
+        }
         
         echo '</div>';
+    }
+    
+    /**
+     * Render add column form
+     */
+    private function render_add_column_form($table_name) {
+        echo '<h2>Add Column to ' . $table_name . '</h2>';
         
-        // Add CSS
-        echo '<style>
-        .schema-status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
+        echo '<form method="post">';
+        wp_nonce_field('add_column');
+        echo '<input type="hidden" name="action" value="add_column">';
+        echo '<input type="hidden" name="table_name" value="' . $table_name . '">';
         
-        .schema-status-card {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #fff;
-        }
+        echo '<table class="form-table">';
+        echo '<tr>';
+        echo '<th><label for="column_name">Column Name</label></th>';
+        echo '<td><input type="text" id="column_name" name="column_name" class="regular-text" required></td>';
+        echo '</tr>';
         
-        .schema-status-card.status-ok {
-            border-left: 4px solid #28a745;
-        }
+        echo '<tr>';
+        echo '<th><label for="column_type">Column Type</label></th>';
+        echo '<td>';
+        echo '<select id="column_type" name="column_type" class="regular-text">';
+        echo '<option value="varchar(255)">VARCHAR(255)</option>';
+        echo '<option value="varchar(100)">VARCHAR(100)</option>';
+        echo '<option value="varchar(50)">VARCHAR(50)</option>';
+        echo '<option value="text">TEXT</option>';
+        echo '<option value="int(11)">INT(11)</option>';
+        echo '<option value="bigint(20)">BIGINT(20)</option>';
+        echo '<option value="decimal(10,2)">DECIMAL(10,2)</option>';
+        echo '<option value="date">DATE</option>';
+        echo '<option value="datetime">DATETIME</option>';
+        echo '<option value="tinyint(1)">TINYINT(1) - Boolean</option>';
+        echo '</select>';
+        echo '</td>';
+        echo '</tr>';
         
-        .schema-status-card.status-missing {
-            border-left: 4px solid #dc3545;
-        }
+        echo '<tr>';
+        echo '<th><label for="column_null">Allow NULL</label></th>';
+        echo '<td>';
+        echo '<select id="column_null" name="column_null" class="regular-text">';
+        echo '<option value="NULL">Allow NULL</option>';
+        echo '<option value="NOT NULL">NOT NULL</option>';
+        echo '</select>';
+        echo '</td>';
+        echo '</tr>';
         
-        .schema-status-card.status-out-of-sync {
-            border-left: 4px solid #ffc107;
-        }
+        echo '<tr>';
+        echo '<th><label for="column_default">Default Value</label></th>';
+        echo '<td><input type="text" id="column_default" name="column_default" class="regular-text" placeholder="Leave empty for no default"></td>';
+        echo '</tr>';
         
-        .schema-status-card.status-error {
-            border-left: 4px solid #dc3545;
-        }
+        echo '</table>';
         
-        .schema-details {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 10px;
-        }
+        echo '<div class="form-actions">';
+        echo '<button type="submit" class="button button-primary">Add Column</button>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=structure" class="button">Cancel</a>';
+        echo '</div>';
         
-        .schema-actions {
-            margin-top: 30px;
-        }
-        </style>';
+        echo '</form>';
     }
     
     /**
