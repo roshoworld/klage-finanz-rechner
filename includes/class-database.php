@@ -169,6 +169,7 @@ class CAH_Database {
     private function add_missing_columns_to_cases_table($table_name) {
         // Define columns that should exist in cases table
         $required_columns = array(
+            'mandant' => "ALTER TABLE $table_name ADD COLUMN mandant varchar(100) DEFAULT NULL",
             'brief_status' => "ALTER TABLE $table_name ADD COLUMN brief_status varchar(20) DEFAULT 'pending'",
             'verfahrensart' => "ALTER TABLE $table_name ADD COLUMN verfahrensart varchar(50) DEFAULT 'mahnverfahren'",
             'rechtsgrundlage' => "ALTER TABLE $table_name ADD COLUMN rechtsgrundlage varchar(100) DEFAULT 'DSGVO Art. 82'",
