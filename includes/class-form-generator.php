@@ -245,9 +245,99 @@ class CAH_Form_Generator {
     }
     
     /**
-     * Get field configuration
+     * Get field configuration with auto-detection for new columns
      */
     private function get_field_config($field_name) {
+        $configs = array(
+            // ... existing configurations ...
+        );
+        
+        // If configuration exists, use it
+        if (isset($configs[$field_name])) {
+            return array_merge($this->get_default_field_config($field_name), $configs[$field_name]);
+        }
+        
+        // Auto-generate configuration for new columns
+        return $this->auto_generate_field_config($field_name);
+    }
+    
+    /**
+     * Auto-generate field configuration for new columns
+     */
+    private function auto_generate_field_config($field_name) {
+        $config = $this->get_default_field_config($field_name);
+        
+        // Auto-detect field type based on name patterns
+        if (strpos($field_name, 'email') !== false) {
+            $config['type'] = 'email';
+        } elseif (strpos($field_name, 'phone') !== false) {
+            $config['type'] = 'tel';
+        } elseif (strpos($field_name, 'date') !== false) {
+            $config['type'] = 'date';
+        } elseif (strpos($field_name, 'datetime') !== false) {
+            $config['type'] = 'datetime';
+        } elseif (strpos($field_name, 'amount') !== false || strpos($field_name, 'cost') !== false) {
+            $config['type'] = 'decimal';
+        } elseif (strpos($field_name, 'count') !== false || strpos($field_name, 'number') !== false) {
+            $config['type'] = 'number';
+        } elseif (strpos($field_name, 'notes') !== false || strpos($field_name, 'content') !== false) {
+            $config['type'] = 'textarea';
+        }
+        
+        return $config;
+    }
+    
+    /**
+     * Get default field configuration
+     */
+    private function get_default_field_config($field_name) {
+        return array(
+            'label' => $this->generate_german_label($field_name),
+            'type' => 'text',
+            'required' => false,
+            'description' => '',
+            'class' => 'regular-text'
+        );
+    }
+    
+    /**
+     * Generate German label from field name
+     */
+    private function generate_german_label($field_name) {
+        $translations = array(
+            'deadline' => 'Deadline',
+            'response' => 'Antwort',
+            'payment' => 'Zahlung',
+            'complexity' => 'Komplexität',
+            'processing' => 'Verarbeitung',
+            'risk' => 'Risiko',
+            'score' => 'Bewertung',
+            'document' => 'Dokument',
+            'language' => 'Sprache',
+            'type' => 'Typ',
+            'case' => 'Fall',
+            'debtor' => 'Schuldner',
+            'status' => 'Status',
+            'date' => 'Datum',
+            'amount' => 'Betrag',
+            'email' => 'E-Mail',
+            'phone' => 'Telefon',
+            'address' => 'Adresse',
+            'city' => 'Stadt',
+            'country' => 'Land',
+            'name' => 'Name',
+            'company' => 'Firma'
+        );
+        
+        $parts = explode('_', $field_name);
+        $label_parts = array();
+        
+        foreach ($parts as $part) {
+            $label_parts[] = $translations[$part] ?? ucfirst($part);
+        }
+        
+        return implode(' ', $label_parts);
+    }
         $configs = array(
             // Cases table fields
             'case_id' => array('label' => 'Fall-ID', 'type' => 'text', 'required' => true, 'description' => 'Eindeutige Fall-Kennung'),
