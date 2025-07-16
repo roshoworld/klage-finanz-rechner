@@ -299,11 +299,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hotfix v1.3.2 verification completed - database schema fix for missing columns in klage_cases table working correctly"
-    - "Cases table upgrade mechanism with 13 missing columns (brief_status, verfahrensart, rechtsgrundlage, etc.) fully functional"
-    - "Case creation working without 'Unknown column brief_status in field list' error after upgrade"
-    - "Both debtors and cases tables upgrade mechanism working for existing installations"
-    - "All database table creation, upgrade, schema check, and case creation functionality verified"
+    - "Hotfix v1.3.3 verification completed - comprehensive database schema fix for ALL missing columns in klage_cases table working correctly"
+    - "Complete cases table upgrade mechanism with 34 missing columns (mandant, brief_status, briefe, schuldner, beweise, dokumente, etc.) fully functional"
+    - "Case creation working without any database column errors after comprehensive upgrade including 'mandant' field"
+    - "Both debtors and cases tables upgrade mechanism working for existing installations with complete schema synchronization"
+    - "All database table creation, upgrade, schema check, and case creation functionality verified with 100% test success rate"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
