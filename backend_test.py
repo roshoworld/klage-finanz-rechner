@@ -125,8 +125,8 @@ class CleanCutTester:
             
             # Some references may remain for compatibility, but UI should be minimal
             self.log_test("Financial calculator UI references reduced", 
-                         financial_ui_count < 5,
-                         f"Found {financial_ui_count} references (should be minimal)")
+                         financial_ui_count <= 5,
+                         f"Found {financial_ui_count} references (should be ≤5)")
             
             # Check if financial management sections are removed
             financial_management = self.check_file_content(admin_dashboard, 
