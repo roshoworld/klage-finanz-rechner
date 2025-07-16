@@ -223,6 +223,8 @@ class CAH_Admin_Dashboard {
     }
     
     private function render_add_case_form() {
+        // Get previously submitted data for form persistence
+        $form_data = $this->get_form_data();
         ?>
         <div class="wrap">
             <h1>Neuen GDPR Spam Fall erstellen</h1>
@@ -247,7 +249,7 @@ class CAH_Admin_Dashboard {
                                     <th scope="row"><label for="case_id">Fall-ID</label></th>
                                     <td>
                                         <input type="text" id="case_id" name="case_id" class="regular-text" 
-                                               value="SPAM-<?php echo date('Y'); ?>-<?php echo str_pad(wp_rand(1, 9999), 4, '0', STR_PAD_LEFT); ?>" required>
+                                               value="<?php echo esc_attr($form_data['case_id'] ?? 'SPAM-' . date('Y') . '-' . str_pad(wp_rand(1, 9999), 4, '0', STR_PAD_LEFT)); ?>" required>
                                         <p class="description">Eindeutige Fall-Kennung</p>
                                     </td>
                                 </tr>
@@ -255,9 +257,9 @@ class CAH_Admin_Dashboard {
                                     <th scope="row"><label for="case_status">Status</label></th>
                                     <td>
                                         <select id="case_status" name="case_status" class="regular-text">
-                                            <option value="draft">📝 Entwurf</option>
-                                            <option value="processing">⚡ In Bearbeitung</option>
-                                            <option value="completed">✅ Abgeschlossen</option>
+                                            <option value="draft" <?php selected($form_data['case_status'] ?? 'draft', 'draft'); ?>>📝 Entwurf</option>
+                                            <option value="processing" <?php selected($form_data['case_status'] ?? 'draft', 'processing'); ?>>⚡ In Bearbeitung</option>
+                                            <option value="completed" <?php selected($form_data['case_status'] ?? 'draft', 'completed'); ?>>✅ Abgeschlossen</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -265,9 +267,9 @@ class CAH_Admin_Dashboard {
                                     <th scope="row"><label for="case_priority">Priorität</label></th>
                                     <td>
                                         <select id="case_priority" name="case_priority" class="regular-text">
-                                            <option value="medium">🟡 Medium</option>
-                                            <option value="high">🟠 Hoch</option>
-                                            <option value="low">🟢 Niedrig</option>
+                                            <option value="medium" <?php selected($form_data['case_priority'] ?? 'medium', 'medium'); ?>>🟡 Medium</option>
+                                            <option value="high" <?php selected($form_data['case_priority'] ?? 'medium', 'high'); ?>>🟠 Hoch</option>
+                                            <option value="low" <?php selected($form_data['case_priority'] ?? 'medium', 'low'); ?>>🟢 Niedrig</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -275,7 +277,7 @@ class CAH_Admin_Dashboard {
                                     <th scope="row"><label for="case_notes">Notizen</label></th>
                                     <td>
                                         <textarea id="case_notes" name="case_notes" class="large-text" rows="4" 
-                                                  placeholder="Interne Notizen zum Fall..."></textarea>
+                                                  placeholder="Interne Notizen zum Fall..."><?php echo esc_textarea($form_data['case_notes'] ?? ''); ?></textarea>
                                     </td>
                                 </tr>
                             </table>
