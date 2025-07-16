@@ -2677,32 +2677,10 @@ class CAH_Admin_Dashboard {
             }
         }
         
-        // Update financial data if exists
-        if (isset($post_data['damages_loss'])) {
-            $financial_data = array(
-                'damages_loss' => floatval($post_data['damages_loss']),
-                'partner_fees' => floatval($post_data['partner_fees']),
-                'communication_fees' => floatval($post_data['communication_fees']),
-                'court_fees' => floatval($post_data['court_fees'])
-            );
-            
-            // Recalculate totals
-            $vat = ($financial_data['partner_fees'] + $financial_data['communication_fees']) * 0.19;
-            $total = $financial_data['damages_loss'] + $financial_data['partner_fees'] + $financial_data['communication_fees'] + $financial_data['court_fees'] + $vat;
-            
-            $financial_data['vat'] = $vat;
-            $financial_data['total'] = $total;
-            
-            $wpdb->update(
-                $wpdb->prefix . 'klage_financial',
-                $financial_data,
-                array('case_id' => $case_id),
-                array('%f', '%f', '%f', '%f', '%f', '%f'),
-                array('%d')
-            );
-        }
-        
         if ($result !== false) {
+            // Trigger WordPress hook for case update (for financial calculator plugin integration)
+            do_action('cah_case_updated', $case_id, $case_data);
+            
             echo '<div class="notice notice-success"><p><strong>✅ Erfolg!</strong> Fall wurde aktualisiert.</p></div>';
             
             // Log the update
