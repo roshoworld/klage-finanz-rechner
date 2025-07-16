@@ -96,14 +96,13 @@ class CAH_Database {
      * Upgrade existing tables to fix schema issues
      */
     private function upgrade_existing_tables() {
-        // Fix debtors_country field length issue
         $table_name = $this->wpdb->prefix . 'klage_debtors';
         
         // Check if table exists
         $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$table_name'");
         
         if ($table_exists) {
-            // Check current column definition
+            // Fix debtors_country field length issue
             $column_info = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'debtors_country'");
             
             if (!empty($column_info)) {
@@ -114,10 +113,49 @@ class CAH_Database {
                     $alter_sql = "ALTER TABLE $table_name MODIFY COLUMN debtors_country varchar(100) DEFAULT 'Deutschland'";
                     $this->wpdb->query($alter_sql);
                     
-                    // Update any existing 'DE' values to 'Deutschland'
+                    // Update existing 'DE' values to 'Deutschland'
                     $update_sql = "UPDATE $table_name SET debtors_country = 'Deutschland' WHERE debtors_country = 'DE'";
                     $this->wpdb->query($update_sql);
                 }
+            }
+            
+            // Add missing columns if they don't exist
+            $this->add_missing_columns_to_debtors_table($table_name);
+        }
+    }
+    
+    /**
+     * Add missing columns to existing debtors table
+     */
+    private function add_missing_columns_to_debtors_table($table_name) {
+        // Define columns that should exist
+        $required_columns = array(
+            'datenquelle' => "ALTER TABLE $table_name ADD COLUMN datenquelle varchar(50) DEFAULT 'manual'",
+            'letzte_aktualisierung' => "ALTER TABLE $table_name ADD COLUMN letzte_aktualisierung datetime DEFAULT NULL",
+            'website' => "ALTER TABLE $table_name ADD COLUMN website varchar(255)",
+            'social_media' => "ALTER TABLE $table_name ADD COLUMN social_media text",
+            'zahlungsverhalten' => "ALTER TABLE $table_name ADD COLUMN zahlungsverhalten varchar(20) DEFAULT 'unbekannt'",
+            'bonität' => "ALTER TABLE $table_name ADD COLUMN bonität varchar(20) DEFAULT 'unbekannt'",
+            'insolvenz_status' => "ALTER TABLE $table_name ADD COLUMN insolvenz_status varchar(20) DEFAULT 'nein'",
+            'pfändung_status' => "ALTER TABLE $table_name ADD COLUMN pfändung_status varchar(20) DEFAULT 'nein'",
+            'bevorzugte_sprache' => "ALTER TABLE $table_name ADD COLUMN bevorzugte_sprache varchar(5) DEFAULT 'de'",
+            'kommunikation_email' => "ALTER TABLE $table_name ADD COLUMN kommunikation_email tinyint(1) DEFAULT 1",
+            'kommunikation_post' => "ALTER TABLE $table_name ADD COLUMN kommunikation_post tinyint(1) DEFAULT 1",
+            'verifiziert' => "ALTER TABLE $table_name ADD COLUMN verifiziert tinyint(1) DEFAULT 0"
+        );
+        
+        // Get existing columns
+        $existing_columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name");
+        $existing_column_names = array();
+        
+        foreach ($existing_columns as $column) {
+            $existing_column_names[] = $column->Field;
+        }
+        
+        // Add missing columns
+        foreach ($required_columns as $column_name => $alter_sql) {
+            if (!in_array($column_name, $existing_column_names)) {
+                $this->wpdb->query($alter_sql);
             }
         }
     }
