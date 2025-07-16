@@ -296,7 +296,7 @@ class CAH_Database_Admin {
         // Table selector
         echo '<div class="table-selector">';
         echo '<label for="table-select">Select Table:</label>';
-        echo '<select id="table-select" onchange="window.location.href=\'?page=cah-database-management&tab=data&table=\' + this.value">';
+        echo '<select id="table-select" onchange="window.location.href=\'?page=klage-click-database&tab=data&table=\' + this.value">';
         
         $tables = array_keys($this->schema_manager->get_complete_schema_definition());
         foreach ($tables as $table) {
