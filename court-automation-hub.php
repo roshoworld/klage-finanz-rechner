@@ -62,26 +62,23 @@ class CourtAutomationHub {
     }
     
     private function init_components() {
-        // Initialize database
-        new CAH_Database();
+        // Initialize schema manager and auto-sync database
+        $schema_manager = new CAH_Schema_Manager();
+        $schema_manager->synchronize_all_tables();
         
-        // Initialize managers
-        new CAH_Case_Manager();
-        new CAH_Debtor_Manager();
-        new CAH_Email_Evidence();
-        new CAH_Financial_Calculator();
-        new CAH_Legal_Framework();
-        new CAH_Court_Manager();
-        new CAH_Audit_Logger();
-        new CAH_N8N_Connector();
-        
-        // Initialize admin
-        if (is_admin()) {
-            new CAH_Admin_Dashboard();
-        }
-        
-        // Initialize REST API
-        new CAH_Rest_API();
+        // Initialize all components
+        $this->database = new CAH_Database();
+        $this->admin_dashboard = new CAH_Admin_Dashboard();
+        $this->database_admin = new CAH_Database_Admin();
+        $this->rest_api = new CAH_REST_API();
+        $this->audit_logger = new CAH_Audit_Logger();
+        $this->case_manager = new CAH_Case_Manager();
+        $this->debtor_manager = new CAH_Debtor_Manager();
+        $this->email_evidence = new CAH_Email_Evidence();
+        $this->financial_calculator = new CAH_Financial_Calculator();
+        $this->legal_framework = new CAH_Legal_Framework();
+        $this->court_manager = new CAH_Court_Manager();
+        $this->n8n_connector = new CAH_N8N_Connector();
     }
     
     private function add_hooks() {
