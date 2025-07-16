@@ -53,6 +53,125 @@ class CAH_Admin_Dashboard {
         }
     }
     
+    private function handle_early_export() {
+        // Check if this is our CSV export request
+        if (isset($_GET['page']) && $_GET['page'] === 'klage-click-cases' && 
+            isset($_GET['action']) && $_GET['action'] === 'export' && 
+            isset($_GET['_wpnonce'])) {
+            
+            // Verify nonce
+            if (!wp_verify_nonce($_GET['_wpnonce'], 'export_csv')) {
+                wp_die('Security check failed');
+            }
+            
+            // Check permissions
+            if (!current_user_can('manage_options')) {
+                wp_die('Insufficient permissions');
+            }
+            
+            // Send the CSV export
+            $this->export_cases_csv();
+            exit; // Critical: Stop WordPress execution
+        }
+    }
+    
+    private function export_cases_csv() {
+        global $wpdb;
+        
+        // Get cases data
+        $cases = $wpdb->get_results("
+            SELECT 
+                c.case_id,
+                c.case_status,
+                c.case_priority,
+                c.mandant,
+                c.submission_date,
+                c.total_amount,
+                c.case_notes,
+                d.debtors_name,
+                d.debtors_email,
+                d.debtors_company,
+                c.created_at
+            FROM {$wpdb->prefix}klage_cases c
+            LEFT JOIN {$wpdb->prefix}klage_debtors d ON c.debtor_id = d.id
+            ORDER BY c.created_at DESC
+        ", ARRAY_A);
+        
+        $filename = 'klage_cases_export_' . date('Y-m-d_H-i-s') . '.csv';
+        
+        // Clean any output buffer
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        // Set headers for CSV download
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // Create CSV output
+        $output = fopen('php://output', 'w');
+        
+        // Add BOM for UTF-8 Excel compatibility
+        fwrite($output, "\xEF\xBB\xBF");
+        
+        // CSV headers
+        fputcsv($output, array(
+            'Fall-ID',
+            'Status',
+            'Priorität',
+            'Mandant',
+            'Eingangsdatum',
+            'Gesamtbetrag',
+            'Notizen',
+            'Schuldner Name',
+            'Schuldner E-Mail',
+            'Schuldner Firma',
+            'Erstellt am'
+        ), ';');
+        
+        // Write data rows
+        foreach ($cases as $case) {
+            fputcsv($output, array(
+                $case['case_id'],
+                $case['case_status'],
+                $case['case_priority'],
+                $case['mandant'],
+                $case['submission_date'],
+                $case['total_amount'],
+                $case['case_notes'],
+                $case['debtors_name'],
+                $case['debtors_email'],
+                $case['debtors_company'],
+                $case['created_at']
+            ), ';');
+        }
+        
+        fclose($output);
+    }
+    
+    public function ajax_export_csv() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'export_csv')) {
+            wp_die('Security check failed');
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_die('Insufficient permissions');
+        }
+        
+        // Generate export URL
+        $export_url = wp_nonce_url(
+            admin_url('admin.php?page=klage-click-cases&action=export'),
+            'export_csv'
+        );
+        
+        wp_redirect($export_url);
+        exit;
+    }
+    
     private function send_template_download() {
         // Check template type
         $template_type = $_GET['template_type'] ?? 'comprehensive';
