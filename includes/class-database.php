@@ -734,7 +734,7 @@ class CAH_Database {
     }
     
     public function get_table_status() {
-        $tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_financial', 'klage_courts');
+        $tables = array('klage_cases', 'klage_debtors', 'klage_clients', 'klage_emails', 'klage_courts');
         $status = array();
         
         foreach ($tables as $table) {
