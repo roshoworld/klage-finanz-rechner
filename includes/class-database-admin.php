@@ -99,7 +99,12 @@ class CAH_Database_Admin {
                 
                 if ($result['success']) {
                     add_action('admin_notices', function() use ($column_name) {
-                        echo '<div class="notice notice-success"><p>Column "' . $column_name . '" added successfully.</p></div>';
+                        echo '<div class="notice notice-success"><p><strong>Column "' . $column_name . '" added successfully!</strong></p>';
+                        echo '<p>✅ Database table updated<br>';
+                        echo '✅ Dynamic forms will automatically include this field<br>';
+                        echo '✅ CSV import templates will automatically include this field<br>';
+                        echo '✅ No additional steps required</p>';
+                        echo '</div>';
                     });
                 } else {
                     add_action('admin_notices', function() use ($result) {
