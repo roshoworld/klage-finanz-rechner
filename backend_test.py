@@ -83,25 +83,17 @@ class CleanCutTester:
         self.log_test("Plugin constant version is 1.4.8", constant_found,
                      "CAH_PLUGIN_VERSION constant matches")
         
-        # Test 3: Financial calculator class still included (simplified version)
+        # Test 3: Financial calculator class completely removed
         financial_class_included = self.check_file_content(main_plugin, 
                                                          r"class-financial-calculator\.php")
-        self.log_test("Financial calculator class still included", financial_class_included,
-                     "Simplified version should remain in core plugin")
+        self.log_test("Financial calculator class completely removed", not financial_class_included,
+                     "Financial calculator should be completely removed from core plugin")
         
-        # Test 4: Check simplified financial calculator class
+        # Test 4: Financial calculator class file removed
         financial_class = "/app/includes/class-financial-calculator.php"
-        if self.check_file_exists(financial_class):
-            # Should be simplified version with basic GDPR calculation
-            has_gdpr_method = self.check_file_content(financial_class, r"calculate_gdpr_damages")
-            has_basic_amounts = self.check_file_content(financial_class, r"548\.11")
-            
-            self.log_test("Simplified financial calculator has GDPR method", has_gdpr_method,
-                         "calculate_gdpr_damages method exists")
-            self.log_test("Simplified financial calculator has standard amounts", has_basic_amounts,
-                         "€548.11 standard amount preserved")
-        else:
-            self.log_test("Financial calculator class exists", False, "File not found")
+        file_removed = not self.check_file_exists(financial_class)
+        self.log_test("Financial calculator class file removed", file_removed,
+                     "class-financial-calculator.php should be deleted")
         
         # Test 5: Database schema - financial tables should be commented/removed
         database_class = "/app/includes/class-database.php"
