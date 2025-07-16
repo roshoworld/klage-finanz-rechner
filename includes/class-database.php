@@ -18,6 +18,36 @@ class CAH_Database {
     }
     
     /**
+     * Upgrade existing tables to fix schema issues
+     */
+    private function upgrade_existing_tables() {
+        // Fix debtors_country field length issue
+        $table_name = $this->wpdb->prefix . 'klage_debtors';
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$table_name'");
+        
+        if ($table_exists) {
+            // Check current column definition
+            $column_info = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'debtors_country'");
+            
+            if (!empty($column_info)) {
+                $column_type = $column_info[0]->Type;
+                
+                // If it's varchar(2), update it to varchar(100)
+                if (strpos($column_type, 'varchar(2)') !== false) {
+                    $alter_sql = "ALTER TABLE $table_name MODIFY COLUMN debtors_country varchar(100) DEFAULT 'Deutschland'";
+                    $this->wpdb->query($alter_sql);
+                    
+                    // Update any existing 'DE' values to 'Deutschland'
+                    $update_sql = "UPDATE $table_name SET debtors_country = 'Deutschland' WHERE debtors_country = 'DE'";
+                    $this->wpdb->query($update_sql);
+                }
+            }
+        }
+    }
+    
+    /**
      * Direct table creation method (bypasses dbDelta issues)
      */
     public function create_tables_direct() {
