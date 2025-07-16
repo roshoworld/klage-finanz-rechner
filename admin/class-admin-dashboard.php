@@ -3087,6 +3087,9 @@ class CAH_Admin_Dashboard {
                     if ($result !== false) {
                         $success_count++;
                         
+                        // Trigger WordPress hook for case update (for financial calculator plugin integration)
+                        do_action('cah_case_updated', $case_id, array('case_status' => $new_status));
+                        
                         // Log the status change
                         if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
                             $wpdb->insert(
