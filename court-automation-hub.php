@@ -75,7 +75,7 @@ class CourtAutomationHub {
         $this->case_manager = new CAH_Case_Manager();
         $this->debtor_manager = new CAH_Debtor_Manager();
         $this->email_evidence = new CAH_Email_Evidence();
-        $this->financial_calculator = new CAH_Financial_Calculator();
+        // Financial calculator removed in v1.4.7 - moved to separate plugin
         $this->legal_framework = new CAH_Legal_Framework();
         $this->court_manager = new CAH_Court_Manager();
         $this->n8n_connector = new CAH_N8N_Connector();
