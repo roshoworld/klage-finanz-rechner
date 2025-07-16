@@ -257,15 +257,21 @@ class CAH_Database_Admin {
         echo '<div class="schema-actions">';
         echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=status" class="button ' . ($action === 'status' ? 'button-primary' : '') . '">Schema Status</a>';
         echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=structure" class="button ' . ($action === 'structure' ? 'button-primary' : '') . '">Table Structure</a>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=indexes" class="button ' . ($action === 'indexes' ? 'button-primary' : '') . '">Indexes & Keys</a>';
         echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=add_column" class="button ' . ($action === 'add_column' ? 'button-primary' : '') . '">Add Column</a>';
+        echo '<a href="?page=klage-click-database&tab=schema&table=' . $table_name . '&action=add_index" class="button ' . ($action === 'add_index' ? 'button-primary' : '') . '">Add Index/Key</a>';
         echo '</div>';
         
         if ($action === 'status') {
             $this->render_schema_status();
         } elseif ($action === 'structure') {
             $this->render_table_structure($table_name);
+        } elseif ($action === 'indexes') {
+            $this->render_table_indexes($table_name);
         } elseif ($action === 'add_column') {
             $this->render_add_column_form($table_name);
+        } elseif ($action === 'add_index') {
+            $this->render_add_index_form($table_name);
         }
         
         echo '</div>';
