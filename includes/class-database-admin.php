@@ -718,31 +718,83 @@ class CAH_Database_Admin {
         
         // Add CSS
         echo '<style>
-        .template-grid {
+        .table-selector {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .schema-actions {
+            margin: 20px 0;
+        }
+        
+        .schema-actions .button {
+            margin-right: 10px;
+        }
+        
+        .schema-status-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin: 20px 0;
         }
         
-        .template-group {
-            border: 1px solid #ddd;
+        .schema-status-card {
             padding: 20px;
-            border-radius: 5px;
-        }
-        
-        .template-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 3px;
-        }
-        
-        .export-item {
-            margin-bottom: 15px;
-            padding: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            background: #fff;
+        }
+        
+        .schema-status-card.status-ok {
+            border-left: 4px solid #28a745;
+        }
+        
+        .schema-status-card.status-missing {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .schema-status-card.status-out-of-sync {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .schema-status-card.status-error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .schema-details {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .global-schema-actions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .table-structure {
+            margin: 20px 0;
+        }
+        
+        .table-structure h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .extra-column {
+            background-color: #fff3cd;
+        }
+        
+        .form-actions {
+            margin-top: 20px;
+        }
+        
+        .form-actions .button {
+            margin-right: 10px;
         }
         </style>';
     }
