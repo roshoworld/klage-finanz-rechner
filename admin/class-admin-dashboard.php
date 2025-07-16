@@ -839,71 +839,12 @@ class CAH_Admin_Dashboard {
                 </a>
             </div>
             
-            <!-- DSGVO Standard Overview -->
+            <!-- Financial Calculator moved to separate plugin -->
             <div class="postbox">
-                <h2 class="hndle">📊 DSGVO Standard-Berechnung</h2>
+                <h2 class="hndle">💰 Finanzrechner</h2>
                 <div class="inside" style="padding: 20px;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr style="background: #f8f9fa;">
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Kostenart</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: right;">Betrag</th>
-                            <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Beschreibung</th>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 10px;">💰 Grundschaden</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€350.00</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 10px;">DSGVO Art. 82 Schadenersatz</td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 10px;">⚖️ Anwaltskosten</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€96.90</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 10px;">RVG Rechtsanwaltsgebühren</td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 10px;">📞 Kommunikation</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€13.36</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 10px;">Porto, Telefon, etc.</td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 10px;">🏛️ Gerichtskosten</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€32.00</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 10px;">Verfahrenskosten</td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 10px;">📊 MwSt (19%)</td>
-                            <td style="border: 1px solid #ddd; padding: 10px; text-align: right;"><strong>€87.85</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 10px;">19% auf Anwalt + Kommunikation</td>
-                        </tr>
-                        <tr style="background: #e7f3ff; font-weight: bold;">
-                            <td style="border: 2px solid #0073aa; padding: 12px;">🎯 GESAMTSUMME</td>
-                            <td style="border: 2px solid #0073aa; padding: 12px; text-align: right; font-size: 18px; color: #0073aa;"><strong>€548.11</strong></td>
-                            <td style="border: 2px solid #0073aa; padding: 12px;">Standard DSGVO SPAM-Fall</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- Quick Templates -->
-            <div class="postbox" style="margin-top: 20px;">
-                <h2 class="hndle">⚡ Schnell-Templates</h2>
-                <div class="inside" style="padding: 20px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                        <div style="background: #f0f8ff; padding: 20px; border-radius: 8px; text-align: center;">
-                            <h4 style="margin: 0 0 10px 0; color: #0073aa;">📋 DSGVO Standard</h4>
-                            <p style="margin: 0 0 10px 0; font-size: 14px;">Einfache SPAM-Fälle</p>
-                            <strong style="font-size: 18px; color: #0073aa;">€548.11</strong>
-                        </div>
-                        <div style="background: #fff3cd; padding: 20px; border-radius: 8px; text-align: center;">
-                            <h4 style="margin: 0 0 10px 0; color: #856404;">💎 DSGVO Premium</h4>
-                            <p style="margin: 0 0 10px 0; font-size: 14px;">Mehrfach-Verstöße</p>
-                            <strong style="font-size: 18px; color: #856404;">€750+</strong>
-                        </div>
-                        <div style="background: #d4edda; padding: 20px; border-radius: 8px; text-align: center;">
-                            <h4 style="margin: 0 0 10px 0; color: #155724;">🏢 Business-Fall</h4>
-                            <p style="margin: 0 0 10px 0; font-size: 14px;">Firmen-Verstöße</p>
-                            <strong style="font-size: 18px; color: #155724;">€1000+</strong>
-                        </div>
-                    </div>
+                    <p>Der Finanzrechner ist jetzt als separates Plugin verfügbar: <strong>Court Automation Hub - Financial Calculator</strong></p>
+                    <p>Bitte installieren Sie das Financial Calculator Plugin für erweiterte Finanzberechnungen.</p>
                 </div>
             </div>
         </div>
