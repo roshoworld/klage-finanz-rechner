@@ -53,7 +53,7 @@ class CourtAutomationHub {
         require_once CAH_PLUGIN_PATH . 'includes/class-audit-logger.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-debtor-manager.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-email-evidence.php';
-        require_once CAH_PLUGIN_PATH . 'includes/class-financial-calculator.php';
+        // Financial calculator removed in v1.4.7 - moved to separate plugin
         require_once CAH_PLUGIN_PATH . 'includes/class-legal-framework.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-court-manager.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-n8n-connector.php';
