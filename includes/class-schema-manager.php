@@ -425,6 +425,99 @@ class CAH_Schema_Manager {
     }
     
     /**
+     * Add column to existing table
+     */
+    public function add_column($table_name, $column_name, $column_definition) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if column already exists
+        $column_exists = $this->wpdb->get_var("SHOW COLUMNS FROM $full_table_name LIKE '$column_name'");
+        if ($column_exists) {
+            return array('success' => false, 'message' => 'Column already exists');
+        }
+        
+        // Add column
+        $sql = "ALTER TABLE $full_table_name ADD COLUMN $column_name $column_definition";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to add column: ' . $this->wpdb->last_error);
+        }
+        
+        return array('success' => true, 'message' => 'Column added successfully');
+    }
+    
+    /**
+     * Modify existing column
+     */
+    public function modify_column($table_name, $column_name, $new_definition) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if column exists
+        $column_exists = $this->wpdb->get_var("SHOW COLUMNS FROM $full_table_name LIKE '$column_name'");
+        if (!$column_exists) {
+            return array('success' => false, 'message' => 'Column does not exist');
+        }
+        
+        // Modify column
+        $sql = "ALTER TABLE $full_table_name MODIFY COLUMN $column_name $new_definition";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to modify column: ' . $this->wpdb->last_error);
+        }
+        
+        return array('success' => true, 'message' => 'Column modified successfully');
+    }
+    
+    /**
+     * Drop column from table
+     */
+    public function drop_column($table_name, $column_name) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if column exists
+        $column_exists = $this->wpdb->get_var("SHOW COLUMNS FROM $full_table_name LIKE '$column_name'");
+        if (!$column_exists) {
+            return array('success' => false, 'message' => 'Column does not exist');
+        }
+        
+        // Don't allow dropping system columns
+        $system_columns = array('id', 'created_at', 'updated_at');
+        if (in_array($column_name, $system_columns)) {
+            return array('success' => false, 'message' => 'Cannot drop system column');
+        }
+        
+        // Drop column
+        $sql = "ALTER TABLE $full_table_name DROP COLUMN $column_name";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to drop column: ' . $this->wpdb->last_error);
+        }
+        
+        return array('success' => true, 'message' => 'Column dropped successfully');
+    }
+    
+    /**
      * Get schema validation status
      */
     public function get_schema_status() {
