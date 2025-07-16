@@ -203,16 +203,16 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.7"
-  test_sequence: 7
+  version: "1.8"
+  test_sequence: 8
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Hotfix v1.2.6 verification completed - both remaining critical issues resolved"
-    - "Case creation validation logic fixed for mixed debtor/email fields"
-    - "GET-based action handlers for status and priority changes implemented"
-    - "Meaningful data detection vs field presence working correctly"
+    - "Hotfix v1.2.7 verification completed - both critical issues from review request resolved"
+    - "Enhanced validation logic for mixed debtor/email inputs working correctly"
+    - "Form data persistence implemented and functioning properly"
+    - "All test focus areas from review request verified successfully"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
