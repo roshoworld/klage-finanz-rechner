@@ -418,7 +418,7 @@ class CAH_Database {
             debtors_house_number varchar(10) NOT NULL,
             debtors_postal_code varchar(5) NOT NULL,
             debtors_city varchar(100) NOT NULL,
-            debtors_country varchar(2) DEFAULT 'DE',
+            debtors_country varchar(100) DEFAULT 'Deutschland',
             debtors_email varchar(255),
             debtors_phone varchar(20),
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
