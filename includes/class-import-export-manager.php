@@ -447,6 +447,7 @@ class CAH_Import_Export_Manager {
                     'fields' => 'all'
                 )
             ),
+            // Financial table removed in v1.4.7 - moved to separate plugin
             'klage_financial' => array(
                 'full' => array(
                     'name' => 'Finanz Template',
