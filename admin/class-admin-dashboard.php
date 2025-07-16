@@ -194,7 +194,7 @@ class CAH_Admin_Dashboard {
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                         <a href="<?php echo admin_url('admin.php?page=klage-click-cases&action=add'); ?>" class="button button-primary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
                             <strong>📝 Neuen Fall erstellen</strong><br>
-                            <small>GDPR Fall mit €548.11 Standard</small>
+                            <small>GDPR Fall - Finanzberechnung über separates Plugin</small>
                         </a>
                         <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary" style="padding: 20px; height: auto; text-decoration: none; text-align: center;">
                             <strong>📊 CSV Import</strong><br>
