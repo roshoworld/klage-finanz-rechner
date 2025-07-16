@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Dashboard class - Forderungen.com Master Data v1.2.1 (Complete Case Management)
+ * Admin Dashboard class - Enhanced Case Creation v1.2.7 (Fixed Validation & Form Persistence)
  */
 
 if (!defined('ABSPATH')) {
