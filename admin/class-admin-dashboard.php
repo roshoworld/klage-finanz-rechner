@@ -375,14 +375,16 @@ class CAH_Admin_Dashboard {
                             <tr>
                                 <th scope="row"><label for="emails_sender_email">Spam-Absender</label></th>
                                 <td>
-                                    <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text">
+                                    <input type="email" id="emails_sender_email" name="emails_sender_email" class="regular-text" 
+                                           value="<?php echo esc_attr($form_data['emails_sender_email'] ?? ''); ?>">
                                     <p class="description">E-Mail-Adresse des Spam-Absenders</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="emails_user_email">Betroffene E-Mail</label></th>
                                 <td>
-                                    <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text">
+                                    <input type="email" id="emails_user_email" name="emails_user_email" class="regular-text" 
+                                           value="<?php echo esc_attr($form_data['emails_user_email'] ?? ''); ?>">
                                     <p class="description">E-Mail-Adresse des Geschädigten</p>
                                 </td>
                             </tr>
@@ -390,13 +392,14 @@ class CAH_Admin_Dashboard {
                                 <th scope="row"><label for="emails_received_date">Empfangsdatum</label></th>
                                 <td>
                                     <input type="date" id="emails_received_date" name="emails_received_date" class="regular-text" 
-                                           value="<?php echo date('Y-m-d'); ?>">
+                                           value="<?php echo esc_attr($form_data['emails_received_date'] ?? date('Y-m-d')); ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="emails_subject">E-Mail Betreff</label></th>
                                 <td>
                                     <input type="text" id="emails_subject" name="emails_subject" class="regular-text" 
+                                           value="<?php echo esc_attr($form_data['emails_subject'] ?? ''); ?>" 
                                            placeholder="Betreff der Spam-E-Mail">
                                 </td>
                             </tr>
@@ -404,7 +407,7 @@ class CAH_Admin_Dashboard {
                                 <th scope="row"><label for="emails_content">E-Mail Inhalt</label></th>
                                 <td>
                                     <textarea id="emails_content" name="emails_content" class="large-text" rows="6" 
-                                              placeholder="Vollständiger Inhalt der Spam-E-Mail"></textarea>
+                                              placeholder="Vollständiger Inhalt der Spam-E-Mail"><?php echo esc_textarea($form_data['emails_content'] ?? ''); ?></textarea>
                                 </td>
                             </tr>
                         </table>
