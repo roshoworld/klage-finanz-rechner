@@ -578,6 +578,162 @@ class CAH_Schema_Manager {
     }
     
     /**
+     * Add unique key to table
+     */
+    public function add_unique_key($table_name, $key_name, $columns) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if unique key already exists
+        $key_exists = $this->wpdb->get_var("SHOW INDEX FROM $full_table_name WHERE Key_name = '$key_name'");
+        if ($key_exists) {
+            return array('success' => false, 'message' => 'Unique key already exists');
+        }
+        
+        // Validate columns exist
+        foreach ($columns as $column) {
+            $column_exists = $this->wpdb->get_var("SHOW COLUMNS FROM $full_table_name LIKE '$column'");
+            if (!$column_exists) {
+                return array('success' => false, 'message' => "Column '$column' does not exist");
+            }
+        }
+        
+        // Add unique key
+        $columns_str = implode(', ', $columns);
+        $sql = "ALTER TABLE $full_table_name ADD UNIQUE KEY $key_name ($columns_str)";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to add unique key: ' . $this->wpdb->last_error);
+        }
+        
+        // Clear schema cache and refresh
+        $this->refresh_schema_cache();
+        
+        return array('success' => true, 'message' => 'Unique key added successfully');
+    }
+    
+    /**
+     * Add regular index to table
+     */
+    public function add_index($table_name, $index_name, $columns) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if index already exists
+        $index_exists = $this->wpdb->get_var("SHOW INDEX FROM $full_table_name WHERE Key_name = '$index_name'");
+        if ($index_exists) {
+            return array('success' => false, 'message' => 'Index already exists');
+        }
+        
+        // Validate columns exist
+        foreach ($columns as $column) {
+            $column_exists = $this->wpdb->get_var("SHOW COLUMNS FROM $full_table_name LIKE '$column'");
+            if (!$column_exists) {
+                return array('success' => false, 'message' => "Column '$column' does not exist");
+            }
+        }
+        
+        // Add index
+        $columns_str = implode(', ', $columns);
+        $sql = "ALTER TABLE $full_table_name ADD INDEX $index_name ($columns_str)";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to add index: ' . $this->wpdb->last_error);
+        }
+        
+        // Clear schema cache and refresh
+        $this->refresh_schema_cache();
+        
+        return array('success' => true, 'message' => 'Index added successfully');
+    }
+    
+    /**
+     * Drop index from table
+     */
+    public function drop_index($table_name, $index_name) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('success' => false, 'message' => 'Table does not exist');
+        }
+        
+        // Check if index exists
+        $index_exists = $this->wpdb->get_var("SHOW INDEX FROM $full_table_name WHERE Key_name = '$index_name'");
+        if (!$index_exists) {
+            return array('success' => false, 'message' => 'Index does not exist');
+        }
+        
+        // Don't allow dropping primary key
+        if ($index_name === 'PRIMARY') {
+            return array('success' => false, 'message' => 'Cannot drop primary key');
+        }
+        
+        // Drop index
+        $sql = "ALTER TABLE $full_table_name DROP INDEX $index_name";
+        $result = $this->wpdb->query($sql);
+        
+        if ($result === false) {
+            return array('success' => false, 'message' => 'Failed to drop index: ' . $this->wpdb->last_error);
+        }
+        
+        // Clear schema cache and refresh
+        $this->refresh_schema_cache();
+        
+        return array('success' => true, 'message' => 'Index dropped successfully');
+    }
+    
+    /**
+     * Get table indexes
+     */
+    public function get_table_indexes($table_name) {
+        $full_table_name = $this->table_prefix . $table_name;
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$full_table_name'");
+        if (!$table_exists) {
+            return array('error' => 'Table does not exist');
+        }
+        
+        // Get indexes
+        $indexes = $this->wpdb->get_results("SHOW INDEX FROM $full_table_name", ARRAY_A);
+        
+        $organized_indexes = array();
+        foreach ($indexes as $index) {
+            $key_name = $index['Key_name'];
+            $column_name = $index['Column_name'];
+            $is_unique = $index['Non_unique'] == 0;
+            $is_primary = $key_name === 'PRIMARY';
+            
+            if (!isset($organized_indexes[$key_name])) {
+                $organized_indexes[$key_name] = array(
+                    'name' => $key_name,
+                    'columns' => array(),
+                    'unique' => $is_unique,
+                    'primary' => $is_primary
+                );
+            }
+            
+            $organized_indexes[$key_name]['columns'][] = $column_name;
+        }
+        
+        return $organized_indexes;
+    }
+    
+    /**
      * Drop column from table
      */
     public function drop_column($table_name, $column_name) {
