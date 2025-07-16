@@ -281,6 +281,22 @@ class CAH_Admin_Dashboard {
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th scope="row"><label for="mandant">Mandant</label></th>
+                                    <td>
+                                        <input type="text" id="mandant" name="mandant" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['mandant'] ?? ''); ?>" required>
+                                        <p class="description">Mandant/Kanzlei</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><label for="submission_date">Einreichungsdatum</label></th>
+                                    <td>
+                                        <input type="date" id="submission_date" name="submission_date" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['submission_date'] ?? date('Y-m-d')); ?>" required>
+                                        <p class="description">Datum der Falleinreichung</p>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th scope="row"><label for="case_notes">Notizen</label></th>
                                     <td>
                                         <textarea id="case_notes" name="case_notes" class="large-text" rows="4" 
