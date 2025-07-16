@@ -62,6 +62,9 @@ class CAH_Database {
         // First, handle existing table updates
         $this->upgrade_existing_tables();
         
+        // Ensure debtors table has correct schema
+        $this->ensure_debtors_table_schema();
+        
         // Define all tables with simpler SQL
         $tables = array(
             'klage_cases' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_cases (
