@@ -1,0 +1,18 @@
+DOWNLOAD YOUR GITHUB FILES
+
+You need to download the files from this system first, then upload them to GitHub.
+
+FILES LOCATION ON THIS SYSTEM:
+/app/READY-TO-UPLOAD/upload-files.tar.gz
+
+WHAT TO DO:
+1. Download the tar.gz file from this system
+2. Extract it on your computer
+3. You'll get two folders:
+   - FOR-klage-click-court-automation (for your messy repo)
+   - FOR-klage-finance (for your empty repo)
+
+THEN:
+4. Upload each folder's contents to the respective GitHub repository
+
+The files are ready - you just need to download them from this system first!
