@@ -314,11 +314,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hotfix v1.3.3 verification completed - comprehensive database schema fix for ALL missing columns in klage_cases table working correctly"
-    - "Complete cases table upgrade mechanism with 34 missing columns (mandant, brief_status, briefe, schuldner, beweise, dokumente, etc.) fully functional"
-    - "Case creation working without any database column errors after comprehensive upgrade including 'mandant' field"
-    - "Both debtors and cases tables upgrade mechanism working for existing installations with complete schema synchronization"
-    - "All database table creation, upgrade, schema check, and case creation functionality verified with 100% test success rate"
+    - "Hotfix v1.4.1 verification completed - admin menu integration fix for Database Management interface working correctly"
+    - "Database Management menu now appears under 'Klage.Click Hub' in WordPress admin with correct parent menu slug"
+    - "All tabs (Schema Management, Data Management, Import/Export, Form Generator) accessible and navigation working"
+    - "URL references, form actions, and tab navigation all use correct page parameter 'klage-click-database'"
+    - "Complete admin menu integration with existing functionality preserved and all 28 tests passed (100% success rate)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
