@@ -15,6 +15,28 @@ class CAH_Database {
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
+        
+        // Run upgrade check on admin init
+        add_action('admin_init', array($this, 'check_and_upgrade_schema'));
+    }
+    
+    /**
+     * Check and upgrade database schema if needed
+     */
+    public function check_and_upgrade_schema() {
+        // Only run on admin pages
+        if (!is_admin()) {
+            return;
+        }
+        
+        // Check if we need to upgrade
+        $version_option = get_option('cah_database_version', '1.0.0');
+        $current_version = '1.3.1';
+        
+        if (version_compare($version_option, $current_version, '<')) {
+            $this->upgrade_existing_tables();
+            update_option('cah_database_version', $current_version);
+        }
     }
     
     /**
