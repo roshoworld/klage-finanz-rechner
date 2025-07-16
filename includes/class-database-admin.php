@@ -398,7 +398,7 @@ class CAH_Database_Admin {
         
         echo '<div class="form-actions">';
         echo '<button type="submit" class="button button-primary">Save Record</button>';
-        echo '<a href="?page=cah-database-management&tab=data&table=' . $table_name . '" class="button">Cancel</a>';
+        echo '<a href="?page=klage-click-database&tab=data&table=' . $table_name . '" class="button">Cancel</a>';
         echo '</div>';
         
         echo '</form>';
