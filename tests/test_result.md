@@ -233,16 +233,16 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.9"
-  test_sequence: 9
+  version: "2.0"
+  test_sequence: 10
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Hotfix v1.2.8 verification completed - critical database schema fix resolved"
-    - "Database schema fix for debtors_country field working correctly"
-    - "Case creation with 'Deutschland' country value now functional"
-    - "All database table creation and case creation functionality verified"
+    - "Hotfix v1.2.9 verification completed - comprehensive database schema fix with upgrade mechanism resolved"
+    - "Database upgrade mechanism with upgrade_existing_tables() and ensure_debtors_table_schema() working correctly"
+    - "Case creation with 'Deutschland' country value fully functional with both new and existing installations"
+    - "All database table creation, upgrade, and case creation functionality verified"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
