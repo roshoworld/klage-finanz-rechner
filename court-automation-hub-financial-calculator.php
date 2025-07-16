@@ -62,15 +62,15 @@ class CAH_Financial_Calculator {
     
     private function load_includes() {
         $includes = array(
-            'includes/class-financial-database.php',
-            'includes/class-financial-admin.php',
-            'includes/class-financial-templates.php',
-            'includes/class-financial-integration.php',
-            'includes/class-financial-calculator.php'
+            'financial-calculator/includes/class-financial-database.php',
+            'financial-calculator/includes/class-financial-admin.php',
+            'financial-calculator/includes/class-financial-templates.php',
+            'financial-calculator/includes/class-financial-integration.php',
+            'financial-calculator/includes/class-financial-calculator.php'
         );
         
         foreach ($includes as $file) {
-            $filepath = CAH_FINANCIAL_PLUGIN_PATH . $file;
+            $filepath = '/app/' . $file;
             if (file_exists($filepath)) {
                 require_once $filepath;
             }
