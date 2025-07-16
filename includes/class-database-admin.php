@@ -114,20 +114,57 @@ class CAH_Database_Admin {
             }
         }
         
-        // Handle drop column
-        if (isset($_GET['action']) && $_GET['action'] === 'drop_column' && isset($_GET['column'])) {
+        // Handle add index
+        if (isset($_POST['action']) && $_POST['action'] === 'add_index') {
+            if (wp_verify_nonce($_POST['_wpnonce'], 'add_index')) {
+                $table_name = sanitize_text_field($_POST['table_name']);
+                $index_name = sanitize_text_field($_POST['index_name']);
+                $index_type = sanitize_text_field($_POST['index_type']);
+                $index_columns = $_POST['index_columns'] ?? array();
+                
+                if (empty($index_columns)) {
+                    add_action('admin_notices', function() {
+                        echo '<div class="notice notice-error"><p>Please select at least one column for the index.</p></div>';
+                    });
+                } else {
+                    $columns = array_map('sanitize_text_field', $index_columns);
+                    
+                    if ($index_type === 'unique') {
+                        $result = $this->schema_manager->add_unique_key($table_name, $index_name, $columns);
+                    } else {
+                        $result = $this->schema_manager->add_index($table_name, $index_name, $columns);
+                    }
+                    
+                    if ($result['success']) {
+                        add_action('admin_notices', function() use ($index_name, $index_type) {
+                            echo '<div class="notice notice-success"><p><strong>' . ucfirst($index_type) . ' "' . $index_name . '" added successfully!</strong></p>';
+                            echo '<p>✅ Database table updated with new ' . $index_type . '<br>';
+                            echo '✅ ' . ($index_type === 'unique' ? 'Uniqueness constraint' : 'Performance index') . ' is now active</p>';
+                            echo '</div>';
+                        });
+                    } else {
+                        add_action('admin_notices', function() use ($result) {
+                            echo '<div class="notice notice-error"><p>Error adding index: ' . $result['message'] . '</p></div>';
+                        });
+                    }
+                }
+            }
+        }
+        
+        // Handle drop index
+        if (isset($_GET['action']) && $_GET['action'] === 'drop_index' && isset($_GET['index'])) {
             $table_name = sanitize_text_field($_GET['table']);
-            $column_name = sanitize_text_field($_GET['column']);
+            $index_name = sanitize_text_field($_GET['index']);
             
-            $result = $this->schema_manager->drop_column($table_name, $column_name);
+            $result = $this->schema_manager->drop_index($table_name, $index_name);
             
             if ($result['success']) {
-                add_action('admin_notices', function() use ($column_name) {
-                    echo '<div class="notice notice-success"><p>Column "' . $column_name . '" dropped successfully.</p></div>';
+                add_action('admin_notices', function() use ($index_name) {
+                    echo '<div class="notice notice-success"><p>Index "' . $index_name . '" dropped successfully.</p></div>';
                 });
             } else {
                 add_action('admin_notices', function() use ($result) {
-                    echo '<div class="notice notice-error"><p>Error dropping column: ' . $result['message'] . '</p></div>';
+                    echo '<div class="notice notice-error"><p>Error dropping index: ' . $result['message'] . '</p></div>';
                 });
             }
         }
