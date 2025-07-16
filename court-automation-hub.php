@@ -45,13 +45,17 @@ class CourtAutomationHub {
     
     private function includes() {
         require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
+        require_once CAH_PLUGIN_PATH . 'includes/class-schema-manager.php';
+        require_once CAH_PLUGIN_PATH . 'includes/class-form-generator.php';
+        require_once CAH_PLUGIN_PATH . 'includes/class-import-export-manager.php';
+        require_once CAH_PLUGIN_PATH . 'includes/class-database-admin.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-case-manager.php';
+        require_once CAH_PLUGIN_PATH . 'includes/class-audit-logger.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-debtor-manager.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-email-evidence.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-financial-calculator.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-legal-framework.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-court-manager.php';
-        require_once CAH_PLUGIN_PATH . 'includes/class-audit-logger.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-n8n-connector.php';
         require_once CAH_PLUGIN_PATH . 'admin/class-admin-dashboard.php';
         require_once CAH_PLUGIN_PATH . 'api/class-rest-api.php';
