@@ -238,7 +238,7 @@ class CAH_Admin_Dashboard {
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
                 <p><strong>🚀 v1.1.4 - Case Creation!</strong></p>
-                <p>Erstellen Sie einen neuen GDPR SPAM-Fall mit automatischer €548.11 Berechnung.</p>
+                <p>Erstellen Sie einen neuen GDPR SPAM-Fall mit Finanzberechnung über separates Plugin.</p>
             </div>
             
             <form method="post">
