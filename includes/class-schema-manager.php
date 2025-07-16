@@ -72,6 +72,12 @@ class CAH_Schema_Manager {
                     'kategorie' => 'varchar(50) DEFAULT "GDPR_SPAM"',
                     'prioritaet_intern' => 'varchar(20) DEFAULT "medium"',
                     'bearbeitungsstatus' => 'varchar(20) DEFAULT "neu"',
+                    'case_deadline_response' => 'date DEFAULT NULL',
+                    'case_deadline_payment' => 'date DEFAULT NULL',
+                    'processing_complexity' => 'varchar(20) DEFAULT "standard"',
+                    'processing_risk_score' => 'decimal(3,2) DEFAULT 0.50',
+                    'document_type' => 'varchar(50) DEFAULT "email"',
+                    'document_language' => 'varchar(5) DEFAULT "de"',
                     'created_at' => 'datetime DEFAULT CURRENT_TIMESTAMP',
                     'updated_at' => 'datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'
                 ),
