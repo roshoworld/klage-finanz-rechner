@@ -2994,8 +2994,7 @@ class CAH_Admin_Dashboard {
                     ", $case_id));
                     
                     if ($case) {
-                        // Delete from related tables first
-                        $wpdb->delete($wpdb->prefix . 'klage_financial', array('case_id' => $case_id), array('%d'));
+                        // Delete from related tables first (excluding financial - handled by hooks)
                         $wpdb->delete($wpdb->prefix . 'klage_audit', array('case_id' => $case_id), array('%d'));
                         
                         // Delete main case
