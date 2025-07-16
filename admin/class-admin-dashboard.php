@@ -292,63 +292,72 @@ class CAH_Admin_Dashboard {
                                 <tr>
                                     <th scope="row"><label for="debtors_first_name">Vorname</label></th>
                                     <td>
-                                        <input type="text" id="debtors_first_name" name="debtors_first_name" class="regular-text">
+                                        <input type="text" id="debtors_first_name" name="debtors_first_name" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_first_name'] ?? ''); ?>">
                                         <p class="description">Vorname des Schuldners</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_last_name">Nachname</label></th>
                                     <td>
-                                        <input type="text" id="debtors_last_name" name="debtors_last_name" class="regular-text" required>
+                                        <input type="text" id="debtors_last_name" name="debtors_last_name" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_last_name'] ?? ''); ?>" required>
                                         <p class="description">Nachname des Schuldners (erforderlich)</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_company">Firma</label></th>
                                     <td>
-                                        <input type="text" id="debtors_company" name="debtors_company" class="regular-text">
+                                        <input type="text" id="debtors_company" name="debtors_company" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_company'] ?? ''); ?>">
                                         <p class="description">Firmenname (falls Unternehmen)</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_email">E-Mail</label></th>
                                     <td>
-                                        <input type="email" id="debtors_email" name="debtors_email" class="regular-text">
+                                        <input type="email" id="debtors_email" name="debtors_email" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_email'] ?? ''); ?>">
                                         <p class="description">E-Mail-Adresse des Schuldners</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_phone">Telefon</label></th>
                                     <td>
-                                        <input type="tel" id="debtors_phone" name="debtors_phone" class="regular-text">
+                                        <input type="tel" id="debtors_phone" name="debtors_phone" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_phone'] ?? ''); ?>">
                                         <p class="description">Telefonnummer des Schuldners</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_address">Adresse</label></th>
                                     <td>
-                                        <input type="text" id="debtors_address" name="debtors_address" class="regular-text">
+                                        <input type="text" id="debtors_address" name="debtors_address" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_address'] ?? ''); ?>">
                                         <p class="description">Vollständige Adresse</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_postal_code">PLZ</label></th>
                                     <td>
-                                        <input type="text" id="debtors_postal_code" name="debtors_postal_code" class="regular-text">
+                                        <input type="text" id="debtors_postal_code" name="debtors_postal_code" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_postal_code'] ?? ''); ?>">
                                         <p class="description">Postleitzahl</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_city">Stadt</label></th>
                                     <td>
-                                        <input type="text" id="debtors_city" name="debtors_city" class="regular-text">
+                                        <input type="text" id="debtors_city" name="debtors_city" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_city'] ?? ''); ?>">
                                         <p class="description">Stadt</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row"><label for="debtors_country">Land</label></th>
                                     <td>
-                                        <input type="text" id="debtors_country" name="debtors_country" class="regular-text" value="Deutschland">
+                                        <input type="text" id="debtors_country" name="debtors_country" class="regular-text" 
+                                               value="<?php echo esc_attr($form_data['debtors_country'] ?? 'Deutschland'); ?>">
                                         <p class="description">Land</p>
                                     </td>
                                 </tr>
