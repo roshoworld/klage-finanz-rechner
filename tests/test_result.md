@@ -368,6 +368,18 @@ backend:
         agent: "testing"
         comment: "✅ PASSED: PHP Syntax Error Fix v1.4.6 verification successful. All 23/23 tests passed (100% success rate). CRITICAL SYNTAX ERROR RESOLVED: The 'unexpected variable $configs' error on line 341 has been completely resolved. Line 341 now contains valid PHP syntax: $config['type'] = 'number'; COMPREHENSIVE VERIFICATION COMPLETED: ✅ Version updated to 1.4.6 in both plugin header and CAH_PLUGIN_VERSION constant ✅ Form generator PHP syntax validation passed with manual syntax check (balanced braces: 97 open, 97 close; balanced parentheses) ✅ All critical PHP files syntax validated (main plugin, admin dashboard, database admin) ✅ Plugin activation readiness verified with proper activation hook registration and required file includes ✅ Form generator functionality confirmed with all 5 required methods (generate_form, group_fields_by_category, render_field_group, render_field_input, get_field_config) ✅ Field type support implemented for 9 field types (text, email, tel, number, date, textarea, select, checkbox, decimal) ✅ German labels implemented for 8+ labels (Fall-ID, Status, Priorität, Mandant, Vorname, Nachname, E-Mail, Telefon) ✅ Form validation JavaScript included with jQuery support. DATABASE MANAGEMENT ACCESSIBILITY VERIFIED: ✅ Database admin class properly structured with CAH_Database_Admin class definition ✅ Admin menu integration with add_submenu_page and correct page parameter 'klage-click-database' ✅ Correct parent menu slug 'klage-click-hub' used (not old 'court-automation-hub') ✅ Database management tabs implemented (Schema, Data, Import, Export, Form) ✅ Admin menu integration confirmed in main plugin initialization. CORE CASE CREATION FUNCTIONALITY PRESERVED: ✅ Case creation methods exist (create_new_case, handle_case_actions, render_add_case_form) ✅ Database tables integration confirmed (klage_cases, klage_debtors, klage_financial) ✅ GDPR compliance maintained with standard amounts (€350.00, €548.11, €96.90) ✅ Security measures implemented (wp_verify_nonce, sanitize_text_field, sanitize_email) ✅ Form validation logic present with 4 validation patterns. REVIEW REQUEST REQUIREMENTS FULFILLED: ✅ Plugin activation works without syntax errors ✅ No PHP syntax errors exist in form generator class ✅ Database Management system is accessible through WordPress admin ✅ Core case creation functionality still works. PRODUCTION READINESS: Plugin v1.4.6 is ready for production use with the critical PHP syntax error in form generator class resolved and all functionality verified as working correctly. The previous 'unexpected variable $configs' error has been definitively fixed."
 
+  - task: "Clean Cut Implementation v1.4.7 - Financial Calculator Removal and New Plugin Creation"
+    implemented: true
+    working: "NA"
+    file: "/app/court-automation-hub.php"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "CRITICAL: Clean Cut Implementation v1.4.7 requires comprehensive testing. Phase 1: Core plugin v1.4.7 - Financial calculator UI removed from admin dashboard, financial database tables removed, hardcoded €548.11 references cleaned up. Phase 2: New Financial Calculator plugin v1.0.0 - Complete separate plugin created with 5 classes, proper database schema, WordPress integration hooks. This implementation was completed but never comprehensively tested. Need to verify: 1) Core plugin functionality after financial calculator removal, 2) New financial calculator plugin functionality, 3) Integration between both plugins, 4) Database operations, case creation, etc."
+
 frontend:
   - task: "Frontend UI Integration"
     implemented: false
