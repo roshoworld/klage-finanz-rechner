@@ -1,13 +1,20 @@
-# Klage.Click Court Automation Hub v1.2.6
+# Court Automation Hub - Core Plugin v1.4.8
 
-**Enterprise Legal Automation Platform for German Courts**
+## 📋 SiteGround Deployment Instructions
 
-[![WordPress](https://img.shields.io/badge/WordPress-5.8%2B-blue.svg)](https://wordpress.org/)
-[![PHP](https://img.shields.io/badge/PHP-8.0%2B-purple.svg)](https://php.net/)
-[![License](https://img.shields.io/badge/License-GPL%20v2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
+### 1. Upload to SiteGround
+1. Zip this entire `court-automation-hub` folder
+2. Upload the zip file to your SiteGround WordPress site
+3. Extract in `/wp-content/plugins/` directory
+4. Activate the plugin from WordPress admin
 
-Comprehensive WordPress plugin for automating German legal proceedings, specializing in GDPR violations and court case management with seamless Forderungen.com integration.
+### 2. What This Plugin Does
+- ✅ Case management system for German legal automation
+- ✅ Database management with 57-field structure
+- ✅ CSV import/export functionality
+- ✅ WordPress admin interface
+- ✅ Audit logging system
+- ✅ Integration hooks for other plugins
 
 ## ✨ Key Features
 
