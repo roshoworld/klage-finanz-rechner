@@ -146,10 +146,10 @@ class CAH_Database_Admin {
         
         // Tab navigation
         echo '<nav class="nav-tab-wrapper">';
-        echo '<a href="?page=cah-database-management&tab=schema" class="nav-tab ' . ($tab === 'schema' ? 'nav-tab-active' : '') . '">Schema Management</a>';
-        echo '<a href="?page=cah-database-management&tab=data" class="nav-tab ' . ($tab === 'data' ? 'nav-tab-active' : '') . '">Data Management</a>';
-        echo '<a href="?page=cah-database-management&tab=import" class="nav-tab ' . ($tab === 'import' ? 'nav-tab-active' : '') . '">Import/Export</a>';
-        echo '<a href="?page=cah-database-management&tab=forms" class="nav-tab ' . ($tab === 'forms' ? 'nav-tab-active' : '') . '">Form Generator</a>';
+        echo '<a href="?page=klage-click-database&tab=schema" class="nav-tab ' . ($tab === 'schema' ? 'nav-tab-active' : '') . '">Schema Management</a>';
+        echo '<a href="?page=klage-click-database&tab=data" class="nav-tab ' . ($tab === 'data' ? 'nav-tab-active' : '') . '">Data Management</a>';
+        echo '<a href="?page=klage-click-database&tab=import" class="nav-tab ' . ($tab === 'import' ? 'nav-tab-active' : '') . '">Import/Export</a>';
+        echo '<a href="?page=klage-click-database&tab=forms" class="nav-tab ' . ($tab === 'forms' ? 'nav-tab-active' : '') . '">Form Generator</a>';
         echo '</nav>';
         
         echo '<div class="tab-content">';
