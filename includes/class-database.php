@@ -31,7 +31,7 @@ class CAH_Database {
         
         // Check if we need to upgrade
         $version_option = get_option('cah_database_version', '1.0.0');
-        $current_version = '1.3.1';
+        $current_version = '1.3.2';
         
         if (version_compare($version_option, $current_version, '<')) {
             $this->upgrade_existing_tables();
