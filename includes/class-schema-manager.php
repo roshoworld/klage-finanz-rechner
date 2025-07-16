@@ -20,9 +20,84 @@ class CAH_Schema_Manager {
     }
     
     /**
-     * Get complete schema definition for all plugin tables
+     * Get complete schema definition - now dynamic from actual database
      */
-    public function get_complete_schema_definition() {
+    public function get_complete_schema_definition($use_database = true) {
+        if ($use_database) {
+            return $this->get_dynamic_schema_from_database();
+        }
+        
+        return $this->get_static_schema_definition();
+    }
+    
+    /**
+     * Get dynamic schema from actual database structure
+     */
+    private function get_dynamic_schema_from_database() {
+        $schema = array();
+        $tables = array('klage_cases', 'klage_debtors', 'klage_financial', 'klage_audit');
+        
+        foreach ($tables as $table_name) {
+            $table_schema = $this->get_current_table_schema($table_name);
+            if ($table_schema) {
+                $schema[$table_name] = $this->convert_database_schema_to_definition($table_schema);
+            }
+        }
+        
+        return $schema;
+    }
+    
+    /**
+     * Convert database schema to definition format
+     */
+    private function convert_database_schema_to_definition($table_schema) {
+        $definition = array(
+            'columns' => array(),
+            'indexes' => $table_schema['indexes'] ?? array()
+        );
+        
+        // Convert column information
+        foreach ($table_schema['columns'] as $column_name => $column_info) {
+            $definition['columns'][$column_name] = $this->convert_column_info_to_definition($column_info);
+        }
+        
+        // Set primary key
+        if (isset($table_schema['primary_key'])) {
+            $definition['primary_key'] = $table_schema['primary_key'];
+        }
+        
+        return $definition;
+    }
+    
+    /**
+     * Convert column info to definition format
+     */
+    private function convert_column_info_to_definition($column_info) {
+        $definition = $column_info['Type'];
+        
+        if ($column_info['Null'] === 'NO') {
+            $definition .= ' NOT NULL';
+        }
+        
+        if ($column_info['Default'] !== null) {
+            if (in_array($column_info['Type'], array('varchar', 'text', 'date', 'datetime'))) {
+                $definition .= " DEFAULT '" . $column_info['Default'] . "'";
+            } else {
+                $definition .= " DEFAULT " . $column_info['Default'];
+            }
+        }
+        
+        if ($column_info['Extra'] === 'auto_increment') {
+            $definition .= ' AUTO_INCREMENT';
+        }
+        
+        return $definition;
+    }
+    
+    /**
+     * Get static schema definition (original hardcoded version)
+     */
+    private function get_static_schema_definition() {
         return array(
             'klage_cases' => array(
                 'columns' => array(
