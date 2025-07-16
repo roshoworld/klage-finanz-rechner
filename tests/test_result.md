@@ -218,16 +218,16 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.8"
-  test_sequence: 8
+  version: "1.9"
+  test_sequence: 9
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Hotfix v1.2.7 verification completed - both critical issues from review request resolved"
-    - "Enhanced validation logic for mixed debtor/email inputs working correctly"
-    - "Form data persistence implemented and functioning properly"
-    - "All test focus areas from review request verified successfully"
+    - "Hotfix v1.2.8 verification completed - critical database schema fix resolved"
+    - "Database schema fix for debtors_country field working correctly"
+    - "Case creation with 'Deutschland' country value now functional"
+    - "All database table creation and case creation functionality verified"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
