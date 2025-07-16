@@ -525,7 +525,24 @@ class CAH_Schema_Manager {
             return array('success' => false, 'message' => 'Failed to add column: ' . $this->wpdb->last_error);
         }
         
+        // Clear schema cache and refresh
+        $this->refresh_schema_cache();
+        
         return array('success' => true, 'message' => 'Column added successfully');
+    }
+    
+    /**
+     * Refresh schema cache after modifications
+     */
+    private function refresh_schema_cache() {
+        // Clear any cached schema data
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+        
+        // Trigger form and template regeneration
+        do_action('cah_schema_updated');
+    }
     }
     
     /**
