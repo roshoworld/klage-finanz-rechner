@@ -284,9 +284,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hotfix v1.3.1 verification completed - enhanced upgrade mechanism with automatic schema check working correctly"
-    - "Database schema synchronization with comprehensive column addition (12 columns) fully functional"
-    - "Case creation with enhanced upgrade mechanism working for both new and existing installations"
+    - "Hotfix v1.3.2 verification completed - database schema fix for missing columns in klage_cases table working correctly"
+    - "Cases table upgrade mechanism with 13 missing columns (brief_status, verfahrensart, rechtsgrundlage, etc.) fully functional"
+    - "Case creation working without 'Unknown column brief_status in field list' error after upgrade"
+    - "Both debtors and cases tables upgrade mechanism working for existing installations"
     - "All database table creation, upgrade, schema check, and case creation functionality verified"
   stuck_tasks: []
   test_all: false
