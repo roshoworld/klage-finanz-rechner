@@ -669,7 +669,7 @@ class CAH_Database {
         $results['debtors'] = dbDelta($sql_debtors);
         $results['clients'] = dbDelta($sql_clients);
         $results['emails'] = dbDelta($sql_emails);
-        $results['financial'] = dbDelta($sql_financial);
+        // Financial table removed in v1.4.7 - moved to separate plugin
         $results['courts'] = dbDelta($sql_courts);
         
         // Insert default courts
