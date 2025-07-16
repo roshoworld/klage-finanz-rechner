@@ -35,7 +35,7 @@ class CAH_Schema_Manager {
      */
     private function get_dynamic_schema_from_database() {
         $schema = array();
-        $tables = array('klage_cases', 'klage_debtors', 'klage_financial', 'klage_audit');
+        $tables = array('klage_cases', 'klage_debtors', 'klage_audit');
         
         foreach ($tables as $table_name) {
             $table_schema = $this->get_current_table_schema($table_name);
