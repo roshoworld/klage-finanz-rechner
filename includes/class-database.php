@@ -59,6 +59,10 @@ class CAH_Database {
             -- Financial Information
             finanzielle_situation varchar(50) DEFAULT 'unbekannt',
             
+            -- Data Source and Tracking
+            datenquelle varchar(50) DEFAULT 'manual',
+            letzte_aktualisierung datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            
             -- Timestamps
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
