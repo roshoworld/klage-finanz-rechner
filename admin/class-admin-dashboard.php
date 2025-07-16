@@ -3026,6 +3026,9 @@ class CAH_Admin_Dashboard {
                         if ($result) {
                             $success_count++;
                             
+                            // Trigger WordPress hook for case deletion (for financial calculator plugin integration)
+                            do_action('cah_case_deleted', $case_id);
+                            
                             // Log the deletion
                             if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
                                 $wpdb->insert(
