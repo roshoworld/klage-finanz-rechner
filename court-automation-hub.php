@@ -107,7 +107,7 @@ class CourtAutomationHub {
         
         // Create database tables
         $database = new CAH_Database();
-        $database->create_tables();
+        $database->create_tables_direct();
         
         // Add capabilities
         $this->add_capabilities();
