@@ -443,17 +443,13 @@ class CAH_Admin_Dashboard {
                     <div class="inside" style="padding: 20px;">
                         <div style="background: #f0f8ff; padding: 15px; border-radius: 5px;">
                             <p><strong>📊 Standard DSGVO-Beträge werden automatisch angewendet:</strong></p>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 15px 0;">
-                                <div><strong>💰 Grundschaden:</strong> €350.00</div>
-                                <div><strong>⚖️ Anwaltskosten:</strong> €96.90</div>
-                                <div><strong>📞 Kommunikation:</strong> €13.36</div>
-                                <div><strong>🏛️ Gerichtskosten:</strong> €32.00</div>
-                                <div><strong>📊 MwSt (19%):</strong> €87.85</div>
-                                <div style="background: #0073aa; color: white; padding: 10px; border-radius: 5px; text-align: center;">
-                                    <strong>🎯 GESAMTSUMME: €548.11</strong>
+                            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                                <div><strong>💰 Finanzberechnung:</strong> Über separates Plugin verfügbar</div>
+                                <div style="background: #e7f3ff; color: #0073aa; padding: 10px; border-radius: 5px; text-align: center; margin-top: 10px;">
+                                    <strong>🧮 Aktivieren Sie das Financial Calculator Plugin</strong>
                                 </div>
                             </div>
-                            <p><em>Diese Beträge können nach der Erstellung im Fall-Editor angepasst werden.</em></p>
+                            <p><em>Die Finanzberechnung erfolgt über ein separates Plugin für maximale Flexibilität.</em></p>
                         </div>
                     </div>
                 </div>
