@@ -144,6 +144,60 @@ class CAH_Database {
             // Add missing columns if they don't exist
             $this->add_missing_columns_to_debtors_table($table_name);
         }
+        
+        // Also upgrade cases table
+        $this->upgrade_cases_table();
+    }
+    
+    /**
+     * Upgrade cases table to add missing columns
+     */
+    private function upgrade_cases_table() {
+        $table_name = $this->wpdb->prefix . 'klage_cases';
+        
+        // Check if table exists
+        $table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '$table_name'");
+        
+        if ($table_exists) {
+            $this->add_missing_columns_to_cases_table($table_name);
+        }
+    }
+    
+    /**
+     * Add missing columns to existing cases table
+     */
+    private function add_missing_columns_to_cases_table($table_name) {
+        // Define columns that should exist in cases table
+        $required_columns = array(
+            'brief_status' => "ALTER TABLE $table_name ADD COLUMN brief_status varchar(20) DEFAULT 'pending'",
+            'verfahrensart' => "ALTER TABLE $table_name ADD COLUMN verfahrensart varchar(50) DEFAULT 'mahnverfahren'",
+            'rechtsgrundlage' => "ALTER TABLE $table_name ADD COLUMN rechtsgrundlage varchar(100) DEFAULT 'DSGVO Art. 82'",
+            'kategorie' => "ALTER TABLE $table_name ADD COLUMN kategorie varchar(50) DEFAULT 'GDPR_SPAM'",
+            'schadenhoehe' => "ALTER TABLE $table_name ADD COLUMN schadenhoehe decimal(10,2) DEFAULT 350.00",
+            'verfahrenswert' => "ALTER TABLE $table_name ADD COLUMN verfahrenswert decimal(10,2) DEFAULT 548.11",
+            'erfolgsaussicht' => "ALTER TABLE $table_name ADD COLUMN erfolgsaussicht varchar(20) DEFAULT 'hoch'",
+            'risiko_bewertung' => "ALTER TABLE $table_name ADD COLUMN risiko_bewertung varchar(20) DEFAULT 'niedrig'",
+            'komplexitaet' => "ALTER TABLE $table_name ADD COLUMN komplexitaet varchar(20) DEFAULT 'standard'",
+            'prioritaet_intern' => "ALTER TABLE $table_name ADD COLUMN prioritaet_intern varchar(20) DEFAULT 'medium'",
+            'bearbeitungsstatus' => "ALTER TABLE $table_name ADD COLUMN bearbeitungsstatus varchar(20) DEFAULT 'neu'",
+            'kommunikation_sprache' => "ALTER TABLE $table_name ADD COLUMN kommunikation_sprache varchar(5) DEFAULT 'de'",
+            'import_source' => "ALTER TABLE $table_name ADD COLUMN import_source varchar(50) DEFAULT 'manual'"
+        );
+        
+        // Get existing columns
+        $existing_columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name");
+        $existing_column_names = array();
+        
+        foreach ($existing_columns as $column) {
+            $existing_column_names[] = $column->Field;
+        }
+        
+        // Add missing columns
+        foreach ($required_columns as $column_name => $alter_sql) {
+            if (!in_array($column_name, $existing_column_names)) {
+                $this->wpdb->query($alter_sql);
+            }
+        }
     }
     
     /**
