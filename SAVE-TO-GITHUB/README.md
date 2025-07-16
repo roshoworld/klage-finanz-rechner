@@ -1,19 +1,21 @@
-# Court Automation Hub - Core Plugin v1.4.8
+# Court Automation Hub - Financial Calculator v1.0.0
 
-## 🏛️ German Court Automation System
+## 💰 Advanced Financial Calculator Plugin
 
-**WordPress plugin for automating legal case management, focusing on German court procedures and GDPR compliance.**
+**WordPress plugin providing advanced financial calculations and template management for German legal cases.**
 
 ### 🎯 What This Plugin Does
-- ✅ **Case Management:** Complete CRUD operations for legal cases
-- ✅ **Database System:** Dynamic 57-field structure for comprehensive case data
-- ✅ **CSV Import/Export:** Dual template system (Forderungen.com + Comprehensive)
-- ✅ **WordPress Integration:** Clean admin interface with audit logging
-- ✅ **German Localization:** Built for German legal procedures
+- ✅ **Financial Templates:** Pre-built templates for GDPR, Contract Disputes, etc.
+- ✅ **Automatic Calculations:** 19% German MwSt, subtotals, grand totals
+- ✅ **CRUD Operations:** Full Create, Read, Update, Delete for financial data
+- ✅ **Case Integration:** Seamless integration with core plugin
+- ✅ **Template Management:** Create and manage custom calculation templates
 
-### 🚫 What's NOT Included
-- ❌ **Financial Calculator:** Moved to separate repository
-- ❌ **Financial Tables:** Use [klage-finance](https://github.com/roshoworld/klage-finance) plugin
+### 🚨 **IMPORTANT: Install Core Plugin First!**
+
+This plugin **REQUIRES** the main plugin to work:
+1. **First:** Install [Court Automation Hub - Core Plugin](https://github.com/roshoworld/klage-click-court-automation)
+2. **Second:** Install this Financial Calculator plugin
 
 ### 📦 Installation
 
@@ -25,190 +27,69 @@
    - **OR** extract and upload to `/wp-content/plugins/`
 
 #### Option 2: Direct Download
-1. Download the latest release from the [Releases page](https://github.com/roshoworld/klage-click-court-automation/releases)
+1. Download the latest release from the [Releases page](https://github.com/roshoworld/klage-finance/releases)
 2. Upload to your WordPress site
 
-### 🔗 Integration with Financial Calculator
+### 💼 Default Templates Included
 
-This plugin works seamlessly with the [Court Automation Hub - Financial Calculator](https://github.com/roshoworld/klage-finance):
+#### **GDPR Standard Template (€548.11)**
+- **Grundschaden:** €350.00
+- **Anwaltskosten:** €96.90 (taxable)
+- **Kommunikationskosten:** €13.36 (taxable)
+- **Gerichtskosten:** €32.00
+- **Total with 19% MwSt:** €548.11
 
-1. **Install this plugin first** (core functionality)
-2. **Install financial calculator** (extended functionality)
-3. **Automatic integration** through WordPress hooks
+#### **Contract Dispute Template (€843.50)**
+- **Vertragsverletzung:** €500.00
+- **Anwaltskosten:** €150.00 (taxable)
+- **Gerichtskosten:** €75.00
+- **Total with 19% MwSt:** €843.50
+
+#### **General Template**
+- Fully customizable for any case type
+
+### 🔗 Integration with Core Plugin
+
+This plugin integrates automatically with the core plugin:
+- **New Case Created** → Applies default financial template
+- **Case Updated** → Updates financial calculations
+- **Case Deleted** → Cleans up financial data
+
+### 🗃️ Database Tables Created
+- `cah_financial_templates` - Global financial templates
+- `cah_financial_template_items` - Template items with categories
+- `cah_case_financial_data` - Per-case financial data
 
 ### 📋 System Requirements
+- **Core Plugin:** [Court Automation Hub](https://github.com/roshoworld/klage-click-court-automation) v1.4.8+ (REQUIRED)
 - **WordPress:** 5.0 or higher
 - **PHP:** 7.4 or higher
 - **MySQL:** 5.7 or higher
-- **SiteGround:** Fully compatible
 
-### 🎯 WordPress Integration Hooks
-- `cah_case_created` - Triggered when a case is created
-- `cah_case_updated` - Triggered when a case is updated
-- `cah_case_deleted` - Triggered when a case is deleted
-
-### 📊 Features
-- **Case Management:** Create, edit, delete legal cases
-- **Debtor Management:** Comprehensive debtor information system
-- **CSV Templates:** Import/export with intelligent field mapping
-- **Audit Logging:** Track all system activities
-- **Search & Filter:** Advanced case filtering capabilities
-- **Bulk Operations:** Mass actions for efficiency
+### 🎯 Features
+- **Template Management:** Create, edit, delete financial templates
+- **Automatic MwSt:** 19% German tax calculation
+- **Per-Case Customization:** Modify calculations for individual cases
+- **Cost Categories:** Organize costs by type (legal fees, court fees, etc.)
+- **Real-time Calculations:** Instant updates as you modify amounts
+- **Export Ready:** Financial data ready for document generation
 
 ### 🚀 Production Ready
-- **Test Status:** 89/93 tests passed (95.7% success rate)
-- **Clean Architecture:** Modular design with proper separation
+- **Test Status:** All integration tests passed
+- **Clean Architecture:** Separate database with `cah_` prefix
 - **WordPress Standards:** Follows WordPress coding standards
 - **Security:** Nonce verification and data sanitization
 
 ### 📞 Support
-- **Installation Guide:** See `INSTALLATION.md`
-- **SiteGround Deployment:** See `SITEGROUND-DEPLOYMENT-GUIDE.md`
-- **Documentation:** Check `/doc` folder for detailed guides
-
-### 🔧 For Developers
-- **WordPress Hooks:** Integration points for extensions
-- **Database Schema:** Dynamic schema management system
-- **REST API:** Endpoints for external integrations
-- **Testing:** Comprehensive test suite included
+- **Installation Guide:** See `README.md`
+- **Core Plugin:** [klage-click-court-automation](https://github.com/roshoworld/klage-click-court-automation)
+- **Issues:** Report issues on GitHub
 
 ---
 
-**Version:** 1.4.8 (Clean Cut Implementation)  
+**Version:** 1.0.0 (Clean Cut Implementation)  
 **Status:** Production Ready  
 **License:** GPL v2 or later  
-**Dependencies:** None
+**Dependencies:** Court Automation Hub Core Plugin v1.4.8+
 
-**Complete System:** Use with [klage-finance](https://github.com/roshoworld/klage-finance) for financial calculations
-
-## ✨ Key Features
-
-- **🗄️ 57-Field Master Data Structure** - Comprehensive case and debtor management
-- **📊 Dual Template System** - Forderungen.com (17 fields) + Comprehensive (57 fields)  
-- **💰 GDPR Financial Calculator** - Automated €548.11 standard calculations
-- **📁 Bulk CSV Import/Export** - Seamless data processing with field mapping
-- **🔍 Complete Audit Trail** - Full case history and compliance tracking
-- **⚖️ German Legal Standards** - RVG-compliant fee calculations, EGVP/XJustiz ready
-
-## 🚀 Quick Start
-
-### Installation
-```bash
-# 1. Upload to WordPress plugins directory
-wp-content/plugins/court-automation-hub/
-
-# 2. Activate through WordPress admin
-Admin → Plugins → Activate "Court Automation Hub"
-
-# 3. Access via admin menu
-Admin → Klage.Click Hub
-```
-
-### First Steps
-1. **Import Data**: Use CSV import with Forderungen.com template
-2. **Create Cases**: Add new legal cases with automatic calculations  
-3. **Manage Workflows**: Track case status from draft to completion
-4. **Generate Reports**: Export data and financial summaries
-
-## 📋 System Requirements
-
-| Component | Requirement |
-|-----------|-------------|
-| **WordPress** | 5.8+ (tested up to 6.5) |
-| **PHP** | 8.0+ recommended |
-| **MySQL** | 5.7+ or MariaDB 10.3+ |
-| **Memory** | 256MB recommended |
-| **Storage** | 50MB + database space |
-
-## 📊 Project Statistics
-
-- **Database Tables**: 14 custom tables
-- **Master Data Fields**: 57 comprehensive fields  
-- **Template Types**: 2 (Forderungen.com + Comprehensive)
-- **Test Coverage**: 34/34 tests PASSED ✅
-- **Standard Case Value**: €548.11 (GDPR)
-
-## 📁 Project Structure
-
-```
-court-automation-hub/
-├── 📄 court-automation-hub.php     # Main plugin file
-├── 📁 includes/                    # Core PHP classes
-├── 📁 admin/                       # WordPress admin interface  
-├── 📁 api/                         # REST API endpoints
-├── 📁 assets/                      # CSS, JavaScript, images
-├── 📁 doc/                         # Complete documentation
-├── 📁 tests/                       # Test suite and validation
-└── 📁 backup/                      # Backup files
-```
-
-## 📖 Documentation
-
-| Document | Description |
-|----------|-------------|
-| **[Complete Documentation](doc/klage.click_project_doc_v120.MD)** | Full technical and business documentation |
-| **[Quick Overview](doc/project_overview_v120.MD)** | Current status and key features |
-| **[Installation Guide](INSTALLATION.md)** | Detailed setup instructions |
-| **[Deployment Guide](SITEGROUND-DEPLOYMENT-GUIDE.md)** | SiteGround-specific deployment |
-
-## 🔄 Development Workflow
-
-### Testing
-```bash
-# Run backend tests
-php tests/backend_test.php
-
-# Validate database schema  
-php tests/test_master_data.php
-```
-
-### Version Control
-- **Current**: v1.2.6 (Production Ready)
-- **Previous**: v1.2.5 (Complete case creation overhaul)
-- **Next**: v1.3.0 (Enhanced editing interface)
-
-## 🏢 Business Impact
-
-- **⚡ 80% faster** case processing
-- **📉 95% fewer** manual data entry errors  
-- **💼 €548.11** standard case value
-- **📈 300% ROI** improvement in efficiency
-
-## 🛣️ Roadmap
-
-### v1.3.0 (Q3 2025)
-- Enhanced case editing for all 57 fields
-- Advanced search and filtering
-- Dashboard analytics
-
-### v1.4.0 (Q4 2025)  
-- Document generation engine
-- N8N workflow integration
-- Client portal frontend
-
-### v2.0.0 (Q1 2026)
-- EGVP/XJustiz court integration
-- AI-powered case analysis
-- Mobile application
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the GPL v2 or later - see the [LICENSE](https://www.gnu.org/licenses/gpl-2.0.html) for details.
-
-## 🆘 Support
-
-- **Documentation**: [Complete Technical Docs](doc/klage.click_project_doc_v120.MD)
-- **Issues**: GitHub Issues
-- **Email**: Technical support through development team
-
----
-
-**Built for the German Legal Industry** • **WordPress Plugin** • **Production Ready v1.2.6** ✅
+**Complete System:** Use with [klage-click-court-automation](https://github.com/roshoworld/klage-click-court-automation) for full functionality

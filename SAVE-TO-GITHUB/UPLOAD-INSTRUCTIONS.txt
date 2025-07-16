@@ -1,0 +1,10 @@
+STEP 1: UPLOAD TO EMPTY REPOSITORY
+
+Go to: https://github.com/roshoworld/klage-finance
+
+1. Click "Add file" → "Upload files"
+2. Drag ALL files from this folder to GitHub
+3. Commit message: "Financial Calculator v1.0.0 - Initial Release"
+4. Click "Commit changes"
+
+DONE! The empty repository now has the financial calculator plugin.
