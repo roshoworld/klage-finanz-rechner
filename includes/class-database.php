@@ -18,6 +18,61 @@ class CAH_Database {
     }
     
     /**
+     * Ensure debtors table has correct schema
+     */
+    private function ensure_debtors_table_schema() {
+        $charset_collate = $this->wpdb->get_charset_collate();
+        $table_name = $this->wpdb->prefix . 'klage_debtors';
+        
+        // Drop and recreate the table to ensure correct schema
+        $this->wpdb->query("DROP TABLE IF EXISTS $table_name");
+        
+        // Create with correct schema
+        $sql = "CREATE TABLE $table_name (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            
+            -- Basic Information
+            debtors_name varchar(200) NOT NULL,
+            debtors_company varchar(200),
+            debtors_first_name varchar(100),
+            debtors_last_name varchar(100),
+            debtors_email varchar(255),
+            debtors_phone varchar(50),
+            debtors_fax varchar(50),
+            
+            -- Address Information
+            debtors_address varchar(200),
+            debtors_street varchar(150),
+            debtors_house_number varchar(20),
+            debtors_address_addition varchar(100),
+            debtors_postal_code varchar(20),
+            debtors_city varchar(100),
+            debtors_state varchar(100),
+            debtors_country varchar(100) DEFAULT 'Deutschland',
+            
+            -- Legal Information
+            rechtsform varchar(50) DEFAULT 'natuerliche_person',
+            handelsregister_nr varchar(50),
+            ustid varchar(50),
+            geschaeftsfuehrer varchar(200),
+            
+            -- Financial Information
+            finanzielle_situation varchar(50) DEFAULT 'unbekannt',
+            
+            -- Timestamps
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            
+            PRIMARY KEY (id),
+            KEY debtors_name (debtors_name),
+            KEY debtors_email (debtors_email),
+            KEY debtors_postal_code (debtors_postal_code)
+        ) $charset_collate";
+        
+        $this->wpdb->query($sql);
+    }
+    
+    /**
      * Upgrade existing tables to fix schema issues
      */
     private function upgrade_existing_tables() {
