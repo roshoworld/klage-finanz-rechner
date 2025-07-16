@@ -427,6 +427,19 @@ class CAH_Database_Admin {
      * Render add column form
      */
     private function render_add_column_form($table_name) {
+        echo '<div class="integration-info" style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">';
+        echo '<h4>🔄 Automatic Integration</h4>';
+        echo '<p><strong>When you add, modify, or drop columns:</strong></p>';
+        echo '<ul>';
+        echo '<li>✅ <strong>Database table</strong> is updated immediately</li>';
+        echo '<li>✅ <strong>Dynamic forms</strong> automatically include new fields</li>';
+        echo '<li>✅ <strong>CSV import templates</strong> automatically include new fields</li>';
+        echo '<li>✅ <strong>Field labels</strong> are auto-generated in German</li>';
+        echo '<li>✅ <strong>Field types</strong> are auto-detected (email, date, number, etc.)</li>';
+        echo '</ul>';
+        echo '<p><strong>No additional steps required!</strong> The system automatically synchronizes everything.</p>';
+        echo '</div>';
+        
         echo '<h2>Add Column to ' . $table_name . '</h2>';
         
         echo '<form method="post">';
