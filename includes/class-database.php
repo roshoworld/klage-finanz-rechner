@@ -373,50 +373,8 @@ class CAH_Database {
                 PRIMARY KEY (id)
             ) $charset_collate",
             
-            'klage_financial' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_financial (
-                id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                case_id bigint(20) unsigned NOT NULL,
-                
-                -- Standard GDPR Calculations
-                damages_loss decimal(10,2) DEFAULT 350.00,
-                partner_fees decimal(10,2) DEFAULT 96.90,
-                communication_fees decimal(10,2) DEFAULT 13.36,
-                vat decimal(10,2) DEFAULT 87.85,
-                court_fees decimal(10,2) DEFAULT 32.00,
-                total decimal(10,2) DEFAULT 548.11,
-                
-                -- Extended Financial Fields
-                streitwert decimal(10,2) DEFAULT 548.11,
-                schadenersatz decimal(10,2) DEFAULT 350.00,
-                anwaltskosten decimal(10,2) DEFAULT 96.90,
-                gerichtskosten decimal(10,2) DEFAULT 32.00,
-                nebenkosten decimal(10,2) DEFAULT 13.36,
-                auslagen decimal(10,2) DEFAULT 0.00,
-                
-                -- Additional Costs
-                mahnkosten decimal(10,2) DEFAULT 0.00,
-                vollstreckungskosten decimal(10,2) DEFAULT 0.00,
-                zinsen decimal(10,2) DEFAULT 0.00,
-                
-                -- Payment Information
-                payment_status varchar(20) DEFAULT 'offen',
-                payment_date date DEFAULT NULL,
-                payment_amount decimal(10,2) DEFAULT 0.00,
-                payment_method varchar(50) DEFAULT NULL,
-                
-                -- Cost Categories
-                kostenkategorie varchar(50) DEFAULT 'GDPR_Standard',
-                gebuehrenstruktur varchar(50) DEFAULT 'RVG',
-                
-                -- Custom Fields
-                custom_fields text,
-                calculation_template_id bigint(20) unsigned,
-                
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (id),
-                KEY case_id (case_id),
-                KEY payment_status (payment_status)
-            ) $charset_collate",
+            // Financial tables moved to separate plugin
+            // 'klage_financial' => removed in v1.4.7
             
             'klage_courts' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_courts (
                 id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
