@@ -461,7 +461,7 @@ class CAH_Admin_Dashboard {
                 <!-- Submit -->
                 <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
                     <p class="submit" style="margin: 0;">
-                        <input type="submit" class="button button-primary button-large" value="💾 Fall erstellen (€548.11)">
+                        <input type="submit" class="button button-primary button-large" value="💾 Fall erstellen">
                         <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">Abbrechen</a>
                     </p>
                 </div>
