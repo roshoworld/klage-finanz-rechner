@@ -72,15 +72,15 @@ class CleanCutTester:
         print("\n🔍 TESTING CORE PLUGIN v1.4.7 - Financial Calculator Removal")
         print("=" * 70)
         
-        # Test 1: Plugin version is 1.4.7
+        # Test 1: Plugin version is 1.4.8
         main_plugin = "/app/court-automation-hub.php"
-        version_found = self.check_file_content(main_plugin, r"Version:\s*1\.4\.7")
-        self.log_test("Core plugin version is 1.4.7", version_found, 
+        version_found = self.check_file_content(main_plugin, r"Version:\s*1\.4\.8")
+        self.log_test("Core plugin version is 1.4.8", version_found, 
                      "Plugin header shows correct version")
         
-        # Test 2: Plugin constant is 1.4.7
-        constant_found = self.check_file_content(main_plugin, r"CAH_PLUGIN_VERSION.*1\.4\.7")
-        self.log_test("Plugin constant version is 1.4.7", constant_found,
+        # Test 2: Plugin constant is 1.4.8
+        constant_found = self.check_file_content(main_plugin, r"CAH_PLUGIN_VERSION.*1\.4\.8")
+        self.log_test("Plugin constant version is 1.4.8", constant_found,
                      "CAH_PLUGIN_VERSION constant matches")
         
         # Test 3: Financial calculator class still included (simplified version)
