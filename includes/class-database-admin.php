@@ -75,6 +75,58 @@ class CAH_Database_Admin {
             }
         }
         
+        // Handle add column
+        if (isset($_POST['action']) && $_POST['action'] === 'add_column') {
+            if (wp_verify_nonce($_POST['_wpnonce'], 'add_column')) {
+                $table_name = sanitize_text_field($_POST['table_name']);
+                $column_name = sanitize_text_field($_POST['column_name']);
+                $column_type = sanitize_text_field($_POST['column_type']);
+                $column_null = sanitize_text_field($_POST['column_null']);
+                $column_default = sanitize_text_field($_POST['column_default']);
+                
+                // Build column definition
+                $column_definition = $column_type . ' ' . $column_null;
+                
+                if (!empty($column_default)) {
+                    if (in_array($column_type, array('varchar(255)', 'varchar(100)', 'varchar(50)', 'text'))) {
+                        $column_definition .= " DEFAULT '" . $column_default . "'";
+                    } else {
+                        $column_definition .= " DEFAULT " . $column_default;
+                    }
+                }
+                
+                $result = $this->schema_manager->add_column($table_name, $column_name, $column_definition);
+                
+                if ($result['success']) {
+                    add_action('admin_notices', function() use ($column_name) {
+                        echo '<div class="notice notice-success"><p>Column "' . $column_name . '" added successfully.</p></div>';
+                    });
+                } else {
+                    add_action('admin_notices', function() use ($result) {
+                        echo '<div class="notice notice-error"><p>Error adding column: ' . $result['message'] . '</p></div>';
+                    });
+                }
+            }
+        }
+        
+        // Handle drop column
+        if (isset($_GET['action']) && $_GET['action'] === 'drop_column' && isset($_GET['column'])) {
+            $table_name = sanitize_text_field($_GET['table']);
+            $column_name = sanitize_text_field($_GET['column']);
+            
+            $result = $this->schema_manager->drop_column($table_name, $column_name);
+            
+            if ($result['success']) {
+                add_action('admin_notices', function() use ($column_name) {
+                    echo '<div class="notice notice-success"><p>Column "' . $column_name . '" dropped successfully.</p></div>';
+                });
+            } else {
+                add_action('admin_notices', function() use ($result) {
+                    echo '<div class="notice notice-error"><p>Error dropping column: ' . $result['message'] . '</p></div>';
+                });
+            }
+        }
+        
         // Handle CSV import
         if (isset($_POST['action']) && $_POST['action'] === 'import_csv') {
             if (wp_verify_nonce($_POST['_wpnonce'], 'import_csv')) {
