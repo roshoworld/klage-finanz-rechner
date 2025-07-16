@@ -30,11 +30,11 @@ class CAH_Database_Admin {
      */
     public function add_admin_menu() {
         add_submenu_page(
-            'court-automation-hub',
+            'klage-click-hub',
             'Database Management',
             'Database Management',
             'manage_options',
-            'cah-database-management',
+            'klage-click-database',
             array($this, 'render_database_management_page')
         );
     }
