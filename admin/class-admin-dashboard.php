@@ -22,9 +22,13 @@ class CAH_Admin_Dashboard {
         // Handle template download EARLY before any output
         $this->handle_early_download();
         
+        // Handle CSV export EARLY before any output
+        $this->handle_early_export();
+        
         // Add AJAX handlers for file downloads
         add_action('wp_ajax_klage_download_template', array($this, 'ajax_download_template'));
         add_action('wp_ajax_klage_export_calculation', array($this, 'ajax_export_calculation'));
+        add_action('wp_ajax_klage_export_csv', array($this, 'ajax_export_csv'));
     }
     
     private function handle_early_download() {
