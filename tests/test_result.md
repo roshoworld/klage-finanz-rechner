@@ -269,10 +269,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Hotfix v1.3.0 verification completed - database schema fix for missing columns resolved"
-    - "Database schema synchronization with datenquelle and letzte_aktualisierung columns working correctly"
-    - "Case creation with missing column fix fully functional for both new and existing installations"
-    - "All database table creation, upgrade, and case creation functionality verified"
+    - "Hotfix v1.3.1 verification completed - enhanced upgrade mechanism with automatic schema check working correctly"
+    - "Database schema synchronization with comprehensive column addition (12 columns) fully functional"
+    - "Case creation with enhanced upgrade mechanism working for both new and existing installations"
+    - "All database table creation, upgrade, schema check, and case creation functionality verified"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
