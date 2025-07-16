@@ -2916,16 +2916,17 @@ class CAH_Admin_Dashboard {
             $has_meaningful_debtor_data = !empty($debtors_last_name) && $debtors_last_name !== 'Unbekannt';
             $has_meaningful_email_data = !empty($sender_email);
             
-            // Require either debtor last name OR sender email (not both)
+            // Require either meaningful debtor data OR meaningful email data (not both)
             if (!$has_meaningful_debtor_data && !$has_meaningful_email_data) {
                 $errors[] = 'Entweder Nachname des Schuldners oder Absender-E-Mail ist erforderlich.';
             }
             
-            // Only require sender email if they're trying to create a complete email evidence record
-            // (i.e., they filled out email subject AND content, indicating they want to document email evidence)
-            $attempting_email_evidence = !empty($_POST['emails_subject']) && !empty($_POST['emails_content']);
-            if ($attempting_email_evidence && empty($sender_email)) {
-                $errors[] = 'Für vollständige E-Mail-Evidenz ist die Absender-E-Mail erforderlich.';
+            // Enhanced validation: If user has meaningful debtor data, don't require email fields
+            // Only require sender email if they're trying to create email evidence AND don't have meaningful debtor data
+            $attempting_email_evidence = !empty($_POST['emails_subject']) || !empty($_POST['emails_content']);
+            
+            if ($attempting_email_evidence && !$has_meaningful_debtor_data && empty($sender_email)) {
+                $errors[] = 'Wenn E-Mail-Evidenz angegeben wird, ist die Absender-E-Mail erforderlich.';
             }
             
             if (!empty($errors)) {
