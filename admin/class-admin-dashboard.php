@@ -2848,11 +2848,16 @@ class CAH_Admin_Dashboard {
             $submission_date = sanitize_text_field($_POST['submission_date']);
             $case_notes = sanitize_textarea_field($_POST['case_notes']);
             
-            // Debtor information (check if we have debtor fields or email fields)
+            // Debtor information (check if we have meaningful debtor or email data)
             $has_debtor_fields = isset($_POST['debtors_first_name']) || isset($_POST['debtors_last_name']);
-            $has_email_fields = isset($_POST['emails_sender_email']) || isset($_POST['emails_user_email']);
+            $has_email_fields = isset($_POST['emails_sender_email']) || isset($_POST['emails_user_email']) || isset($_POST['emails_subject']) || isset($_POST['emails_content']);
             
-            if ($has_debtor_fields) {
+            // Check for meaningful data in debtor fields first
+            $has_meaningful_debtor_data_check = !empty($_POST['debtors_last_name']) && sanitize_text_field($_POST['debtors_last_name']) !== 'Unbekannt';
+            $has_meaningful_email_data_check = !empty($_POST['emails_sender_email']);
+            
+            // Determine primary data source - prioritize debtor fields if they have meaningful data
+            if ($has_debtor_fields && $has_meaningful_debtor_data_check) {
                 // Manual case creation with debtor information
                 $debtors_first_name = sanitize_text_field($_POST['debtors_first_name']);
                 $debtors_last_name = sanitize_text_field($_POST['debtors_last_name']);
