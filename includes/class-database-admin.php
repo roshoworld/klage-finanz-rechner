@@ -1028,6 +1028,47 @@ class CAH_Database_Admin {
         .form-actions .button {
             margin-right: 10px;
         }
+        
+        .unique-key-recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .recommendation-card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            border-left: 4px solid #0073aa;
+        }
+        
+        .recommendation-card h4 {
+            margin-top: 0;
+            color: #0073aa;
+        }
+        
+        .recommendation-card code {
+            background: #f1f1f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .column-selection {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        
+        .column-selection label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
         </style>';
     }
     
