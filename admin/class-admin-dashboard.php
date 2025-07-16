@@ -2868,7 +2868,7 @@ class CAH_Admin_Dashboard {
                 $debtors_postal_code = sanitize_text_field($_POST['debtors_postal_code']);
                 $debtors_city = sanitize_text_field($_POST['debtors_city']);
                 $debtors_country = sanitize_text_field($_POST['debtors_country']) ?: 'Deutschland';
-            } elseif ($has_email_fields) {
+            } elseif ($has_email_fields && $has_meaningful_email_data_check) {
                 // Email-based case creation - extract debtor info from email
                 $sender_email = sanitize_email($_POST['emails_sender_email']);
                 $user_email = sanitize_email($_POST['emails_user_email']);
