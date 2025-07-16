@@ -560,17 +560,11 @@ class CAH_Admin_Dashboard {
                     </div>
                 </div>
                 
-                <!-- Financial Calculation -->
-                <div class="postbox" style="margin-top: 20px;">
-                    <h2 class="hndle">💰 Automatische DSGVO-Berechnung</h2>
-                    <div class="inside" style="padding: 20px;">
-                        <div style="background: #f0f8ff; padding: 15px; border-radius: 5px;">
-                            <p><strong>📊 Standard DSGVO-Beträge werden automatisch angewendet:</strong></p>
-                            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 10px 0;">
-                                <div><strong>💰 Finanzberechnung:</strong> Über separates Plugin verfügbar</div>
-                                <div style="background: #e7f3ff; color: #0073aa; padding: 10px; border-radius: 5px; text-align: center; margin-top: 10px;">
-                                    <strong>🧮 Aktivieren Sie das Financial Calculator Plugin</strong>
-                                </div>
+                <!-- Financial Calculator moved to separate plugin -->
+                <div class="notice notice-info">
+                    <p><strong>🧮 Aktivieren Sie das Financial Calculator Plugin</strong><br>
+                    Der Financial Calculator wurde in ein separates Plugin ausgelagert. Bitte aktivieren Sie das "Court Automation Hub - Financial Calculator" Plugin für erweiterte Finanzfunktionen.</p>
+                </div>
                             </div>
                             <p><em>Die Finanzberechnung erfolgt über ein separates Plugin für maximale Flexibilität.</em></p>
                         </div>
