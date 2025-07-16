@@ -543,7 +543,6 @@ class CAH_Schema_Manager {
         // Trigger form and template regeneration
         do_action('cah_schema_updated');
     }
-    }
     
     /**
      * Modify existing column
