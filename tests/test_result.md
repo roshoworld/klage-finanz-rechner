@@ -401,13 +401,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "PHP Syntax Error Fix v1.4.6 verification completed - 'unexpected variable $configs' error on line 341 successfully resolved"
-    - "Plugin activation syntax error resolved - all PHP files pass syntax validation"
-    - "Version updated to 1.4.6 to reflect the critical syntax fix in form generator class"
-    - "Database Management system accessibility confirmed through WordPress admin"
-    - "Core case creation functionality preserved and working correctly"
-    - "Form generator class functionality fully operational with all methods and field types"
-    - "Plugin ready for production use with resolved PHP syntax errors"
+    - "Clean Cut Implementation v1.4.7 - CRITICAL PRIORITY TESTING"
+    - "Phase 1: Core plugin v1.4.7 - Financial calculator completely removed from admin dashboard, financial database tables removed, hardcoded €548.11 references cleaned up"
+    - "Phase 2: New Financial Calculator plugin v1.0.0 - Complete separate plugin created with 5 classes, proper database schema, WordPress integration hooks"
+    - "Phase 3: Testing required - Implementation completed but never comprehensively tested"
+    - "Need to verify: Core plugin functionality after financial calculator removal, New financial calculator plugin functionality, Integration between both plugins, Database operations, case creation, etc."
+    - "RISK: Version 1.4.7 implementation exists but has never been tested - potential production issues"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
