@@ -16,6 +16,31 @@
 - ✅ Audit logging system
 - ✅ Integration hooks for other plugins
 
+### 3. What's NOT Included
+- ❌ Financial calculator (moved to separate plugin)
+- ❌ Financial database tables
+- ❌ Financial calculations
+
+### 4. For Complete System
+To get financial calculations, also install:
+**Court Automation Hub - Financial Calculator** plugin
+
+### 5. System Requirements
+- PHP 7.4+
+- WordPress 5.0+
+- MySQL 5.7+
+
+### 6. WordPress Integration Hooks
+This plugin provides hooks for extensibility:
+- `cah_case_created` - When a case is created
+- `cah_case_updated` - When a case is updated  
+- `cah_case_deleted` - When a case is deleted
+
+---
+**Version:** 1.4.8 (Clean Cut Implementation)
+**Status:** Production Ready
+**Dependencies:** None
+
 ## ✨ Key Features
 
 - **🗄️ 57-Field Master Data Structure** - Comprehensive case and debtor management
