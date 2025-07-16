@@ -299,7 +299,7 @@ class CAH_Form_Generator {
             'datenquelle' => array('label' => 'Datenquelle', 'type' => 'select', 'options' => array('manual' => 'Manuell', 'forderungen_com' => 'Forderungen.com', 'email' => 'E-Mail')),
             'verifiziert' => array('label' => 'Verifiziert', 'type' => 'checkbox'),
             
-            // Financial table fields
+            // Financial table fields removed in v1.4.7
             'damages_loss' => array('label' => 'Grundschaden', 'type' => 'decimal', 'default' => '350.00'),
             'partner_fees' => array('label' => 'Anwaltskosten', 'type' => 'decimal', 'default' => '96.90'),
             'communication_fees' => array('label' => 'Kommunikationskosten', 'type' => 'decimal', 'default' => '13.36'),
