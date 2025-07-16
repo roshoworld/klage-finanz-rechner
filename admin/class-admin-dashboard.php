@@ -2935,27 +2935,8 @@ class CAH_Admin_Dashboard {
             if ($result) {
                 $case_internal_id = $wpdb->insert_id;
                 
-                // Create standard financial record
-                if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_financial'")) {
-                    $wpdb->insert(
-                        $wpdb->prefix . 'klage_financial',
-                        array(
-                            'case_id' => $case_internal_id,
-                            'damages_loss' => 350.00,
-                            'partner_fees' => 96.90,
-                            'communication_fees' => 13.36,
-                            'vat' => 87.85,
-                            'total' => 548.11,
-                            'court_fees' => 32.00,
-                            'streitwert' => 548.11,
-                            'schadenersatz' => 350.00,
-                            'anwaltskosten' => 96.90,
-                            'gerichtskosten' => 32.00,
-                            'nebenkosten' => 13.36
-                        ),
-                        array('%d', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f', '%f')
-                    );
-                }
+                // Trigger WordPress hook for case creation (for financial calculator plugin integration)
+                do_action('cah_case_created', $case_internal_id, $case_data);
                 
                 // Create audit log entry
                 if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}klage_audit'")) {
