@@ -67,6 +67,7 @@ class CAH_Form_Generator {
                 'Kommunikation' => array('bevorzugte_sprache', 'kommunikation_email', 'kommunikation_post'),
                 'Metadata' => array('datenquelle', 'verifiziert', 'social_media')
             );
+        // Financial table removed in v1.4.7 - moved to separate plugin
         } elseif ($table_name === 'klage_financial') {
             $groups = array(
                 'DSGVO Standard-Beträge' => array('damages_loss', 'partner_fees', 'communication_fees', 'vat', 'court_fees', 'total'),
