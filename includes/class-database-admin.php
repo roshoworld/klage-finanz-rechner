@@ -357,7 +357,7 @@ class CAH_Database_Admin {
                 echo '<td>' . esc_html(substr($value, 0, 50)) . (strlen($value) > 50 ? '...' : '') . '</td>';
             }
             echo '<td>';
-            echo '<a href="?page=cah-database-management&tab=data&table=' . $table_name . '&action=edit&id=' . $row['id'] . '" class="button button-small">Edit</a>';
+            echo '<a href="?page=klage-click-database&tab=data&table=' . $table_name . '&action=edit&id=' . $row['id'] . '" class="button button-small">Edit</a>';
             echo '</td>';
             echo '</tr>';
         }
