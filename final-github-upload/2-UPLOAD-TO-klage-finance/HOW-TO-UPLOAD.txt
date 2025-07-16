@@ -1,9 +1,0 @@
-DRAG AND DROP INSTRUCTIONS:
-
-1. Go to: https://github.com/roshoworld/klage-finance
-2. Click "Add file" → "Upload files"
-3. Drag ALL contents from "2-UPLOAD-TO-klage-finance" folder
-4. Commit message: "Financial Calculator v1.0.0"
-5. Click "Commit changes"
-
-DONE! Repository 2 updated.
