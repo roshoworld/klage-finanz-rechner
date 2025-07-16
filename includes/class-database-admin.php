@@ -330,7 +330,7 @@ class CAH_Database_Admin {
         echo '<div class="data-list">';
         echo '<div class="data-list-header">';
         echo '<h3>Records in ' . $table_name . '</h3>';
-        echo '<a href="?page=cah-database-management&tab=data&table=' . $table_name . '&action=new" class="button button-primary">Add New Record</a>';
+        echo '<a href="?page=klage-click-database&tab=data&table=' . $table_name . '&action=new" class="button button-primary">Add New Record</a>';
         echo '</div>';
         
         if (empty($data['data'])) {
