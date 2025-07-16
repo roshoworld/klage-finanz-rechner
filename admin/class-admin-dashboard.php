@@ -565,9 +565,6 @@ class CAH_Admin_Dashboard {
                     <p><strong>🧮 Aktivieren Sie das Financial Calculator Plugin</strong><br>
                     Der Financial Calculator wurde in ein separates Plugin ausgelagert. Bitte aktivieren Sie das "Court Automation Hub - Financial Calculator" Plugin für erweiterte Finanzfunktionen.</p>
                 </div>
-                            </div>
-                            <p><em>Die Finanzberechnung erfolgt über ein separates Plugin für maximale Flexibilität.</em></p>
-                        </div>
                     </div>
                 </div>
                 
