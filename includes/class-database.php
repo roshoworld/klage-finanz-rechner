@@ -29,6 +29,9 @@ class CAH_Database {
         
         $charset_collate = $this->wpdb->get_charset_collate();
         
+        // First, handle existing table updates
+        $this->upgrade_existing_tables();
+        
         // Define all tables with simpler SQL
         $tables = array(
             'klage_cases' => "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}klage_cases (
