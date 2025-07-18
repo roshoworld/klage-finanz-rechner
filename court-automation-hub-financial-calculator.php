@@ -52,6 +52,15 @@ function cah_financial_conflict_notice() {
     <?php
 }
 
+function cah_financial_version_notice() {
+    ?>
+    <div class="notice notice-warning">
+        <p><strong>Court Automation Hub - Financial Calculator</strong> requires Court Automation Hub v1.4.8 or higher.</p>
+        <p>Please update the core plugin to the latest version.</p>
+    </div>
+    <?php
+}
+
 function cah_financial_deactivate_self() {
     deactivate_plugins(plugin_basename(__FILE__));
 }
