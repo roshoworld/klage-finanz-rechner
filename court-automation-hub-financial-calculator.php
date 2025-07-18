@@ -127,4 +127,4 @@ class CAH_Financial_Calculator_Plugin {
 }
 
 // Initialize the plugin
-new CAH_Financial_Calculator();
+new CAH_Financial_Calculator_Plugin();
