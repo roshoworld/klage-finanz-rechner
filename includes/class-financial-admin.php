@@ -13,7 +13,7 @@ class CAH_Financial_Admin {
     
     public function add_admin_menu() {
         add_submenu_page(
-            'klage-click-main',
+            'klage-click-hub',
             'Financial Calculator',
             'Financial Calculator',
             'manage_options',
@@ -22,7 +22,7 @@ class CAH_Financial_Admin {
         );
         
         add_submenu_page(
-            'klage-click-main',
+            'klage-click-hub',
             'Financial Templates',
             'Financial Templates',
             'manage_options',
