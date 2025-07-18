@@ -44,7 +44,7 @@ class CAH_Financial_Template_Manager {
         
         if ($template) {
             $db_manager = new CAH_Financial_DB_Manager();
-            $calculator = new CAH_Financial_Calculator();
+            $calculator = new CAH_Financial_Calculator_Engine();
             
             $cost_items = json_decode($template->cost_items, true);
             $calculation = $calculator->calculate_totals($cost_items, $template->mwst_rate);
