@@ -106,8 +106,10 @@ class CAH_Financial_Calculator {
     
     public function handle_case_created($case_id) {
         // Apply default template to new case
-        $templates = new CAH_Financial_Template_Manager();
-        $templates->apply_default_template($case_id);
+        if (class_exists('CAH_Financial_Template_Manager')) {
+            $templates = new CAH_Financial_Template_Manager();
+            $templates->apply_default_template($case_id);
+        }
     }
     
     public function handle_case_updated($case_id) {
@@ -117,8 +119,10 @@ class CAH_Financial_Calculator {
     
     public function handle_case_deleted($case_id) {
         // Clean up financial data when case is deleted
-        $database = new CAH_Financial_DB_Manager();
-        $database->delete_case_financial_data($case_id);
+        if (class_exists('CAH_Financial_DB_Manager')) {
+            $database = new CAH_Financial_DB_Manager();
+            $database->delete_case_financial_data($case_id);
+        }
     }
 }
 
