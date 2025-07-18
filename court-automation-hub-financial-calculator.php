@@ -23,15 +23,21 @@ define('CAH_FINANCIAL_PLUGIN_VERSION', '1.0.0');
 // Check if main plugin is active
 if (!class_exists('CourtAutomationHub')) {
     add_action('admin_notices', 'cah_financial_admin_notice');
+    add_action('admin_init', 'cah_financial_deactivate_self');
     return;
 }
 
 function cah_financial_admin_notice() {
     ?>
     <div class="notice notice-error">
-        <p><strong>Court Automation Hub - Financial Calculator</strong> requires the main "Court Automation Hub" plugin to be installed and activated.</p>
+        <p><strong>Court Automation Hub - Financial Calculator</strong> requires the main "Court Automation Hub" plugin to be installed and activated first.</p>
+        <p>Please install and activate the core plugin, then try activating this plugin again.</p>
     </div>
     <?php
+}
+
+function cah_financial_deactivate_self() {
+    deactivate_plugins(plugin_basename(__FILE__));
 }
 
 // Main plugin class
