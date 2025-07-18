@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('CAH_FINANCIAL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CAH_FINANCIAL_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CAH_FINANCIAL_PLUGIN_VERSION', '1.0.1');
+define('CAH_FINANCIAL_PLUGIN_VERSION', '1.0.2');
 
 // Check if main plugin is active
 if (!class_exists('CourtAutomationHub')) {
