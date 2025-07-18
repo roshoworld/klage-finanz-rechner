@@ -27,11 +27,27 @@ if (!class_exists('CourtAutomationHub')) {
     return;
 }
 
+// Check for class conflicts (in case old financial calculator classes exist)
+if (class_exists('CAH_Financial_Calculator') && !class_exists('CAH_Financial_Calculator_Plugin')) {
+    add_action('admin_notices', 'cah_financial_conflict_notice');
+    add_action('admin_init', 'cah_financial_deactivate_self');
+    return;
+}
+
 function cah_financial_admin_notice() {
     ?>
     <div class="notice notice-error">
         <p><strong>Court Automation Hub - Financial Calculator</strong> requires the main "Court Automation Hub" plugin to be installed and activated first.</p>
         <p>Please install and activate the core plugin, then try activating this plugin again.</p>
+    </div>
+    <?php
+}
+
+function cah_financial_conflict_notice() {
+    ?>
+    <div class="notice notice-error">
+        <p><strong>Court Automation Hub - Financial Calculator</strong> detected class conflicts with the core plugin.</p>
+        <p>Please ensure you're using the latest separated version of the core plugin that has the financial calculator removed.</p>
     </div>
     <?php
 }
