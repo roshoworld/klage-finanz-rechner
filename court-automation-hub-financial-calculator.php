@@ -41,7 +41,7 @@ function cah_financial_deactivate_self() {
 }
 
 // Main plugin class
-class CAH_Financial_Calculator {
+class CAH_Financial_Calculator_Plugin {
     
     public function __construct() {
         add_action('plugins_loaded', array($this, 'init'));
