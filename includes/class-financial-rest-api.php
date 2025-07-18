@@ -60,7 +60,7 @@ class CAH_Financial_REST_API {
         $case_id = $request['case_id'];
         $params = $request->get_params();
         
-        $calculator = new CAH_Financial_Calculator();
+        $calculator = new CAH_Financial_Calculator_Engine();
         $db_manager = new CAH_Financial_DB_Manager();
         
         $cost_items = $params['cost_items'];
