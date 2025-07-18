@@ -60,9 +60,10 @@ The plugin integrates with the main Court Automation Hub via WordPress hooks:
 - Sonstige: €0.00
 
 ## Version
-1.0.1 - Menu integration fix and class conflict resolution
+1.0.2 - Full template CRUD functionality
 
 ### Changelog
+- **v1.0.2**: Added complete template editing functionality (Create, Edit, Delete templates)
 - **v1.0.1**: Fixed menu integration, resolved class conflicts, improved compatibility
 - **v1.0.0**: Initial separated plugin release
 
