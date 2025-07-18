@@ -1,10 +1,10 @@
 <?php
 /**
- * Financial Calculator
+ * Financial Calculator Engine
  * Core calculation logic for financial operations
  */
 
-class CAH_Financial_Calculator {
+class CAH_Financial_Calculator_Engine {
     
     public function calculate_totals($cost_items, $mwst_rate = 19.00) {
         $subtotal = 0;
