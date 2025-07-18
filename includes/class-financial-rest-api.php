@@ -96,7 +96,7 @@ class CAH_Financial_REST_API {
     public function calculate_totals($request) {
         $params = $request->get_params();
         
-        $calculator = new CAH_Financial_Calculator();
+        $calculator = new CAH_Financial_Calculator_Engine();
         
         $cost_items = $params['cost_items'];
         $mwst_rate = isset($params['mwst_rate']) ? $params['mwst_rate'] : 19.00;
