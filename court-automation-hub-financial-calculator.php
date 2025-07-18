@@ -83,6 +83,9 @@ class CAH_Financial_Calculator {
     }
     
     public function activate() {
+        // Load required files for activation
+        $this->load_includes();
+        
         // Create database tables
         $database = new CAH_Financial_DB_Manager();
         $database->create_tables();
