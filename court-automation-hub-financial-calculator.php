@@ -8,7 +8,6 @@
  * Text Domain: cah-financial-calculator
  * Domain Path: /languages
  * License: GPL v2 or later
- * Requires Plugins: court-automation-hub
  */
 
 // Prevent direct access
