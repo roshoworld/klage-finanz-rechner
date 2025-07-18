@@ -15,7 +15,7 @@ class CAH_Financial_Admin {
         add_submenu_page(
             'klage-click-hub',
             'Financial Calculator',
-            'Financial Calculator',
+            '🧮 Finanz-Rechner',
             'manage_options',
             'cah-financial-calculator',
             array($this, 'admin_page')
@@ -24,7 +24,7 @@ class CAH_Financial_Admin {
         add_submenu_page(
             'klage-click-hub',
             'Financial Templates',
-            'Financial Templates',
+            '📋 Finanz-Vorlagen',
             'manage_options',
             'cah-financial-templates',
             array($this, 'templates_page')
