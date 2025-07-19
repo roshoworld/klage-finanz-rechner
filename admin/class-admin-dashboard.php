@@ -2885,30 +2885,18 @@ class CAH_Admin_Dashboard {
                 'case_creation_date' => current_time('mysql'),
                 'case_status' => 'draft',
                 'case_priority' => $case_priority,
-                'brief_status' => 'pending',
-                'mandant' => $mandant,
-                'submission_date' => $submission_date_mysql,
-                'case_notes' => $case_notes,
                 'debtor_id' => $debtor_id,
                 'total_amount' => 548.11, // Standard GDPR amount
-                'verfahrensart' => 'mahnverfahren',
-                'rechtsgrundlage' => 'DSGVO Art. 82',
-                'kategorie' => 'GDPR_SPAM',
-                'schadenhoehe' => 350.00,
-                'verfahrenswert' => 548.11,
-                'erfolgsaussicht' => 'hoch',
-                'risiko_bewertung' => 'niedrig',
-                'komplexitaet' => 'standard',
-                'prioritaet_intern' => $case_priority,
-                'bearbeitungsstatus' => 'neu',
-                'kommunikation_sprache' => 'de',
-                'import_source' => 'manual'
+                'processing_complexity' => 'standard',
+                'processing_risk_score' => 3,
+                'document_type' => 'mahnbescheid',
+                'document_language' => 'de'
             );
             
             $result = $wpdb->insert(
                 $wpdb->prefix . 'klage_cases',
                 $case_data,
-                array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%f', '%s', '%s', '%s', '%f', '%f', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                array('%s', '%s', '%s', '%s', '%d', '%f', '%s', '%d', '%s', '%s')
             );
             
             if ($result) {
