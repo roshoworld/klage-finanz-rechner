@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('CAH_FC_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CAH_FC_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CAH_FC_PLUGIN_VERSION', '1.0.0');
+define('CAH_FC_PLUGIN_VERSION', '1.0.6');
 
 // Main plugin class
 class CAH_Financial_Calculator_Plugin {
