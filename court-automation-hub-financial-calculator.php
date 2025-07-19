@@ -22,46 +22,46 @@ define('CAH_FINANCIAL_PLUGIN_VERSION', '1.0.2');
 
 // Check if main plugin is active
 if (!class_exists('CourtAutomationHub')) {
-    add_action('admin_notices', 'cah_financial_admin_notice');
-    add_action('admin_init', 'cah_financial_deactivate_self');
+    add_action('admin_notices', 'cah_financial_v102_admin_notice');
+    add_action('admin_init', 'cah_financial_v102_deactivate_self');
     return;
 }
 
 // Check for class conflicts (in case old financial calculator classes exist)
 if (class_exists('CAH_Financial_Calculator') && !class_exists('CAH_Financial_Calculator_Plugin')) {
-    add_action('admin_notices', 'cah_financial_conflict_notice');
-    add_action('admin_init', 'cah_financial_deactivate_self');
+    add_action('admin_notices', 'cah_financial_v102_conflict_notice');
+    add_action('admin_init', 'cah_financial_v102_deactivate_self');
     return;
 }
 
-function cah_financial_admin_notice() {
+function cah_financial_v102_admin_notice() {
     ?>
     <div class="notice notice-error">
-        <p><strong>Court Automation Hub - Financial Calculator</strong> requires the main "Court Automation Hub" plugin to be installed and activated first.</p>
+        <p><strong>Court Automation Hub - Financial Calculator v1.0.2</strong> requires the main "Court Automation Hub" plugin to be installed and activated first.</p>
         <p>Please install and activate the core plugin, then try activating this plugin again.</p>
     </div>
     <?php
 }
 
-function cah_financial_conflict_notice() {
+function cah_financial_v102_conflict_notice() {
     ?>
     <div class="notice notice-error">
-        <p><strong>Court Automation Hub - Financial Calculator</strong> detected class conflicts with the core plugin.</p>
+        <p><strong>Court Automation Hub - Financial Calculator v1.0.2</strong> detected class conflicts with the core plugin.</p>
         <p>Please ensure you're using the latest separated version of the core plugin that has the financial calculator removed.</p>
     </div>
     <?php
 }
 
-function cah_financial_version_notice() {
+function cah_financial_v102_version_notice() {
     ?>
     <div class="notice notice-warning">
-        <p><strong>Court Automation Hub - Financial Calculator</strong> requires Court Automation Hub v1.4.8 or higher.</p>
+        <p><strong>Court Automation Hub - Financial Calculator v1.0.2</strong> requires Court Automation Hub v1.4.8 or higher.</p>
         <p>Please update the core plugin to the latest version.</p>
     </div>
     <?php
 }
 
-function cah_financial_deactivate_self() {
+function cah_financial_v102_deactivate_self() {
     deactivate_plugins(plugin_basename(__FILE__));
 }
 
