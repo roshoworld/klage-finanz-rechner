@@ -1,10 +1,11 @@
 <?php
 /**
  * Admin Dashboard Class
- * Enhanced with Financial Calculator Integration v1.4.9
+ * Enhanced with Financial Calculator Integration v1.5.0
  */
 
-class CAH_Admin_Dashboard {
+if (!class_exists('CAH_Admin_Dashboard')) {
+    class CAH_Admin_Dashboard {
     
     public function __construct() {
         add_action('admin_menu', array($this, 'admin_menu'));
