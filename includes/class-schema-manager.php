@@ -1,99 +1,110 @@
 <?php
 /**
- * Schema Manager - v1.4.9
+ * Schema Manager - v1.5.0
  */
-class CAH_Schema_Manager {
-    public function synchronize_all_tables() {
-        // Schema synchronization logic
+if (!class_exists('CAH_Schema_Manager')) {
+    class CAH_Schema_Manager {
+        public function synchronize_all_tables() {
+            // Schema synchronization logic
+        }
     }
 }
 
 /**
- * Form Generator - v1.4.9
+ * Import Export Manager - v1.5.0
  */
-class CAH_Form_Generator {
-    public function __construct() {
-        // Form generation logic
+if (!class_exists('CAH_Import_Export_Manager')) {
+    class CAH_Import_Export_Manager {
+        public function __construct() {
+            // Import/export logic
+        }
     }
 }
 
 /**
- * Import Export Manager - v1.4.9
+ * Database Admin - v1.5.0
  */
-class CAH_Import_Export_Manager {
-    public function __construct() {
-        // Import/export logic
+if (!class_exists('CAH_Database_Admin')) {
+    class CAH_Database_Admin {
+        public function __construct() {
+            // Database admin logic
+        }
     }
 }
 
 /**
- * Database Admin - v1.4.9
+ * Case Manager - v1.5.0
  */
-class CAH_Database_Admin {
-    public function __construct() {
-        // Database admin logic
+if (!class_exists('CAH_Case_Manager')) {
+    class CAH_Case_Manager {
+        public function __construct() {
+            // Case management logic
+        }
     }
 }
 
 /**
- * Case Manager - v1.4.9
+ * Audit Logger - v1.5.0
  */
-class CAH_Case_Manager {
-    public function __construct() {
-        // Case management logic
+if (!class_exists('CAH_Audit_Logger')) {
+    class CAH_Audit_Logger {
+        public function __construct() {
+            // Audit logging logic
+        }
     }
 }
 
 /**
- * Audit Logger - v1.4.9
+ * Debtor Manager - v1.5.0
  */
-class CAH_Audit_Logger {
-    public function __construct() {
-        // Audit logging logic
+if (!class_exists('CAH_Debtor_Manager')) {
+    class CAH_Debtor_Manager {
+        public function __construct() {
+            // Debtor management logic
+        }
     }
 }
 
 /**
- * Debtor Manager - v1.4.9
+ * Email Evidence - v1.5.0
  */
-class CAH_Debtor_Manager {
-    public function __construct() {
-        // Debtor management logic
+if (!class_exists('CAH_Email_Evidence')) {
+    class CAH_Email_Evidence {
+        public function __construct() {
+            // Email evidence logic
+        }
     }
 }
 
 /**
- * Email Evidence - v1.4.9
+ * Legal Framework - v1.5.0
  */
-class CAH_Email_Evidence {
-    public function __construct() {
-        // Email evidence logic
+if (!class_exists('CAH_Legal_Framework')) {
+    class CAH_Legal_Framework {
+        public function __construct() {
+            // Legal framework logic
+        }
     }
 }
 
 /**
- * Legal Framework - v1.4.9
+ * Court Manager - v1.5.0
  */
-class CAH_Legal_Framework {
-    public function __construct() {
-        // Legal framework logic
+if (!class_exists('CAH_Court_Manager')) {
+    class CAH_Court_Manager {
+        public function __construct() {
+            // Court management logic
+        }
     }
 }
 
 /**
- * Court Manager - v1.4.9
+ * N8N Connector - v1.5.0
  */
-class CAH_Court_Manager {
-    public function __construct() {
-        // Court management logic
-    }
-}
-
-/**
- * N8N Connector - v1.4.9
- */
-class CAH_N8N_Connector {
-    public function __construct() {
-        // N8N connector logic
+if (!class_exists('CAH_N8N_Connector')) {
+    class CAH_N8N_Connector {
+        public function __construct() {
+            // N8N connector logic
+        }
     }
 }
