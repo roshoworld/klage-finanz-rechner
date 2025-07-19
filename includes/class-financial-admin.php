@@ -305,4 +305,248 @@ class CAH_Financial_Admin {
         $template_manager->delete_template($template_id);
         echo '<div class="notice notice-success"><p>Vorlage wurde erfolgreich gelöscht.</p></div>';
     }
+    
+    // Cost Items Management
+    public function cost_items_page() {
+        $db_manager = new CAH_Financial_DB_Manager();
+        $action = isset($_GET['action']) ? $_GET['action'] : 'list';
+        $item_id = isset($_GET['item_id']) ? intval($_GET['item_id']) : 0;
+        
+        // Handle form submissions
+        if (isset($_POST['cost_item_action'])) {
+            $this->handle_cost_item_actions();
+        }
+        
+        switch ($action) {
+            case 'edit':
+                $this->edit_cost_item_page($item_id);
+                break;
+            case 'add':
+                $this->add_cost_item_page();
+                break;
+            case 'delete':
+                $this->delete_cost_item($item_id);
+                $this->list_cost_items_page();
+                break;
+            default:
+                $this->list_cost_items_page();
+                break;
+        }
+    }
+    
+    private function list_cost_items_page() {
+        $db_manager = new CAH_Financial_DB_Manager();
+        $cost_items = $db_manager->get_all_cost_items(false); // Show both active and inactive
+        
+        ?>
+        <div class="wrap">
+            <h1>💰 Kosten Items</h1>
+            
+            <div class="metabox-holder">
+                <div class="postbox">
+                    <h2 class="hndle">Alle Kosten Items</h2>
+                    <div class="inside">
+                        <table class="widefat fixed striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Beschreibung</th>
+                                    <th>Standard Betrag</th>
+                                    <th>Kategorie</th>
+                                    <th>Status</th>
+                                    <th>Reihenfolge</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($cost_items as $item): ?>
+                                <tr<?php echo !$item->is_active ? ' style="opacity: 0.6;"' : ''; ?>>
+                                    <td><?php echo esc_html($item->name); ?></td>
+                                    <td><?php echo esc_html($item->description); ?></td>
+                                    <td>€<?php echo number_format($item->default_amount, 2, ',', '.'); ?></td>
+                                    <td><?php echo esc_html(ucfirst($item->category)); ?></td>
+                                    <td><?php echo $item->is_active ? '✅ Aktiv' : '❌ Inaktiv'; ?></td>
+                                    <td><?php echo $item->sort_order; ?></td>
+                                    <td>
+                                        <a href="<?php echo admin_url('admin.php?page=cah-cost-items&action=edit&item_id=' . $item->id); ?>" class="button button-small">Bearbeiten</a>
+                                        <a href="<?php echo admin_url('admin.php?page=cah-cost-items&action=delete&item_id=' . $item->id); ?>" class="button button-small button-link-delete" onclick="return confirm('Sind Sie sicher, dass Sie dieses Kosten Item löschen möchten?')">Löschen</a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        
+                        <p>
+                            <a href="<?php echo admin_url('admin.php?page=cah-cost-items&action=add'); ?>" class="button button-primary">Neues Kosten Item hinzufügen</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+    
+    private function add_cost_item_page() {
+        ?>
+        <div class="wrap">
+            <h1>💰 Neues Kosten Item</h1>
+            
+            <form method="post" action="<?php echo admin_url('admin.php?page=cah-cost-items'); ?>">
+                <?php wp_nonce_field('cost_item_save'); ?>
+                <input type="hidden" name="cost_item_action" value="save">
+                
+                <div class="metabox-holder">
+                    <div class="postbox">
+                        <h2 class="hndle">Kosten Item Details</h2>
+                        <div class="inside">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">Name *</th>
+                                    <td><input type="text" name="name" class="regular-text" required></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Beschreibung</th>
+                                    <td><textarea name="description" class="regular-text" rows="3"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Standard Betrag (€) *</th>
+                                    <td><input type="number" name="default_amount" step="0.01" min="0" class="regular-text" required></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Kategorie *</th>
+                                    <td>
+                                        <select name="category" class="regular-text" required>
+                                            <option value="grundkosten">Grundkosten</option>
+                                            <option value="gerichtskosten">Gerichtskosten</option>
+                                            <option value="anwaltskosten">Anwaltskosten</option>
+                                            <option value="sonstige">Sonstige</option>
+                                            <option value="general">Allgemein</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Reihenfolge</th>
+                                    <td><input type="number" name="sort_order" min="0" value="0" class="small-text"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td><input type="checkbox" name="is_active" value="1" checked> Aktiv</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="submit">
+                    <input type="submit" name="submit" class="button button-primary" value="Kosten Item speichern">
+                    <a href="<?php echo admin_url('admin.php?page=cah-cost-items'); ?>" class="button">Abbrechen</a>
+                </p>
+            </form>
+        </div>
+        <?php
+    }
+    
+    private function edit_cost_item_page($item_id) {
+        $db_manager = new CAH_Financial_DB_Manager();
+        $item = $db_manager->get_cost_item($item_id);
+        
+        if (!$item) {
+            echo '<div class="notice notice-error"><p>Kosten Item nicht gefunden.</p></div>';
+            $this->list_cost_items_page();
+            return;
+        }
+        
+        ?>
+        <div class="wrap">
+            <h1>💰 Kosten Item bearbeiten</h1>
+            
+            <form method="post" action="<?php echo admin_url('admin.php?page=cah-cost-items'); ?>">
+                <?php wp_nonce_field('cost_item_save'); ?>
+                <input type="hidden" name="cost_item_action" value="save">
+                <input type="hidden" name="item_id" value="<?php echo $item->id; ?>">
+                
+                <div class="metabox-holder">
+                    <div class="postbox">
+                        <h2 class="hndle">Kosten Item Details</h2>
+                        <div class="inside">
+                            <table class="form-table">
+                                <tr>
+                                    <th scope="row">Name *</th>
+                                    <td><input type="text" name="name" class="regular-text" value="<?php echo esc_attr($item->name); ?>" required></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Beschreibung</th>
+                                    <td><textarea name="description" class="regular-text" rows="3"><?php echo esc_textarea($item->description); ?></textarea></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Standard Betrag (€) *</th>
+                                    <td><input type="number" name="default_amount" step="0.01" min="0" class="regular-text" value="<?php echo esc_attr($item->default_amount); ?>" required></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Kategorie *</th>
+                                    <td>
+                                        <select name="category" class="regular-text" required>
+                                            <option value="grundkosten" <?php selected($item->category, 'grundkosten'); ?>>Grundkosten</option>
+                                            <option value="gerichtskosten" <?php selected($item->category, 'gerichtskosten'); ?>>Gerichtskosten</option>
+                                            <option value="anwaltskosten" <?php selected($item->category, 'anwaltskosten'); ?>>Anwaltskosten</option>
+                                            <option value="sonstige" <?php selected($item->category, 'sonstige'); ?>>Sonstige</option>
+                                            <option value="general" <?php selected($item->category, 'general'); ?>>Allgemein</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Reihenfolge</th>
+                                    <td><input type="number" name="sort_order" min="0" value="<?php echo esc_attr($item->sort_order); ?>" class="small-text"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Status</th>
+                                    <td><input type="checkbox" name="is_active" value="1" <?php checked($item->is_active, 1); ?>> Aktiv</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="submit">
+                    <input type="submit" name="submit" class="button button-primary" value="Kosten Item aktualisieren">
+                    <a href="<?php echo admin_url('admin.php?page=cah-cost-items'); ?>" class="button">Abbrechen</a>
+                </p>
+            </form>
+        </div>
+        <?php
+    }
+    
+    private function delete_cost_item($item_id) {
+        $db_manager = new CAH_Financial_DB_Manager();
+        $db_manager->delete_cost_item($item_id);
+        echo '<div class="notice notice-success"><p>Kosten Item wurde erfolgreich gelöscht.</p></div>';
+    }
+    
+    private function handle_cost_item_actions() {
+        if (!wp_verify_nonce($_POST['_wpnonce'], 'cost_item_save')) {
+            return;
+        }
+        
+        $action = $_POST['cost_item_action'];
+        
+        if ($action === 'save') {
+            $data = array(
+                'name' => sanitize_text_field($_POST['name']),
+                'description' => sanitize_textarea_field($_POST['description']),
+                'default_amount' => floatval($_POST['default_amount']),
+                'category' => sanitize_text_field($_POST['category']),
+                'sort_order' => intval($_POST['sort_order']),
+                'is_active' => isset($_POST['is_active']) ? 1 : 0
+            );
+            
+            if (isset($_POST['item_id'])) {
+                $data['id'] = intval($_POST['item_id']);
+            }
+            
+            $db_manager = new CAH_Financial_DB_Manager();
+            $db_manager->save_cost_item($data);
+            
+            echo '<div class="notice notice-success"><p>Kosten Item wurde erfolgreich gespeichert.</p></div>';
+        }
+    }
 }
