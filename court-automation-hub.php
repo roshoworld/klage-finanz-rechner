@@ -3,7 +3,7 @@
  * Plugin Name: Court Automation Hub
  * Plugin URI: https://klage.click
  * Description: Multi-purpose legal automation platform for German courts with AI-powered processing
- * Version: 1.5.1
+ * Version: 1.4.8
  * Author: Klage.Click
  * Text Domain: court-automation-hub
  * Domain Path: /languages
@@ -18,26 +18,10 @@ if (!defined('ABSPATH')) {
 // Define plugin constants
 define('CAH_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CAH_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('CAH_PLUGIN_VERSION', '1.5.1');
+define('CAH_PLUGIN_VERSION', '1.4.8');
 
 // Main plugin class
 class CourtAutomationHub {
-    
-    // Declare properties to avoid PHP 8.2 deprecation warnings
-    public $database;
-    public $admin_dashboard;
-    public $database_admin;
-    public $rest_api;
-    public $audit_logger;
-    public $case_manager;
-    public $debtor_manager;
-    public $email_evidence;
-    public $legal_framework;
-    public $court_manager;
-    public $n8n_connector;
-    public $schema_manager;
-    public $form_generator;
-    public $import_export_manager;
     
     public function __construct() {
         add_action('plugins_loaded', array($this, 'init'));
@@ -69,6 +53,7 @@ class CourtAutomationHub {
         require_once CAH_PLUGIN_PATH . 'includes/class-audit-logger.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-debtor-manager.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-email-evidence.php';
+        // Financial calculator removed in v1.4.7 - moved to separate plugin
         require_once CAH_PLUGIN_PATH . 'includes/class-legal-framework.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-court-manager.php';
         require_once CAH_PLUGIN_PATH . 'includes/class-n8n-connector.php';
@@ -78,8 +63,8 @@ class CourtAutomationHub {
     
     private function init_components() {
         // Initialize schema manager and auto-sync database
-        $this->schema_manager = new CAH_Schema_Manager();
-        $this->schema_manager->synchronize_all_tables();
+        $schema_manager = new CAH_Schema_Manager();
+        $schema_manager->synchronize_all_tables();
         
         // Initialize all components
         $this->database = new CAH_Database();
@@ -90,11 +75,10 @@ class CourtAutomationHub {
         $this->case_manager = new CAH_Case_Manager();
         $this->debtor_manager = new CAH_Debtor_Manager();
         $this->email_evidence = new CAH_Email_Evidence();
+        // Financial calculator removed in v1.4.7 - moved to separate plugin
         $this->legal_framework = new CAH_Legal_Framework();
         $this->court_manager = new CAH_Court_Manager();
         $this->n8n_connector = new CAH_N8N_Connector();
-        $this->form_generator = new CAH_Form_Generator();
-        $this->import_export_manager = new CAH_Import_Export_Manager();
     }
     
     private function add_hooks() {
@@ -121,21 +105,13 @@ class CourtAutomationHub {
     public function activate() {
         // Include database class for activation
         require_once CAH_PLUGIN_PATH . 'includes/class-database.php';
-        require_once CAH_PLUGIN_PATH . 'includes/class-schema-manager.php';
         
         // Create database tables
         $database = new CAH_Database();
         $database->create_tables_direct();
         
-        // Initialize schema
-        $schema_manager = new CAH_Schema_Manager();
-        $schema_manager->synchronize_all_tables();
-        
         // Add capabilities
         $this->add_capabilities();
-        
-        // Initialize audit log
-        $this->init_audit_log();
         
         // Flush rewrite rules
         flush_rewrite_rules();
@@ -154,10 +130,7 @@ class CourtAutomationHub {
             'manage_klage_click_debtors',
             'manage_klage_click_documents',
             'manage_klage_click_templates',
-            'manage_klage_click_settings',
-            'import_klage_click_data',
-            'export_klage_click_data',
-            'manage_klage_click_audit'
+            'manage_klage_click_settings'
         );
         
         $administrator = get_role('administrator');
@@ -165,14 +138,6 @@ class CourtAutomationHub {
             foreach ($capabilities as $capability) {
                 $administrator->add_cap($capability);
             }
-        }
-    }
-    
-    private function init_audit_log() {
-        // Log plugin activation
-        if (class_exists('CAH_Audit_Logger')) {
-            $audit_logger = new CAH_Audit_Logger();
-            $audit_logger->log_action('plugin_activated', 'Court Automation Hub activated', 0, get_current_user_id());
         }
     }
 }
