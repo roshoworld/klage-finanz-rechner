@@ -77,7 +77,7 @@ class CAH_Financial_Calculator_Plugin {
     public function init() {
         // Check core plugin version compatibility
         if (defined('CAH_PLUGIN_VERSION') && version_compare(CAH_PLUGIN_VERSION, '1.4.8', '<')) {
-            add_action('admin_notices', 'cah_financial_version_notice');
+            add_action('admin_notices', 'cah_financial_v102_version_notice');
             return;
         }
         
