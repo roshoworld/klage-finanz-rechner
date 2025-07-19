@@ -136,11 +136,9 @@ class CAH_Financial_Calculator_Plugin {
     }
     
     public function handle_case_created($case_id) {
-        // Apply default template to new case
-        if (class_exists('CAH_Financial_Template_Manager')) {
-            $templates = new CAH_Financial_Template_Manager();
-            $templates->apply_default_template($case_id);
-        }
+        // No longer auto-apply default template - user will choose manually
+        // Template selection is now optional via dropdown in case management
+        do_action('cah_financial_case_created', $case_id);
     }
     
     public function handle_case_updated($case_id) {
