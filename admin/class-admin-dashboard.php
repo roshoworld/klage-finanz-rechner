@@ -2255,8 +2255,9 @@ class CAH_Admin_Dashboard {
                                 <tr>
                                     <th scope="row"><label for="case_id">Fall-ID</label></th>
                                     <td>
-                                        <input type="text" id="case_id" name="case_id" value="<?php echo esc_attr($case->case_id); ?>" class="regular-text" readonly>
-                                        <p class="description">Fall-ID kann nicht geändert werden</p>
+                                        <input type="text" id="case_id" name="case_id" value="<?php echo esc_attr($case->case_id); ?>" class="regular-text" required>
+                                        <p class="description">Fall-ID muss eindeutig sein. System prüft automatisch auf Duplikate.</p>
+                                        <div id="case_id_validation" style="display:none;"></div>
                                     </td>
                                 </tr>
                                 <tr>
