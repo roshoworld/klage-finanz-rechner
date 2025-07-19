@@ -29,6 +29,7 @@ class CAH_Admin_Dashboard {
         add_action('wp_ajax_klage_download_template', array($this, 'ajax_download_template'));
         add_action('wp_ajax_klage_export_calculation', array($this, 'ajax_export_calculation'));
         add_action('wp_ajax_klage_export_csv', array($this, 'ajax_export_csv'));
+        add_action('wp_ajax_check_case_id_unique', array($this, 'ajax_check_case_id_unique'));
     }
     
     private function handle_early_download() {
