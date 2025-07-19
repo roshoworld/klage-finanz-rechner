@@ -2199,10 +2199,7 @@ class CAH_Admin_Dashboard {
             ", $case->debtor_id));
         }
         
-        // Get financial data
-        $financial = $wpdb->get_row($wpdb->prepare("
-            SELECT * FROM {$wpdb->prefix}klage_financial WHERE case_id = %d
-        ", $case_id));
+        // Financial data handled by separate plugin
         
         // Handle form submission
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_case'])) {
