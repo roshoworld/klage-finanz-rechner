@@ -354,15 +354,25 @@ class CAH_Admin_Dashboard {
             <h1>Neuen GDPR Spam Fall erstellen</h1>
             
             <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.4 - Case Creation!</strong></p>
-                <p>Erstellen Sie einen neuen GDPR SPAM-Fall mit Finanzberechnung über separates Plugin.</p>
+                <p><strong>🚀 v1.5.3 - Enhanced Case Creation!</strong></p>
+                <p>Erstellen Sie einen neuen GDPR SPAM-Fall mit integrierter Finanzberechnung.</p>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="nav-tab-wrapper">
+                <a href="#basic-info" class="nav-tab nav-tab-active" onclick="switchTab(event, 'basic-info')">📋 Grunddaten</a>
+                <?php if (class_exists('CAH_Case_Financial_Integration')): ?>
+                    <a href="#financial" class="nav-tab" onclick="switchTab(event, 'financial')">💰 Finanzierung</a>
+                <?php endif; ?>
             </div>
             
             <form method="post">
                 <?php wp_nonce_field('create_case', 'create_case_nonce'); ?>
                 <input type="hidden" name="action" value="create_case">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- Basic Info Tab -->
+                <div id="basic-info" class="tab-content active">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                     
                     <!-- Case Information -->
                     <div class="postbox">
