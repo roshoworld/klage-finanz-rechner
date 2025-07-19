@@ -71,8 +71,12 @@ class CAH_Financial_DB_Manager {
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($cost_items_sql);
         dbDelta($templates_sql);
         dbDelta($financial_sql);
+        
+        // Create default cost items if none exist
+        $this->create_default_cost_items();
     }
     
     public function delete_case_financial_data($case_id) {
