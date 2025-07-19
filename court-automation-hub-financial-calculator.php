@@ -89,6 +89,7 @@ class CAH_Financial_Calculator_Plugin {
         new CAH_Financial_Admin();
         new CAH_Financial_Template_Manager();
         new CAH_Financial_REST_API();
+        new CAH_Case_Financial_Integration();
         
         // Add actions for main plugin integration
         add_action('cah_case_created', array($this, 'handle_case_created'));
