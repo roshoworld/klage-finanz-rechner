@@ -107,4 +107,95 @@ class CAH_Financial_DB_Manager {
             $wpdb->insert($table_name, $data);
         }
     }
+    
+    // Cost Items CRUD Methods
+    public function create_default_cost_items() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        
+        // Check if cost items already exist
+        $existing = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        
+        if ($existing == 0) {
+            $default_items = array(
+                array(
+                    'name' => 'Grundkosten',
+                    'description' => 'Standard DSGVO Grundkosten',
+                    'default_amount' => 548.11,
+                    'category' => 'grundkosten',
+                    'sort_order' => 1
+                ),
+                array(
+                    'name' => 'Gerichtskosten',
+                    'description' => 'Standardmäßige Gerichtskosten',
+                    'default_amount' => 50.00,
+                    'category' => 'gerichtskosten',
+                    'sort_order' => 2
+                ),
+                array(
+                    'name' => 'Anwaltskosten',
+                    'description' => 'Standardmäßige Anwaltskosten',
+                    'default_amount' => 200.00,
+                    'category' => 'anwaltskosten',
+                    'sort_order' => 3
+                ),
+                array(
+                    'name' => 'Sonstige Kosten',
+                    'description' => 'Zusätzliche oder sonstige Kosten',
+                    'default_amount' => 0.00,
+                    'category' => 'sonstige',
+                    'sort_order' => 4
+                )
+            );
+            
+            foreach ($default_items as $item) {
+                $wpdb->insert($table_name, $item);
+            }
+        }
+    }
+    
+    public function get_all_cost_items($active_only = true) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        $where = $active_only ? "WHERE is_active = 1" : "";
+        
+        return $wpdb->get_results("SELECT * FROM $table_name $where ORDER BY sort_order ASC, name ASC");
+    }
+    
+    public function get_cost_item($item_id) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $item_id));
+    }
+    
+    public function save_cost_item($data) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        
+        if (isset($data['id']) && $data['id'] > 0) {
+            $wpdb->update($table_name, $data, array('id' => $data['id']));
+            return $data['id'];
+        } else {
+            $wpdb->insert($table_name, $data);
+            return $wpdb->insert_id;
+        }
+    }
+    
+    public function delete_cost_item($item_id) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        return $wpdb->delete($table_name, array('id' => $item_id));
+    }
+    
+    public function get_cost_items_by_category($category) {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'cah_cost_items';
+        return $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE category = %s AND is_active = 1 ORDER BY sort_order ASC, name ASC", $category));
+    }
 }
