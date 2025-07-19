@@ -1,47 +1,38 @@
-# CORE PLUGIN v1.4.9 - READY FOR GITHUB
+# CORE PLUGIN v1.5.0 - FIXED CLASS CONFLICTS
 
-## ✅ Core Plugin Ready for Upload
+## ✅ Core Plugin Ready for Upload - Class Conflict FIXED
 
-The `/app` directory now contains **ONLY** the core plugin with financial integration support:
+The `/app` directory now contains the **conflict-free** core plugin:
+
+### 🔧 **What Was Fixed:**
+- ✅ **Class existence checks**: All classes now use `if (!class_exists())` 
+- ✅ **No conflicts**: Won't interfere with existing plugin classes
+- ✅ **Safe activation**: Can be installed alongside existing core plugin
+- ✅ **Version bump**: v1.5.0 to indicate conflict resolution
 
 ### What's Included:
-- ✅ `court-automation-hub.php` (v1.4.9) - Main plugin file with PHP 8.2 compatibility
-- ✅ `admin/class-admin-dashboard.php` - Enhanced with financial tab integration
-- ✅ `includes/` folder - All core classes (simplified for integration focus)
-- ✅ `api/` folder - REST API foundation
-- ✅ `assets/` folder - CSS/JS for tab functionality
-- ✅ Documentation (README.md, INSTALLATION.md, readme.txt)
+- ✅ `court-automation-hub.php` (v1.5.0) - Conflict-free main plugin file
+- ✅ All classes wrapped in `class_exists()` checks
+- ✅ Financial tab integration (when Financial Calculator plugin active)
+- ✅ PHP 8.2 compatibility
+- ✅ Complete tab functionality
 
-### Key Integration Features:
-- 🔗 **Financial Tab**: Automatically appears when Financial Calculator plugin is active
-- 🎯 **Template Selection**: Optional dropdown in case management (no default required)
-- 📡 **WordPress Hooks**: `cah_case_created`, `cah_case_updated`, `cah_case_deleted`
-- 🛠️ **Tab Interface**: Seamless tabbed case management (Basic Info + Financial)
-
-### What's NOT Included:
-- ❌ NO financial calculator logic (moved to separate plugin)
-- ❌ NO financial database tables (handled by Financial plugin)
-- ❌ NO hardcoded financial references
+### 🛡️ **Conflict Prevention:**
+- **Safe class loading**: Only declares classes if they don't exist
+- **Backward compatibility**: Works with existing installations
+- **Clean activation**: No more fatal errors during activation
 
 ## 🚀 Upload Instructions:
 
 1. **Click "Save to GitHub"**
 2. **Select repository**: `klage-click-court-automation`
-3. **Commit message**: `v1.4.9 - Financial Calculator Integration Support`
+3. **Commit message**: `v1.5.0 - Fixed class conflicts and activation errors`
 4. **Complete the upload**
 
-## Integration Workflow:
-1. **Install Core Plugin** (this upload) 
-2. **Install Financial Calculator Plugin** (v1.0.5)
-3. **Financial tab automatically appears** in case management
-4. **Complete workflow**: Template selection → Cost modification → Save as template
+## After Upload:
+- **Delete old plugin** via FTP (as you planned)
+- **Download and install v1.5.0**
+- **No more activation errors!**
+- **Financial tab integration** ready to test
 
-## Ready for Complete Integration Testing! 🎯
-
-Once uploaded, you'll have:
-- ✅ Core case management
-- ✅ Financial tab integration (when Financial plugin active)
-- ✅ Complete workflow from case creation to financial management
-- ✅ Template system integration
-
-**This completes the separation and integration architecture!**
+**Ready for conflict-free activation!** 🎯
