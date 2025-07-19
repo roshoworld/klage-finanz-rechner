@@ -232,14 +232,8 @@ class CAH_Admin_Dashboard {
             array($this, 'admin_page_cases')
         );
         
-        add_submenu_page(
-            'klage-click-hub',
-            __('Finanz-Rechner', 'court-automation-hub'),
-            __('Finanz-Rechner', 'court-automation-hub'),
-            'manage_options',
-            'klage-click-financial',
-            array($this, 'admin_page_financial')  // Financial calculator removed in v1.4.7 - moved to separate plugin
-        );
+        
+        // Financial calculator removed in v1.5.1 - handled by separate plugin
         
         add_submenu_page(
             'klage-click-hub',
