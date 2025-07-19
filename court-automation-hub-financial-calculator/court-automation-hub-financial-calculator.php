@@ -3,7 +3,7 @@
  * Plugin Name: Court Automation Hub - Financial Calculator
  * Plugin URI: https://klage.click/financial-calculator
  * Description: Advanced financial calculator for legal proceedings with template management and case integration
- * Version: 1.0.5
+ * Version: 1.0.0
  * Author: Klage.Click
  * Text Domain: court-automation-hub-financial
  * Domain Path: /languages
