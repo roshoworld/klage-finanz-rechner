@@ -19,6 +19,24 @@ class CAH_Financial_DB_Manager {
         
         $charset_collate = $wpdb->get_charset_collate();
         
+        // Cost items table
+        $cost_items_table = $wpdb->prefix . 'cah_cost_items';
+        $cost_items_sql = "CREATE TABLE $cost_items_table (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            name varchar(200) NOT NULL,
+            description text,
+            default_amount decimal(10,2) DEFAULT 0.00,
+            category varchar(100) DEFAULT 'general',
+            is_active tinyint(1) DEFAULT 1,
+            sort_order int(11) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY name (name),
+            KEY category (category),
+            KEY is_active (is_active)
+        ) $charset_collate;";
+        
         // Financial templates table
         $templates_table = $wpdb->prefix . 'cah_financial_templates';
         $templates_sql = "CREATE TABLE $templates_table (
