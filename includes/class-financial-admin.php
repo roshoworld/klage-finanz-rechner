@@ -71,6 +71,7 @@ class CAH_Financial_Admin {
                         <h3>Quick Actions:</h3>
                         <p>
                             <a href="<?php echo admin_url('admin.php?page=cah-financial-templates'); ?>" class="button button-primary">Manage Templates</a>
+                            <a href="<?php echo admin_url('admin.php?page=cah-cost-items'); ?>" class="button button-primary">Manage Cost Items</a>
                             <a href="<?php echo admin_url('admin.php?page=klage-click-cases'); ?>" class="button button-secondary">View Cases</a>
                         </p>
                     </div>
