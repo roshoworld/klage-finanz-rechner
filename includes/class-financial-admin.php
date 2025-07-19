@@ -29,6 +29,15 @@ class CAH_Financial_Admin {
             'cah-financial-templates',
             array($this, 'templates_page')
         );
+        
+        add_submenu_page(
+            'klage-click-hub',
+            'Cost Items',
+            '💰 Kosten Items',
+            'manage_options',
+            'cah-cost-items',
+            array($this, 'cost_items_page')
+        );
     }
     
     public function enqueue_scripts() {
