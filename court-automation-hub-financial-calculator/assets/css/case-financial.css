@@ -1,0 +1,339 @@
+/* Case Financial Integration Styles */
+
+#case-financial-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.financial-section h3 {
+    margin: 0 0 20px 0;
+    color: #0073aa;
+    font-size: 18px;
+}
+
+/* Template Selection */
+.template-selection {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.template-selection label {
+    font-weight: 600;
+    margin: 0;
+}
+
+.template-selection select {
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+}
+
+/* Cost Items Section */
+.cost-items-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+#cost-items-table {
+    margin-top: 10px;
+}
+
+#cost-items-table th {
+    background: #f1f1f1;
+    font-weight: 600;
+    padding: 12px;
+}
+
+#cost-items-table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* Category Badges */
+.category-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.category-grundkosten {
+    background: #4caf50;
+}
+
+.category-gerichtskosten {
+    background: #ff9800;
+}
+
+.category-anwaltskosten {
+    background: #2196f3;
+}
+
+.category-sonstige {
+    background: #9c27b0;
+}
+
+/* Calculation Summary */
+.calculation-summary {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    border-left: 4px solid #0073aa;
+}
+
+.calculation-summary h4 {
+    margin: 0 0 15px 0;
+    color: #0073aa;
+}
+
+.calculation-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 5px 0;
+}
+
+.calculation-row.total-row {
+    border-top: 2px solid #0073aa;
+    margin-top: 15px;
+    padding-top: 15px;
+    font-size: 16px;
+}
+
+.calculation-row span:last-child {
+    font-weight: 600;
+    min-width: 100px;
+    text-align: right;
+}
+
+/* Financial Actions */
+.financial-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.financial-actions .button {
+    padding: 8px 15px;
+    height: auto;
+}
+
+/* Cost Item Modal */
+#cost-item-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cost-item-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.cost-item-form h3 {
+    margin: 0 0 20px 0;
+    color: #0073aa;
+    font-size: 18px;
+}
+
+.cost-item-form .form-table {
+    margin: 0;
+}
+
+.cost-item-form .form-table th {
+    width: 120px;
+    padding: 10px 10px 10px 0;
+    vertical-align: top;
+}
+
+.cost-item-form .form-table td {
+    padding: 10px 0;
+}
+
+.cost-item-form .form-table input,
+.cost-item-form .form-table select,
+.cost-item-form .form-table textarea {
+    width: 100%;
+    max-width: none;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.modal-actions .button {
+    margin-left: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .template-selection {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .template-selection select {
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .financial-actions {
+        flex-direction: column;
+    }
+    
+    .financial-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .calculation-row {
+        font-size: 14px;
+    }
+    
+    .cost-item-form {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    #cost-items-table {
+        font-size: 13px;
+    }
+    
+    #cost-items-table th,
+    #cost-items-table td {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    #cost-items-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .category-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success/Error States */
+.notice {
+    margin: 5px 0 15px 0;
+    padding: 1px 12px;
+    border-left: 4px solid;
+    background: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,.1);
+}
+
+.notice-success {
+    border-left-color: #46b450;
+    background: #ecf7ed;
+}
+
+.notice-error {
+    border-left-color: #dc3232;
+    background: #fbeaea;
+}
+
+.notice-warning {
+    border-left-color: #ffb900;
+    background: #fff8e5;
+}
+
+.notice p {
+    margin: 0.5em 0;
+    padding: 2px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Enhanced Button Styles */
+.button-primary {
+    background: #0073aa;
+    border-color: #0073aa;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.button-primary:hover {
+    background: #005a87;
+    border-color: #005a87;
+    color: #fff;
+}
+
+.button-secondary {
+    background: #f7f7f7;
+    border-color: #cccccc;
+    color: #555;
+    transition: all 0.2s ease;
+}
+
+.button-secondary:hover {
+    background: #e0e0e0;
+    border-color: #999;
+    color: #444;
+}
+
+.button-link-delete {
+    color: #a00;
+}
+
+.button-link-delete:hover {
+    color: #dc3232;
+}
