@@ -3422,4 +3422,27 @@ class CAH_Admin_Dashboard {
         
         return $errors;
     }
+    
+    // AJAX handler for case ID uniqueness check
+    public function ajax_check_case_id_unique() {
+        check_ajax_referer('cah_admin_nonce', 'nonce');
+        
+        $case_id = sanitize_text_field($_POST['case_id']);
+        
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'klage_cases';
+        
+        // Check if case_id already exists
+        $existing = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE case_id = %s",
+            $case_id
+        ));
+        
+        $is_unique = ($existing == 0);
+        
+        wp_send_json_success(array(
+            'unique' => $is_unique,
+            'message' => $is_unique ? 'Fall-ID verfügbar' : 'Fall-ID bereits vergeben'
+        ));
+    }
 }
