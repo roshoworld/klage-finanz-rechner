@@ -362,7 +362,7 @@ class CAH_Admin_Dashboard {
             <!-- Tab Navigation -->
             <div class="nav-tab-wrapper">
                 <a href="#basic-info" class="nav-tab nav-tab-active" onclick="switchTab(event, 'basic-info')">📋 Grunddaten</a>
-                <?php if (class_exists('CAH_Case_Financial_Integration')): ?>
+                <?php if (class_exists('CAH_Financial_Calculator_Plugin') || class_exists('CAH_Case_Financial_Integration')): ?>
                     <a href="#financial" class="nav-tab" onclick="switchTab(event, 'financial')">💰 Finanzierung</a>
                 <?php endif; ?>
             </div>
