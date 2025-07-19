@@ -739,4 +739,41 @@ class CAH_Database {
         
         return $status;
     }
+    
+    private function fix_missing_columns() {
+        // Fix missing case_id column in klage_cases table
+        $table_name = $this->wpdb->prefix . 'klage_cases';
+        
+        // Check if case_id column exists
+        $columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'case_id'");
+        
+        if (empty($columns)) {
+            // Add missing case_id column
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN case_id varchar(100) NOT NULL UNIQUE AFTER id");
+            
+            // Generate case_id values for existing rows
+            $existing_rows = $this->wpdb->get_results("SELECT id FROM $table_name WHERE case_id IS NULL OR case_id = ''");
+            foreach ($existing_rows as $row) {
+                $case_id = 'SPAM-' . date('Y') . '-' . str_pad($row->id, 4, '0', STR_PAD_LEFT);
+                $this->wpdb->update($table_name, array('case_id' => $case_id), array('id' => $row->id));
+            }
+        }
+        
+        // Add other missing columns as needed
+        $this->add_missing_column($table_name, 'case_creation_date', 'datetime NOT NULL DEFAULT CURRENT_TIMESTAMP');
+        $this->add_missing_column($table_name, 'case_status', "enum('draft','pending','processing','completed','cancelled') DEFAULT 'draft'");
+        $this->add_missing_column($table_name, 'case_priority', "enum('low','medium','high','urgent') DEFAULT 'medium'");
+        $this->add_missing_column($table_name, 'processing_complexity', "enum('simple','standard','complex') DEFAULT 'standard'");
+        $this->add_missing_column($table_name, 'processing_risk_score', 'tinyint(3) unsigned DEFAULT 3');
+        $this->add_missing_column($table_name, 'document_type', "enum('mahnbescheid','klage') DEFAULT 'mahnbescheid'");
+        $this->add_missing_column($table_name, 'document_language', "varchar(2) DEFAULT 'de'");
+        $this->add_missing_column($table_name, 'total_amount', 'decimal(10,2) DEFAULT 0.00');
+    }
+    
+    private function add_missing_column($table_name, $column_name, $column_definition) {
+        $columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE '$column_name'");
+        if (empty($columns)) {
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name $column_definition");
+        }
+    }
 }
