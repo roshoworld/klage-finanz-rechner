@@ -750,9 +750,12 @@ class CAH_Database {
         // Check if case_id column exists
         $columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'case_id'");
         
+        // Check if case_id column exists and fix its constraints
+        $columns = $this->wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'case_id'");
+        
         if (empty($columns)) {
-            // Add missing case_id column
-            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN case_id varchar(100) NOT NULL UNIQUE AFTER id");
+            // Add missing case_id column (NOT unique - should be editable)
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN case_id varchar(100) AFTER id");
             
             // Generate case_id values for existing rows
             $existing_rows = $this->wpdb->get_results("SELECT id FROM $table_name WHERE case_id IS NULL OR case_id = ''");
@@ -760,6 +763,10 @@ class CAH_Database {
                 $case_id = 'SPAM-' . date('Y') . '-' . str_pad($row->id, 4, '0', STR_PAD_LEFT);
                 $this->wpdb->update($table_name, array('case_id' => $case_id), array('id' => $row->id));
             }
+        } else {
+            // Remove UNIQUE constraint if it exists (case_id should be editable)
+            $this->wpdb->query("ALTER TABLE $table_name DROP INDEX case_id");
+            $this->wpdb->query("ALTER TABLE $table_name ADD INDEX case_id (case_id)");
         }
         
         // Add other missing columns as needed
