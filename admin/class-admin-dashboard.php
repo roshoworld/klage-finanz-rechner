@@ -915,52 +915,7 @@ class CAH_Admin_Dashboard {
         <?php
     }
     
-    public function admin_page_financial() {
-        $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : 'manage';
-        
-        switch ($action) {
-            case 'calculator':
-                echo '<div class="wrap"><h1>🧮 Financial Calculator</h1><div class="notice notice-info"><p><strong>Financial Calculator moved to separate plugin.</strong> Please activate the "Court Automation Hub - Financial Calculator" plugin for advanced financial management.</p></div></div>';
-                break;
-            default:
-                $this->render_financial_field_manager();
-                break;
-        }
-    }
-    
-    private function render_financial_field_manager() {
-        ?>
-        <div class="wrap">
-            <h1>💰 Finanz-Rechner Verwaltung</h1>
-            
-            <div style="background: #e7f3ff; padding: 15px; margin: 20px 0; border-radius: 5px; border-left: 4px solid #0073aa;">
-                <p><strong>🚀 v1.1.3 - Dynamischer Finanz-Rechner!</strong></p>
-                <p>Excel-ähnliche Berechnungen mit DSGVO-Standards und benutzerdefinierten Feldern.</p>
-            </div>
-            
-            <div style="display: flex; gap: 20px; margin: 20px 0;">
-                <a href="<?php echo admin_url('admin.php?page=klage-click-financial&action=calculator'); ?>" class="button button-primary">
-                    🧮 Rechner öffnen
-                </a>
-                <a href="<?php echo admin_url('admin.php?page=klage-click-import'); ?>" class="button button-secondary">
-                    📊 CSV Import
-                </a>
-            </div>
-            
-            <!-- Financial Calculator moved to separate plugin -->
-            <div class="postbox">
-                <h2 class="hndle">💰 Finanzrechner</h2>
-                <div class="inside" style="padding: 20px;">
-                    <p>Der Finanzrechner ist jetzt als separates Plugin verfügbar: <strong>Court Automation Hub - Financial Calculator</strong></p>
-                    <p>Bitte installieren Sie das Financial Calculator Plugin für erweiterte Finanzberechnungen.</p>
-                </div>
-            </div>
-        </div>
-        <?php
-    }
-    
-    // Financial calculator moved to separate plugin
-    // This method is deprecated and will be removed in future versions
+    // Financial calculator functionality removed in v1.5.1 - moved to separate plugin
     
     public function admin_page_import() {
         global $wpdb;
