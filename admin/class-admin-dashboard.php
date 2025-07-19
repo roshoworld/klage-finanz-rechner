@@ -572,6 +572,23 @@ class CAH_Admin_Dashboard {
                     </div>
                 </div>
                 
+                </div> <!-- End Basic Info Tab -->
+                
+                <!-- Financial Tab -->
+                <?php if (class_exists('CAH_Case_Financial_Integration')): ?>
+                <div id="financial" class="tab-content">
+                    <div class="postbox">
+                        <h2 class="hndle">💰 Finanzielle Berechnung</h2>
+                        <div class="inside" style="padding: 20px;">
+                            <div id="case-financial-integration">
+                                <!-- Financial calculator integration will be loaded here -->
+                                <p>Finanzberechnung wird nach dem Erstellen des Falls verfügbar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
                 <!-- Submit -->
                 <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
                     <p class="submit" style="margin: 0;">
