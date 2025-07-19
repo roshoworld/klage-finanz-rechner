@@ -1,0 +1,57 @@
+/* Admin Dashboard CSS - v1.4.9 */
+
+.nav-tab-wrapper {
+    border-bottom: 1px solid #ccc;
+    margin: 0 0 20px 0;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+#case-tabs {
+    margin: 20px 0;
+}
+
+.cah-financial-integration {
+    background: #f0f8ff;
+    border: 1px solid #0073aa;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.notice.notice-info p {
+    margin: 0;
+}
+
+.button-large {
+    padding: 10px 20px;
+    height: auto;
+    font-size: 16px;
+}
+
+.metabox-holder .postbox {
+    margin-bottom: 20px;
+}
+
+.form-table th {
+    width: 150px;
+}
+
+.widefat td {
+    padding: 10px;
+}
+
+.button-link-delete {
+    color: #a00;
+}
+
+.button-link-delete:hover {
+    color: #dc3232;
+}
