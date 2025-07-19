@@ -1,0 +1,45 @@
+.cah-financial-container {
+    margin: 20px 0;
+}
+
+.cah-financial-section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+.cah-financial-section h4 {
+    margin-top: 0;
+    color: #0073aa;
+}
+
+#calc-total {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0073aa;
+}
+
+.cah-financial-calculation {
+    background: #fff;
+    border: 2px solid #0073aa;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.cah-cost-input {
+    width: 120px;
+}
+
+.cah-template-selector {
+    width: 300px;
+}
+
+.cah-financial-actions {
+    margin-top: 15px;
+}
+
+.cah-financial-actions .button {
+    margin-right: 10px;
+}
