@@ -102,7 +102,8 @@ class CAH_Financial_Calculator_Plugin {
             'includes/class-financial-admin.php',
             'includes/class-financial-template-manager.php',
             'includes/class-financial-rest-api.php',
-            'includes/class-financial-calculator.php'
+            'includes/class-financial-calculator.php',
+            'includes/class-case-financial-integration.php'
         );
         
         foreach ($includes as $file) {
