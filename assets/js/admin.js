@@ -30,8 +30,39 @@ jQuery(document).ready(function($) {
     // Auto-generate case ID
     $('#case_id').on('focus', function() {
         if ($(this).val() === '') {
-            var caseId = generateCaseId();
+            var timestamp = Date.now().toString().substr(-4);
+            var caseId = 'SPAM-' + new Date().getFullYear() + '-' + timestamp;
             $(this).val(caseId);
+        }
+    });
+    
+    // Case ID uniqueness validation
+    $('#case_id').on('blur', function() {
+        var caseId = $(this).val();
+        var currentCaseId = $('input[name="original_case_id"]').val(); // For edit forms
+        
+        if (caseId && caseId !== currentCaseId) {
+            $.ajax({
+                url: cah_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'check_case_id_unique',
+                    case_id: caseId,
+                    nonce: cah_ajax.nonce
+                },
+                success: function(response) {
+                    var validationDiv = $('#case_id_validation');
+                    if (response.success) {
+                        if (response.data.unique) {
+                            validationDiv.html('<span style="color: green;">✅ Fall-ID verfügbar</span>').show();
+                            $('#case_id').css('border-color', '#00a32a');
+                        } else {
+                            validationDiv.html('<span style="color: red;">❌ Fall-ID bereits vergeben</span>').show();
+                            $('#case_id').css('border-color', '#d63638');
+                        }
+                    }
+                }
+            });
         }
     });
     
