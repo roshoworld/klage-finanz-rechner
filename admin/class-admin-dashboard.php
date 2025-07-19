@@ -371,3 +371,4 @@ if (!class_exists('CAH_Admin_Dashboard')) {
         wp_send_json_success(array('message' => 'Case deleted successfully'));
     }
 }
+} // End class_exists check
