@@ -4,6 +4,29 @@
 
 jQuery(document).ready(function($) {
     
+    // Tab functionality
+    window.switchTab = function(evt, tabName) {
+        var i, tabcontent, tablinks;
+        
+        // Hide all tab content
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        
+        // Remove active class from all tab buttons
+        tablinks = document.getElementsByClassName("nav-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("nav-tab-active");
+        }
+        
+        // Show the specific tab content and add active class to the button
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("nav-tab-active");
+        
+        evt.preventDefault();
+    };
+    
     // Auto-generate case ID
     $('#case_id').on('focus', function() {
         if ($(this).val() === '') {
